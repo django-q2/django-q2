@@ -7,7 +7,7 @@ on:
     branches:
       - master
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -52,15 +52,22 @@ jobs:
         - name: Run Tests
           run: |
             poetry run pytest --cov=./django_q --cov-report=xml
-        - name: Upload coverage
-          uses: codecov/codecov-action@v1
-          env:
-            PYTHON: ${{ matrix.python-version }}
-            DJANGO: ${{ matrix.django }}
+        - name: Coveralls
+          uses: coverallsapp/github-action@v1.1.3
           with:
-            token: ${{ secrets.CODECOV_TOKEN }}
-            env_vars: PYTHON, DJANGO
-            fail_ci_if_error: true
+            github-token: ${{ secrets.github_token }}
+            parallel: true
+            flag-name: run-python-${{ matrix.python-version }}-django-${{ matrix.django }}
         - name: Build docs
           run: |
             poetry run sphinx-build -b html -d docs/_build/doctrees  -nW docs docs/_build/html
+
+  finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push to coveralls
+        uses: coverallsapp/github-action@v1.1.3
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
