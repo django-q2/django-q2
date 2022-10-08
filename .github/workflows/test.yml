@@ -58,6 +58,7 @@ jobs:
             github-token: ${{ secrets.github_token }}
             parallel: true
             flag-name: run-python-${{ matrix.python-version }}-django-${{ matrix.django }}
+            path-to-lcov: coverage.xml
         - name: Build docs
           run: |
             poetry run sphinx-build -b html -d docs/_build/doctrees  -nW docs docs/_build/html
