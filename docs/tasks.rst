@@ -98,7 +98,7 @@ Please note that this will override any other option keywords.
 
 .. note::
     For tasks to be processed you will need to have a worker cluster running in the background using ``python manage.py qcluster``
-    or you need to configure Django Q to run in synchronous mode for testing using the :ref:`sync` option.
+    or you need to configure Django Q2 to run in synchronous mode for testing using the :ref:`sync` option.
 
 
 AsyncTask
