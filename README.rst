@@ -3,7 +3,8 @@ A multiprocessing distributed task queue for Django
 
 |image0| |image1| |docs|
 
-.. code::
+::
+
     Django Q2 is a fork of Django Q. Big thanks to Ilan Steemers for starting this project. Unfortunately, development has stalled since June 2021. Django Q2 is the new updated version of Django Q, with dependencies updates, docs updates and several bug fixes. Original repository: https://github.com/Koed00/django-q
 
 Features
