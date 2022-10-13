@@ -29,4 +29,4 @@ jobs:
           python -m pip install poetry
       - name: Build and publish package
         # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-        run: poetry --build --dry-run publish
+        run: poetry --build --username=__token__ --password=${{ PYPI_TOKEN }} publish
