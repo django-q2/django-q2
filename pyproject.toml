@@ -5,8 +5,8 @@ packages = [
     { include = "django_q" },
 ]
 description = "A multiprocessing distributed task queue for Django"
-authors = ["Ilan Steemers <koed00@gmail.com>"]
-maintainers = ["Ilan Steemers <koed00@gmail.com>", "Stan Triepels <django-q2@stantriepels.com>"]
+authors = ["Stan Triepels <django-q2@stantriepels.com>", "Ilan Steemers <koed00@gmail.com>"]
+maintainers = ["Stan Triepels <django-q2@stantriepels.com>"]
 license = "MIT"
 readme = 'README.rst'
 
