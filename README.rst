@@ -27,7 +27,6 @@ Requirements
 
 -  `Django <https://www.djangoproject.com>`__ > = 2.2
 -  `Django-picklefield <https://github.com/gintas/django-picklefield>`__
--  `Arrow <https://github.com/crsmithdev/arrow>`__
 -  `Blessed <https://github.com/jquast/blessed>`__
 
 Tested with: Python 3.7, 3.8, 3.9, 3.10 Django 2.2.X and 3.2.X
@@ -173,14 +172,14 @@ Admin page or directly from your code:
 
     # Run a task every 5 minutes, starting at 6 today
     # for 2 hours
-    import arrow
+    from datetime import datetime
 
     schedule('math.hypot',
              3, 4,
              schedule_type=Schedule.MINUTES,
              minutes=5,
              repeats=24,
-             next_run=arrow.utcnow().replace(hour=18, minute=0))
+             next_run=datetime.utcnow().replace(hour=18, minute=0))
 
     # Use a cron expression
     schedule('math.hypot',

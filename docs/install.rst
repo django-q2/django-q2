@@ -38,10 +38,6 @@ Django Q2 is tested for Python 3.7, 3.8, 3.9 and 3.10
 
     Used to store args, kwargs and result objects in the database.
 
--  `Arrow <https://github.com/crsmithdev/arrow>`__
-
-    The scheduler uses Chris Smith's wonderful project to determine correct dates in the future.
-
 -  `Blessed <https://github.com/jquast/blessed>`__
 
     This feature-filled fork of Erik Rose's blessings project provides the terminal layout of the monitor.

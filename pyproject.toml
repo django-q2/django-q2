@@ -47,7 +47,6 @@ include = ['CHANGELOG.md']
 python = ">=3.7.13, <4"
 django = ">=2.2"
 blessed = "^1.17.6"
-arrow = "^1.1.0"
 django-picklefield = "^3.0.1"
 
 hiredis = { version = "^1.0.1", optional = true }
