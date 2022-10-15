@@ -657,7 +657,7 @@ def scheduler(broker: Broker = None):
                                         "Please install croniter to enable cron expressions"
                                     )
                                 )
-                            next_run = croniter(s.cron, localtime()).get_next()
+                            next_run = croniter(s.cron, localtime()).get_next(datetime)
                         if Conf.CATCH_UP or next_run > datetime.utcnow():
                             break
 
