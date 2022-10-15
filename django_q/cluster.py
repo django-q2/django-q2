@@ -213,8 +213,9 @@ class Sentinel:
         :param process: the process to reincarnate
         :type process: Process or None
         """
+        # close connections before spawning new process
         if not Conf.SYNC:
-            db.connections.close_all()  # Close any old connections
+            db.connections.close_all()
         if process == self.monitor:
             self.monitor = self.spawn_monitor()
             logger.error(_(f"reincarnated monitor {process.name} after sudden death"))
@@ -238,8 +239,9 @@ class Sentinel:
     def spawn_cluster(self):
         self.pool = []
         Stat(self).save()
+        # close connections before spawning new process
         if not Conf.SYNC:
-            db.connection.close()
+            db.connections.close_all()
         # spawn worker pool
         for __ in range(self.pool_size):
             self.spawn_worker()
@@ -389,12 +391,13 @@ def monitor(result_queue: Queue, broker: Broker = None):
         # signal execution done
         post_execute.send(sender="django_q", task=task)
         # log the result
+        info_name = f"{task['name']} ({task['func']})"
         if task["success"]:
             # log success
-            logger.info(_(f"Processed [{task['name']}]"))
+            logger.info(_(f"Processed [{info_name}]"))
         else:
             # log failure
-            logger.error(_(f"Failed [{task['name']}] - {task['result']}"))
+            logger.error(_(f"Failed [{info_name}] - {task['result']}"))
     logger.info(_(f"{name} stopped monitoring results"))
 
 
@@ -408,8 +411,8 @@ def worker(
     :type result_queue: multiprocessing.Queue
     :type timer: multiprocessing.Value
     """
-    name = current_process().name
-    logger.info(_(f"{name} ready for work at {current_process().pid}"))
+    proc_name = current_process().name
+    logger.info(_(f"{proc_name} ready for work at {current_process().pid}"))
     task_count = 0
     if timeout is None:
         timeout = -1
@@ -419,7 +422,9 @@ def worker(
         timer.value = -1  # Idle
         task_count += 1
         # Get the function from the task
-        logger.info(_(f'{name} processing [{task["name"]}]'))
+        func = task["func"]
+        func_name = func.__name__ if hasattr(func, "__name__") else str(func)
+        logger.info(_(f'{proc_name} processing [{task["name"]}({func_name})]'))
         f = task["func"]
         # if it's not an instance try to get it from the string
         if not callable(task["func"]):
@@ -450,8 +455,18 @@ def worker(
             if task_count == Conf.RECYCLE or rss_check():
                 timer.value = -2  # Recycled
                 break
-    logger.info(_(f"{name} stopped doing work"))
+    logger.info(_(f"{proc_name} stopped doing work"))
 
+def get_func_repr(func):
+    # convert func to string
+    if inspect.isfunction(func):
+        return f"{func.__module__}.{func.__name__}"
+    elif inspect.ismethod(func):
+        return (
+            f"{func.__self__.__module__}."
+            f"{func.__self__.__name__}.{func.__name__}"
+        )
+    return func
 
 def save_task(task, broker: Broker):
     """
@@ -473,14 +488,23 @@ def save_task(task, broker: Broker):
         )
     # SAVE LIMIT > 0: Prune database, SAVE_LIMIT 0: No pruning
     close_old_django_connections()
+
     try:
+        filters = {}
+        if Conf.SAVE_LIMIT_PER and Conf.SAVE_LIMIT_PER in {"group", "name", "func"} and Conf.SAVE_LIMIT_PER in task:
+            value = task[Conf.SAVE_LIMIT_PER]
+            if Conf.SAVE_LIMIT_PER == "func":
+                value = get_func_repr(value)
+            filters[Conf.SAVE_LIMIT_PER] = value
+
         database_to_use = {"using": Conf.ORM if Conf.ORM else Schedule.objects.db} if not Conf.HAS_REPLICA else {}
         with db.transaction.atomic(**database_to_use):
-            last = Success.objects.select_for_update().last()
-            if task["success"] and 0 < Conf.SAVE_LIMIT <= Success.objects.count():
+            last = Success.objects.filter(**filters).select_for_update().last()
+            if task["success"] and 0 < Conf.SAVE_LIMIT <= Success.objects.filter(**filters).count():
                 last.delete()
+
         # check if this task has previous results
-        if Task.objects.filter(id=task["id"], name=task["name"]).exists():
+        try:
             existing_task = Task.objects.get(id=task["id"], name=task["name"])
             # only update the result if it hasn't succeeded yet
             if not existing_task.success:
@@ -496,16 +520,9 @@ def save_task(task, broker: Broker):
             ):
                 broker.acknowledge(task["ack_id"])
 
-        else:
-            func = task["func"]
+        except Task.DoesNotExist:
             # convert func to string
-            if inspect.isfunction(func):
-                func = f"{func.__module__}.{func.__name__}"
-            elif inspect.ismethod(func):
-                func = (
-                    f"{func.__self__.__module__}."
-                    f"{func.__self__.__name__}.{func.__name__}"
-                )
+            func = get_func_repr(task["func"])
             Task.objects.create(
                 id=task["id"],
                 name=task["name"],
@@ -599,10 +616,15 @@ def scheduler(broker: Broker = None):
                 # get args, kwargs and hook
                 if s.kwargs:
                     try:
-                        # eval should be safe here because dict()
-                        kwargs = eval(f"dict({s.kwargs})")
-                    except SyntaxError:
-                        kwargs = {}
+                        # first try the dict syntax
+                        kwargs = ast.literal_eval(s.kwargs)
+                    except (SyntaxError, ValueError):
+                        # else use the kwargs syntax
+                        try:
+                            parsed_kwargs = ast.parse(f"f({s.kwargs})").body[0].value.keywords
+                            kwargs = {kwarg.arg: ast.literal_eval(kwarg.value) for kwarg in parsed_kwargs}
+                        except (SyntaxError, ValueError):
+                            kwargs = {}
                 if s.args:
                     args = ast.literal_eval(s.args)
                     # single value won't eval to tuple, so:
@@ -693,7 +715,7 @@ def close_old_django_connections():
         logger.warning(
             "Preserving django database connections because sync=True. Beware "
             "that tasks are now injected in the calling context/transactions "
-            "which may result in unexpected bahaviour."
+            "which may result in unexpected behaviour."
         )
     else:
         db.close_old_connections()

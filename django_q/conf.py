@@ -86,6 +86,13 @@ class Conf:
     # Failures are always saved
     SAVE_LIMIT = conf.get("save_limit", 250)
 
+    # save-limit can be set per Task's "group" or "name" or "func"
+    SAVE_LIMIT_PER = conf.get("save_limit_per", None)
+
+    # Verify SAVE_LIMIT_PER is valid
+    if SAVE_LIMIT_PER not in ["group", "name", "func", None]:
+        warn(f"SAVE_LIMIT_PER ({SAVE_LIMIT_PER}) is not a valid option. Options are: 'group', 'name', 'func' and None. Default is None.")
+
     # Guard loop sleep in seconds. Should be between 0 and 60 seconds.
     GUARD_CYCLE = conf.get("guard_cycle", 0.5)
 
@@ -137,9 +144,9 @@ class Conf:
     # Verify if retry and timeout settings are correct
     if not TIMEOUT or (TIMEOUT > RETRY):
         warn(
-            """Retry and timeout are misconfigured. Set retry larger than timeout, 
-        failure to do so will cause the tasks to be retriggered before completion. 
-        See https://django-q.readthedocs.io/en/latest/configure.html#retry for details."""
+            """Retry and timeout are misconfigured. Set retry larger than timeout,
+        failure to do so will cause the tasks to be retriggered before completion.
+        See https://django-q2.readthedocs.io/en/master/configure.html#retry for details."""
         )
 
     # Sets the amount of tasks the cluster will try to pop off the broker.
@@ -207,7 +214,7 @@ class Conf:
 logger = logging.getLogger("django-q")
 
 # Set up standard logging handler in case there is none
-if not logger.handlers:
+if not logger.hasHandlers():
     logger.setLevel(level=getattr(logging, Conf.LOG_LEVEL))
     logger.propagate = False
     formatter = logging.Formatter(
