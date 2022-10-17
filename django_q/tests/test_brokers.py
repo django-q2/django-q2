@@ -58,68 +58,6 @@ def test_custom(monkeypatch):
     assert broker.__class__.__name__ == "Redis"
 
 
-def test_disque(monkeypatch):
-    monkeypatch.setattr(Conf, "DISQUE_NODES", ["127.0.0.1:7711"])
-    # check broker
-    broker = get_broker(list_key="disque_test")
-    assert broker.ping() is True
-    assert broker.info() is not None
-    # clear before we start
-    broker.delete_queue()
-    # async_task
-    broker.enqueue("test")
-    assert broker.queue_size() == 1
-    # dequeue
-    task = broker.dequeue()[0]
-    assert task[1] == "test"
-    broker.acknowledge(task[0])
-    assert broker.queue_size() == 0
-    # Retry test
-    monkeypatch.setattr(Conf, "RETRY", 1)
-    broker.enqueue("test")
-    assert broker.queue_size() == 1
-    broker.dequeue()
-    assert broker.queue_size() == 0
-    sleep(1.5)
-    assert broker.queue_size() == 1
-    task = broker.dequeue()[0]
-    assert broker.queue_size() == 0
-    broker.acknowledge(task[0])
-    sleep(1.5)
-    assert broker.queue_size() == 0
-    # delete job
-    task_id = broker.enqueue("test")
-    broker.delete(task_id)
-    assert broker.dequeue() is None
-    # fail
-    task_id = broker.enqueue("test")
-    broker.fail(task_id)
-    # bulk test
-    for _ in range(5):
-        broker.enqueue("test")
-    monkeypatch.setattr(Conf, "BULK", 5)
-    monkeypatch.setattr(Conf, "DISQUE_FASTACK", True)
-    tasks = broker.dequeue()
-    for task in tasks:
-        assert task is not None
-        broker.acknowledge(task[0])
-    # test duplicate acknowledge
-    broker.acknowledge(task[0])
-    # delete queue
-    broker.enqueue("test")
-    broker.enqueue("test")
-    broker.delete_queue()
-    assert broker.queue_size() == 0
-    # connection test
-    monkeypatch.setattr(Conf, "DISQUE_NODES", ["127.0.0.1:7798", "127.0.0.1:7799"])
-    with pytest.raises(redis.exceptions.ConnectionError):
-        broker.get_connection()
-    # connection test with no nodes
-    monkeypatch.setattr(Conf, "DISQUE_NODES", None)
-    with pytest.raises(redis.exceptions.ConnectionError):
-        broker.get_connection()
-
-
 @pytest.mark.skipif(
     not os.getenv("IRON_MQ_TOKEN"), reason="requires IronMQ credentials"
 )

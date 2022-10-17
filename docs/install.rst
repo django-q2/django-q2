@@ -45,7 +45,7 @@ Django Q2 is tested for Python 3.7, 3.8, 3.9 and 3.10
 
 Optional
 ~~~~~~~~
--  `Redis-py <https://github.com/andymccurdy/redis-py>`__ client by Andy McCurdy is used  to interface with both the Redis and Disque brokers::
+-  `Redis-py <https://github.com/andymccurdy/redis-py>`__ client by Andy McCurdy is used  to interface with both the Redis::
 
     $ pip install redis
 
@@ -72,8 +72,6 @@ Optional
     $ pip install pymongo
 
 - `Redis <http://redis.io/>`__ server is the default broker for Django Q2. It provides the best performance and does not require Django's cache framework for monitoring.
-
-- `Disque <https://github.com/antirez/disque>`__ server is based on Redis by the same author, but focuses on reliable queues. Currently in Alpha, but highly recommended. You can either build it from source or use it on Heroku through the `Tynd <https://disque.tynd.co/>`__ beta.
 
 - `MongoDB <https://www.mongodb.org/>`__ is a highly scalable NoSQL database which makes for a very fast and reliably persistent at-least-once message broker. Usually available on most PaaS providers.
 

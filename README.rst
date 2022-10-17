@@ -19,7 +19,7 @@ Features
 -  Django Admin integration
 -  PaaS compatible with multiple instances
 -  Multi cluster monitor
--  Redis, Disque, IronMQ, SQS, MongoDB or ORM
+-  Redis, IronMQ, SQS, MongoDB or ORM
 -  Rollbar and Sentry support
 
 Requirements
@@ -34,7 +34,6 @@ Tested with: Python 3.7, 3.8, 3.9, 3.10 Django 2.2.X and 3.2.X
 Brokers
 ~~~~~~~
 - `Redis <https://django-q2.readthedocs.org/en/latest/brokers.html#redis>`__
-- `Disque <https://django-q2.readthedocs.org/en/latest/brokers.html#disque>`__
 - `IronMQ <https://django-q2.readthedocs.org/en/latest/brokers.html#ironmq>`__
 - `Amazon SQS <https://django-q2.readthedocs.org/en/latest/brokers.html#amazon-sqs>`__
 - `MongoDB <https://django-q2.readthedocs.org/en/latest/brokers.html#mongodb>`__
@@ -197,7 +196,6 @@ To run the tests you will need the following in addition to install requirements
 
 * `py.test <http://pytest.org/latest/>`__
 * `pytest-django <https://github.com/pytest-dev/pytest-django>`__
-* Disque from https://github.com/antirez/disque.git
 * Redis
 * MongoDB
 
