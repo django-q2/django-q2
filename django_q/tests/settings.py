@@ -106,11 +106,16 @@ LOGGING = {
 
 STATIC_URL = "/static/"
 
+REDIS_HOST = os.environ.get("REDIS_HOST", "redis")
+
+MONGO_HOST = os.environ.get("MONGO_HOST", "mongo")
+
+
 # Django Redis
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/0",
+        "LOCATION": f"redis://{REDIS_HOST}:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PARSER_CLASS": "redis.connection.HiredisParser",
@@ -125,5 +130,5 @@ Q_CLUSTER = {
     "testing": True,
     "log_level": "DEBUG",
     "django_redis": "default",
-    "redis": "redis://redis:6379/0"
+    "redis": f"redis://{REDIS_HOST}:6379/0"
 }

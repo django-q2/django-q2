@@ -7,6 +7,7 @@ import redis
 from django_q.brokers import Broker, get_broker
 from django_q.conf import Conf
 from django_q.humanhash import uuid
+from django_q.tests.settings import REDIS_HOST, MONGO_HOST
 
 
 def test_broker(monkeypatch):
@@ -40,11 +41,11 @@ def test_redis(monkeypatch):
     broker = get_broker()
     assert broker.ping() is True
     assert broker.info() is not None
-    monkeypatch.setattr(Conf, "REDIS", {"host": "redis", "port": 7799})
+    monkeypatch.setattr(Conf, "REDIS", {"host": REDIS_HOST, "port": 7799})
     broker = get_broker()
     with pytest.raises(Exception):
         broker.ping()
-    monkeypatch.setattr(Conf, "REDIS", "redis://redis:7799")
+    monkeypatch.setattr(Conf, "REDIS", f"redis://{REDIS_HOST}:7799")
     broker = get_broker()
     with pytest.raises(Exception):
         broker.ping()
@@ -250,7 +251,7 @@ def test_orm(monkeypatch):
 
 @pytest.mark.django_db
 def test_mongo(monkeypatch):
-    monkeypatch.setattr(Conf, "MONGO", {"host": "mongo", "port": 27017})
+    monkeypatch.setattr(Conf, "MONGO", {"host": MONGO_HOST, "port": 27017})
     # check broker
     broker = get_broker(list_key="mongo_test")
     assert broker.ping() is True
