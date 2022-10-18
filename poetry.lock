@@ -960,8 +960,8 @@ testing = ["django-redis", "croniter", "hiredis", "psutil", "iron-mq", "boto3", 
 
 [metadata]
 lock-version = "1.1"
-python-versions = ">=3.8.15, <4"
-content-hash = "5ddb1a8d1a0e7d4b49abb4b86b5b19f8a2ba0dad7af07a71b98feec6d6a7662a"
+python-versions = ">=3.8.14, <4"
+content-hash = "3164c7b86a93925523372abdfa8f2a88f5dbda725bd0576c0bf429de06a631db"
 
 [metadata.files]
 alabaster = [
