@@ -32,7 +32,7 @@ Django Q2 is tested for Python 3.7, 3.8, 3.9 and 3.10
 -  `Django <https://www.djangoproject.com>`__
 
     Django Q2 aims to use as much of Django's standard offerings as possible.
-    The code is tested against Django versions `2.2.x` and `3.2.x`.
+    The code is tested against Django versions `3.2.x` and `4.1.x`.
 
 -  `Django-picklefield <https://github.com/gintas/django-picklefield>`__
 
@@ -136,7 +136,7 @@ You can reference the `requirements <https://github.com/GDay/django-q2/blob/mast
 Django
 ~~~~~~
 We strive to be compatible with last two major version of Django.
-At the moment this means we support the 2.2.x and 3.2.x releases.
+At the moment this means we support the 3.2.x and 4.1.x releases.
 
 Since we are now no longer supporting Python 2, we can also not support older versions of Django that do not support Python >= 3.6
 For this you can always use older releases, but they are no longer maintained.

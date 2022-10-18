@@ -25,11 +25,11 @@ Features
 Requirements
 ~~~~~~~~~~~~
 
--  `Django <https://www.djangoproject.com>`__ > = 2.2
+-  `Django <https://www.djangoproject.com>`__ > = 3.2
 -  `Django-picklefield <https://github.com/gintas/django-picklefield>`__
 -  `Blessed <https://github.com/jquast/blessed>`__
 
-Tested with: Python 3.7, 3.8, 3.9, 3.10 Django 2.2.X and 3.2.X
+Tested with: Python 3.7, 3.8, 3.9, 3.10 Django 3.2.X and 4.1.X
 
 Brokers
 ~~~~~~~
