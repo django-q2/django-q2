@@ -658,7 +658,7 @@ def scheduler(broker: Broker = None):
                                     )
                                 )
                             next_run = croniter(s.cron, localtime()).get_next(datetime)
-                        if Conf.CATCH_UP or next_run > datetime.utcnow():
+                        if Conf.CATCH_UP or next_run > localtime():
                             break
 
                     s.next_run = next_run

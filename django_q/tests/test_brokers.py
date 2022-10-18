@@ -40,11 +40,11 @@ def test_redis(monkeypatch):
     broker = get_broker()
     assert broker.ping() is True
     assert broker.info() is not None
-    monkeypatch.setattr(Conf, "REDIS", {"host": "127.0.0.1", "port": 7799})
+    monkeypatch.setattr(Conf, "REDIS", {"host": "redis", "port": 7799})
     broker = get_broker()
     with pytest.raises(Exception):
         broker.ping()
-    monkeypatch.setattr(Conf, "REDIS", "redis://127.0.0.1:7799")
+    monkeypatch.setattr(Conf, "REDIS", "redis://redis:7799")
     broker = get_broker()
     with pytest.raises(Exception):
         broker.ping()
@@ -250,7 +250,7 @@ def test_orm(monkeypatch):
 
 @pytest.mark.django_db
 def test_mongo(monkeypatch):
-    monkeypatch.setattr(Conf, "MONGO", {"host": "127.0.0.1", "port": 27017})
+    monkeypatch.setattr(Conf, "MONGO", {"host": "mongo", "port": 27017})
     # check broker
     broker = get_broker(list_key="mongo_test")
     assert broker.ping() is True

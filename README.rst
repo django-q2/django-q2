@@ -192,44 +192,15 @@ For more info check the `Schedules <https://django-q2.readthedocs.org/en/latest/
 Testing
 ~~~~~~~
 
-To run the tests you will need the following in addition to install requirements:
-
-* `py.test <http://pytest.org/latest/>`__
-* `pytest-django <https://github.com/pytest-dev/pytest-django>`__
-* Redis
-* MongoDB
-
-Or you can use the included Docker Compose file.
-
-The following commands can be used to run the tests:
+Running tests is easy with docker compose, it will also start the necessary databases. Just run:
 
 .. code:: bash
-
-    # Create virtual environment
-    python -m venv venv
-
-    # Install requirements
-    venv/bin/pip install -r requirements.txt
-
-    # Install test dependencies
-    venv/bin/pip install pytest pytest-django
-
-    # Install django-q
-    venv/bin/python setup.py develop
-
-    # Run required services (you need to have docker-compose installed)
-    docker-compose -f test-services-docker-compose.yaml up -d
-
-    # Run tests
-    venv/bin/pytest
-
-    # Stop the services required by tests (when you no longer plan to run tests)
-    docker-compose -f test-services-docker-compose.yaml down
+    docker-compose -f test-services-docker-compose.yaml run --rm django-q2 poetry run pytest
 
 Locale
 ~~~~~~
 
-Currently available in English, German and French.
+Currently available in English, German, Turkish, and French.
 Translation pull requests are always welcome.
 
 Todo

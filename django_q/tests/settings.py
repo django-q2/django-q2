@@ -110,7 +110,7 @@ STATIC_URL = "/static/"
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/0",
+        "LOCATION": "redis://redis:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "PARSER_CLASS": "redis.connection.HiredisParser",
@@ -125,4 +125,5 @@ Q_CLUSTER = {
     "testing": True,
     "log_level": "DEBUG",
     "django_redis": "default",
+    "redis": "redis://redis:6379/0"
 }
