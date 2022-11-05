@@ -7,13 +7,13 @@
 - Fix: func reference in admin https://github.com/GDay/django-q2/pull/28
 
 
-## [v1.4.2] (https://github.com/GDay/django-q2/tree/v1.4.2) (2022-11-22)
+## [v1.4.2](https://github.com/GDay/django-q2/tree/v1.4.2) (2022-11-22)
 
 **Merged pull requests:**
 
 - Make redis dependency optional and update boto3 #22
 
-## [v1.4.1] (https://github.com/GDay/django-q2/tree/v1.4.1) (2022-11-21)
+## [v1.4.1](https://github.com/GDay/django-q2/tree/v1.4.1) (2022-11-21)
 
 **Merged pull requests:**
 
@@ -38,7 +38,7 @@
 - Remove blessed dependency https://github.com/GDay/django-q2/pull/20
 - Release new version and docs fixes https://github.com/GDay/django-q2/pull/21
 
-## [v1.4.0]() (2021-06-10)
+## v1.4.0 
 
 **Closed issues:**
 

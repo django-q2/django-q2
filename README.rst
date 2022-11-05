@@ -32,7 +32,7 @@ Changes compared to the original Django-Q:
 - Improved admin area
 - Fixed a lot of issues
 
-See the [changelog](CHANGELOG.MD) for all changes.
+See the `changelog <https://github.com/gday/django-q2/CHANGELOG.md>`__ for all changes.
 
 Requirements
 ~~~~~~~~~~~~
