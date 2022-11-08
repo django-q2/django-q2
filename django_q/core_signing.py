@@ -5,7 +5,12 @@ import zlib
 from django.core.signing import BadSignature, JSONSerializer, SignatureExpired
 from django.core.signing import Signer as Sgnr
 from django.core.signing import TimestampSigner as TsS
-from django.core.signing import b64_decode, dumps, base62
+from django.core.signing import b64_decode, dumps
+try:
+    from django.core.signing import base62
+except ImportError:
+    # For django < 4.0
+    from django.utils.baseconv import base62
 from django.utils.crypto import constant_time_compare
 from django.utils.encoding import force_bytes, force_str
 
