@@ -257,8 +257,8 @@ def info(broker=None):
         term.black_on_green(
             term.center(
                 _(
-                    f'-- {Conf.PREFIX.capitalize()} { ".".join(str(v) for v in VERSION)} on {broker.info()}  --'
-                )
+                    '-- {prefix} {version} on {info}  --'
+                    ) % {'prefix': Conf.PREFIX.capitalize(), 'version':  ".".join(str(v) for v in VERSION), 'info': broker.info()}
             )
         )
     )
@@ -293,7 +293,7 @@ def info(broker=None):
         + term.move_x(1 * col_width)
         + term.white(str(models.Schedule.objects.count()))
         + term.move_x(2 * col_width)
-        + term.cyan(_(f"Tasks/{per}"))
+        + term.cyan(_("Tasks/{per}") % {'per': per})
         + term.move_x(3 * col_width)
         + term.white(f"{tasks_per:.2f}")
         + term.move_x(4 * col_width)
@@ -485,7 +485,7 @@ def memory(run_once=False, workers=False, broker=None):
             # for testing
             if run_once:
                 return Stat.get_all(broker=broker)
-            print(term.move(row + 2, 0) + term.center("[Press q to quit]"))
+            print(term.move(row + 2, 0) + term.center(_("[Press q to quit]")))
             val = term.inkey(timeout=1)
 
 
@@ -496,5 +496,5 @@ def get_ids():
         for s in stat:
             print(s.cluster_id)
     else:
-        print("No clusters appear to be running.")
+        print(_("No clusters appear to be running."))
     return True
