@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-15 15:53+0100\n"
+"POT-Creation-Date: 2022-11-10 01:33+0000\n"
 "PO-Revision-Date: 2018-08-05 18:28+0200\n"
 "Last-Translator: Jonas Winkler\n"
 "Language-Team: \n"
@@ -17,431 +17,499 @@ msgstr ""
 "X-Generator: Poedit 2.1.1\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: admin.py:40
+#: django_q/admin.py:43
 msgid "Resubmit selected tasks to queue"
 msgstr "Ausgewählte Aufgaben erneut ausführen"
 
-#: brokers/disque.py:59
-msgid "No Disque nodes configured"
-msgstr "Keine Disque-Knoten konfiguriert"
+#: django_q/admin.py:98 django_q/models.py:228
+#, fuzzy
+#| msgid "Success"
+msgid "success"
+msgstr "erfolg"
 
-#: brokers/disque.py:76
-msgid "Could not connect to any Disque nodes"
-msgstr "Konnte zu keinem Disque-Knoten verbinden"
+#: django_q/admin.py:109 django_q/models.py:230
+msgid "last_run"
+msgstr ""
 
-#: cluster.py:76
+#: django_q/cluster.py:77
 #, fuzzy, python-brace-format
 #| msgid "Q Cluster-{} starting."
-msgid "Q Cluster {self.name} starting."
-msgstr "Q-Cluster {self.name} wird gestartet."
+msgid "Q Cluster {name} starting."
+msgstr "Q-Cluster {name} wird gestartet."
 
-#: cluster.py:84
+#: django_q/cluster.py:85
 #, fuzzy, python-brace-format
 #| msgid "Q Cluster-{} stopping."
-msgid "Q Cluster {self.name} stopping."
-msgstr "Q-Cluster {self.name} wird gestoppt."
+msgid "Q Cluster {name} stopping."
+msgstr "Q-Cluster {name} wird gestoppt."
 
-#: cluster.py:87
+#: django_q/cluster.py:88
 #, fuzzy, python-brace-format
 #| msgid "Q Cluster-{} has stopped."
-msgid "Q Cluster {self.name} has stopped."
-msgstr "Q-Cluster {self.name} wurde gestoppt."
+msgid "Q Cluster {name} has stopped."
+msgstr "Q-Cluster {name} wurde gestoppt."
 
-#: cluster.py:95
-msgid ""
-"{current_process().name} got signal {Conf.SIGNAL_NAMES.get(signum, \"UNKNOWN"
-"\")}"
-msgstr ""
-"{current_process().name} erhielt das Signal {Conf.SIGNAL_NAMES.get(signum, "
-"\"UNKNOWN\")}"
+#: django_q/cluster.py:96
+#, python-brace-format
+msgid "{name} got signal {signal}"
+msgstr "{name} erhielt das Signal {signal}"
 
-#: cluster.py:216
+#: django_q/cluster.py:219
 #, fuzzy, python-brace-format
 #| msgid "reincarnated monitor {} after sudden death"
-msgid "reincarnated monitor {process.name} after sudden death"
-msgstr "Monitor {process.name} wurde nach unerwartetem Absturz neu gestartet"
+msgid "reincarnated monitor {name} after sudden death"
+msgstr "Monitor {name} wurde nach unerwartetem Absturz neu gestartet"
 
-#: cluster.py:219
+#: django_q/cluster.py:222
 #, fuzzy, python-brace-format
 #| msgid "reincarnated pusher {} after sudden death"
-msgid "reincarnated pusher {process.name} after sudden death"
-msgstr "Pusher {process.name} wurde nach unerwartetem Absturz neu gestartet"
+msgid "reincarnated pusher {name} after sudden death"
+msgstr "Pusher {name} wurde nach unerwartetem Absturz neu gestartet"
 
-#: cluster.py:226
+#: django_q/cluster.py:229
 #, fuzzy, python-brace-format
 #| msgid "reincarnated worker {} after timeout"
-msgid "reincarnated worker {process.name} after timeout"
-msgstr "Worker {process.name} wurde nach Zeitüberschreitung neu gestartet"
+msgid "reincarnated worker {name} after timeout"
+msgstr "Worker {name} wurde nach Zeitüberschreitung neu gestartet"
 
-#: cluster.py:228
+#: django_q/cluster.py:231
 #, fuzzy, python-brace-format
 #| msgid "recycled worker {}"
-msgid "recycled worker {process.name}"
-msgstr "Worker {process.name} wurde wiederverwendet"
+msgid "recycled worker {name}"
+msgstr "Worker {name} wurde wiederverwendet"
 
-#: cluster.py:230
+#: django_q/cluster.py:233
 #, fuzzy, python-brace-format
 #| msgid "reincarnated worker {} after death"
-msgid "reincarnated worker {process.name} after death"
-msgstr "Worker {process.name} wurde nach unerwartetem Absturz neu gestartet"
+msgid "reincarnated worker {name} after death"
+msgstr "Worker {name} wurde nach unerwartetem Absturz neu gestartet"
 
-#: cluster.py:251
-msgid ""
-"{current_process().name} guarding cluster {humanize(self.cluster_id.hex)}"
+#: django_q/cluster.py:256
+#, fuzzy, python-brace-format
+#| msgid ""
+#| "{current_process().name} guarding cluster {humanize(self.cluster_id.hex)}"
+msgid "{name} guarding cluster {cluster_name}"
 msgstr ""
-"{current_process().name} beschützt das Cluster {humanize(self.cluster_id."
-"hex)}"
+"{name} beschützt das Cluster {cluster_name}"
 
-#: cluster.py:256
-msgid "Q Cluster {humanize(self.cluster_id.hex)} running."
-msgstr "Q-Cluster {humanize(self.cluster_id.hex)} ist bereit."
+#: django_q/cluster.py:261
+#, fuzzy, python-brace-format
+#| msgid "Q Cluster-{} starting."
+msgid "Q Cluster {cluster_name} running."
+msgstr "Q-Cluster {cluster_name} wird gestartet."
 
-#: cluster.py:290
+#: django_q/cluster.py:295
 #, fuzzy, python-brace-format
 #| msgid "{} stopping cluster processes"
 msgid "{name} stopping cluster processes"
 msgstr "{name} hält Cluster-Prozesse an"
 
-#: cluster.py:315
+#: django_q/cluster.py:320
 #, fuzzy, python-brace-format
 #| msgid "{} waiting for the monitor."
 msgid "{name} waiting for the monitor."
 msgstr "{name} wartet auf den Monitor."
 
-#: cluster.py:337
-msgid "{current_process().name} pushing tasks at {current_process().pid}"
+#: django_q/cluster.py:342
+#, fuzzy, python-brace-format
+#| msgid "{current_process().name} pushing tasks at {current_process().pid}"
+msgid "{process_name} pushing tasks at {id}"
 msgstr ""
-"{current_process().name} veröffentlicht Aufagaben auf {current_process().pid}"
+"{process_name} veröffentlicht Aufagaben auf {id}"
 
-#: cluster.py:358
+#: django_q/cluster.py:363
 #, fuzzy, python-brace-format
 #| msgid "queueing from {}"
-msgid "queueing from {broker.list_key}"
-msgstr "Einreihen von {broker.list_key}"
+msgid "queueing from {list_key}"
+msgstr "Einreihen von {list_key}"
 
-#: cluster.py:361
-#, fuzzy
+#: django_q/cluster.py:366
+#, fuzzy, python-brace-format
 #| msgid "{} stopped pushing tasks"
-msgid "{current_process().name} stopped pushing tasks"
-msgstr "{current_process().name} veröffentlicht keine Aufgaben mehr"
+msgid "{name} stopped pushing tasks"
+msgstr "{name} veröffentlicht keine Aufgaben mehr"
 
-#: cluster.py:373
-#, fuzzy
+#: django_q/cluster.py:378
+#, fuzzy, python-brace-format
 #| msgid "{} monitoring at {}"
-msgid "{name} monitoring at {current_process().pid}"
-msgstr "{name} beobachtet auf {current_process().pid}"
+msgid "{name} monitoring at {id}"
+msgstr "{name} beobachtet auf {id}"
 
-#: cluster.py:387
-#, fuzzy
+#: django_q/cluster.py:395
+#, fuzzy, python-brace-format
 #| msgid "Processed [{}]"
-msgid "Processed [{task['name']}]"
-msgstr "[{task['name']}] wurde verarbeitet"
+msgid "Processed '{info_name}' ({task_name})"
+msgstr "[{task_name}] - '{info_name}' wurde verarbeitet"
 
-#: cluster.py:390
-msgid "Failed [{task['name']}] - {task['result']}"
-msgstr "[{task['name']}] ist fehlgeschlagen - {task['result']}"
+#: django_q/cluster.py:398
+#, fuzzy, python-brace-format
+#| msgid "Failed '{info_name}' ({task['name']}) - {task['result']}"
+msgid "Failed '{info_name}' ({task_name}) - {task_result}"
+msgstr "'{info_name}' ({task_name}) ist fehlgeschlagen - {task_result}"
 
-#: cluster.py:391
+#: django_q/cluster.py:399
 #, fuzzy, python-brace-format
 #| msgid "{} stopped monitoring results"
 msgid "{name} stopped monitoring results"
 msgstr "{name} überwacht keine Ergebnisse mehr"
 
-#: cluster.py:405
-#, fuzzy
+#: django_q/cluster.py:413
+#, fuzzy, python-brace-format
 #| msgid "{} ready for work at {}"
-msgid "{name} ready for work at {current_process().pid}"
-msgstr "{name} ist bereit für Arbeit auf {current_process().pid}"
+msgid "{proc_name} ready for work at {id}"
+msgstr "{proc_name} ist bereit für Arbeit auf {id}"
 
-#: cluster.py:415
-#, fuzzy
-#| msgid "{} processing [{}]"
-msgid "{name} processing [{task[\"name\"]}]"
-msgstr "{name} verarbeitet [{task[\"name\"]}]"
+#: django_q/cluster.py:425
+#, fuzzy, python-brace-format
+#| msgid "{proc_name} processing '{func_name}' ({task['name']})"
+msgid "{proc_name} processing '{func_name}' ({task_name})"
+msgstr "{proc_name} verarbeitet '{func_name}' ({task_name})"
 
-#: cluster.py:455
+#: django_q/cluster.py:440
+#, python-brace-format
+msgid ""
+"Could not process '{func_name}'. Check the location of the function and the "
+"args/kwargs."
+msgstr ""
+"Konnte '{func_name}' nicht verarbeiten. Überprüfen Sie den Ort der Funktion und die args/kwargs."
+
+#: django_q/cluster.py:456
 #, fuzzy, python-brace-format
 #| msgid "{} stopped doing work"
-msgid "{name} stopped doing work"
-msgstr "{name} hat die Arbeit beendet"
+msgid "{proc_name} stopped doing work"
+msgstr "{proc_name} hat die Arbeit beendet"
 
-#: cluster.py:619 models.py:143
+#: django_q/cluster.py:649 django_q/models.py:144
 msgid "Please install croniter to enable cron expressions"
 msgstr "Bitte installieren Sie croniter, um Cron-Ausdrücke zu aktivieren"
 
-#: cluster.py:644
-#, fuzzy
+#: django_q/cluster.py:672
+#, fuzzy, python-brace-format
 #| msgid "{} failed to create a task from schedule [{}]"
-msgid ""
-"{current_process().name} failed to create a task from schedule [{s.name or s."
-"id}]"
+msgid "{process_name} failed to create a task from schedule [{schedule}]"
 msgstr ""
-"{current_process().name} konnte keine Aufgabe von Zeitplan [{s.name or s."
-"id}] erstellen"
+"{process_name} konnte keine Aufgabe von Zeitplan [{schedule}] "
+" erstellen"
 
-#: cluster.py:650
-#, fuzzy
+#: django_q/cluster.py:678
+#, fuzzy, python-brace-format
 #| msgid "{} created a task from schedule [{}]"
-msgid ""
-"{current_process().name} created a task from schedule [{s.name or s.id}]"
+msgid "{process_name} created a task from schedule [{schedule}]"
 msgstr ""
-"{current_process().name} hat eine Aufgabe des Zeitplans [{s.name or s.id}] "
+"{process_name} hat eine Aufgabe des Zeitplans [{schedule}] "
 "erstellt"
 
-#: cluster.py:716
+#: django_q/cluster.py:718
+msgid "Skipping cpu affinity because psutil was not found."
+msgstr "Cpu-Affinität wird übersprungen, da psutil nicht gefunden wurde."
+
+#: django_q/cluster.py:723
+msgid "Faking cpu affinity because it is not supported on this platform"
+msgstr "Vortäuschen von CPU-Affinität, da diese auf dieser Plattform nicht unterstützt wird"
+
+#: django_q/cluster.py:744
 #, fuzzy, python-brace-format
 #| msgid "{} will use cpu {}"
 msgid "{pid} will use cpu {affinity}"
 msgstr "{pid} wird CPU {affinity} benutzen"
 
+#: django_q/conf.py:85
+#, python-brace-format
+msgid ""
+"SAVE_LIMIT_PER ({option}) is not a valid option. Options are: 'group', "
+"'name', 'func' and None. Default is None."
+msgstr ""
+"SAVE_LIMIT_PER ({option}) ist keine gültige Option. Optionen sind: 'group', 'name', 'func' und None. Standard ist None."
+
 #. Translators: Cluster status descriptions
-#: conf.py:184
+#: django_q/conf.py:194
 msgid "Starting"
 msgstr "Wird gestartet"
 
-#: conf.py:185
+#: django_q/conf.py:195
 msgid "Working"
 msgstr "Arbeitet"
 
-#: conf.py:186
+#: django_q/conf.py:196
 msgid "Idle"
 msgstr "Leerlauf"
 
-#: conf.py:187
+#: django_q/conf.py:197
 msgid "Stopped"
 msgstr "Gestoppt"
 
-#: conf.py:188
+#: django_q/conf.py:198
 msgid "Stopping"
 msgstr "Wird gestoppt"
 
 #. Translators: help text for qcluster management command
-#: management/commands/qcluster.py:9
+#: django_q/management/commands/qcluster.py:9
 msgid "Starts a Django Q Cluster."
 msgstr "Startet ein Django-Q-Cluster."
 
 #. Translators: help text for qinfo management command
-#: management/commands/qinfo.py:11
+#: django_q/management/commands/qinfo.py:11
 msgid "General information over all clusters."
 msgstr "Allgemeine Informationen über alle Cluster"
 
+#. Translators: help text for qmemory management command
+#: django_q/management/commands/qmemory.py:9
+msgid "Monitors Q Cluster memory usage"
+msgstr "Überwacht die Speichernutzung von Q Cluster"
+
 #. Translators: help text for qmonitor management command
-#: management/commands/qmonitor.py:9
+#: django_q/management/commands/qmonitor.py:9
 msgid "Monitors Q Cluster activity"
 msgstr "Q-Cluster aktiv überwachen"
 
-#: models.py:118
+#: django_q/models.py:119
 msgid "Successful task"
 msgstr "Erfolgreiche Aufgabe"
 
-#: models.py:119
+#: django_q/models.py:120
 msgid "Successful tasks"
 msgstr "Erfolgreiche Aufgaben"
 
-#: models.py:134
+#: django_q/models.py:135
 msgid "Failed task"
 msgstr "Fehlgeschlagene Aufgabe"
 
-#: models.py:135
+#: django_q/models.py:136
 msgid "Failed tasks"
 msgstr "Fehlgeschlagene Aufgaben"
 
-#: models.py:159
+#: django_q/models.py:160
 msgid "e.g. 1, 2, 'John'"
 msgstr "zum Beispiel 1, 2, 'John'"
 
-#: models.py:161
+#: django_q/models.py:162
 msgid "e.g. x=1, y=2, name='John'"
 msgstr "zum Beispiel x=1, y=2, name='John'"
 
-#: models.py:173
+#: django_q/models.py:176
 msgid "Once"
 msgstr "Einmal"
 
-#: models.py:174
+#: django_q/models.py:177
 msgid "Minutes"
 msgstr "Minuten"
 
-#: models.py:175
+#: django_q/models.py:178
 msgid "Hourly"
 msgstr "Stündlich"
 
-#: models.py:176
+#: django_q/models.py:179
 msgid "Daily"
 msgstr "Täglich"
 
-#: models.py:177
+#: django_q/models.py:180
 msgid "Weekly"
 msgstr "Wöchentlich"
 
-#: models.py:178
+#: django_q/models.py:181
+msgid "Biweekly"
+msgstr "Zweiwöchentlich"
+
+#: django_q/models.py:182
 msgid "Monthly"
 msgstr "Monatlich"
 
-#: models.py:179
+#: django_q/models.py:183
+msgid "Bimonthly"
+msgstr "Zweimonatlich"
+
+#: django_q/models.py:184
 msgid "Quarterly"
 msgstr "Vierteljährlich"
 
-#: models.py:180
+#: django_q/models.py:185
 msgid "Yearly"
 msgstr "Jährlich"
 
-#: models.py:181
+#: django_q/models.py:186
 msgid "Cron"
 msgstr "Cron"
 
-#: models.py:184
+#: django_q/models.py:189
 msgid "Schedule Type"
 msgstr "Zeitplan-Typ"
 
-#: models.py:187
+#: django_q/models.py:192
 msgid "Number of minutes for the Minutes type"
 msgstr "Anzahl Minuten für den Typ 'Minuten'"
 
-#: models.py:190
+#: django_q/models.py:195
 msgid "Repeats"
 msgstr "Wiederhohlungen"
 
-#: models.py:190
+#: django_q/models.py:195
 msgid "n = n times, -1 = forever"
 msgstr "n = n mal, -1 = für immer"
 
-#: models.py:193
+#: django_q/models.py:198
 msgid "Next Run"
 msgstr "Nächste Ausführung"
 
-#: models.py:200
+#: django_q/models.py:205
 msgid "Cron expression"
 msgstr "Cron-Ausdruck"
 
-#: models.py:226
+#: django_q/models.py:235
 msgid "Scheduled task"
 msgstr "Geplante Aufgabe"
 
-#: models.py:227
+#: django_q/models.py:236
 msgid "Scheduled tasks"
 msgstr "Geplante Aufgaben"
 
-#: models.py:250
+#: django_q/models.py:262
 msgid "Queued task"
 msgstr "Eingereihte Aufgabe"
 
-#: models.py:251
+#: django_q/models.py:263
 msgid "Queued tasks"
 msgstr "Eingereihte Aufgaben"
 
-#: monitor.py:35
+#: django_q/monitor.py:62 django_q/monitor.py:339
 msgid "Host"
 msgstr "Host"
 
-#: monitor.py:39
+#: django_q/monitor.py:66 django_q/monitor.py:343 django_q/monitor.py:450
 msgid "Id"
 msgstr "Id"
 
-#: monitor.py:43
+#: django_q/monitor.py:70
 msgid "State"
 msgstr "Status"
 
-#: monitor.py:47
+#: django_q/monitor.py:74
 msgid "Pool"
 msgstr "Pool"
 
-#: monitor.py:51
+#: django_q/monitor.py:78
 msgid "TQ"
 msgstr "TQ"
 
-#: monitor.py:55
+#: django_q/monitor.py:82
 msgid "RQ"
 msgstr "RQ"
 
-#: monitor.py:59
+#: django_q/monitor.py:86
 msgid "RC"
 msgstr "RC"
 
-#: monitor.py:63
+#: django_q/monitor.py:90
 msgid "Up"
 msgstr "Up"
 
-#: monitor.py:143 monitor.py:247
+#: django_q/monitor.py:170 django_q/monitor.py:279
 msgid "Queued"
 msgstr "Eingereiht"
 
-#: monitor.py:151
+#: django_q/monitor.py:178
 msgid "Success"
 msgstr "Erfolg"
 
-#: monitor.py:161 monitor.py:255
+#: django_q/monitor.py:188 django_q/monitor.py:287
 msgid "Failures"
 msgstr "Fehlschläge"
 
-#: monitor.py:172
+#: django_q/monitor.py:199 django_q/monitor.py:488
 msgid "[Press q to quit]"
 msgstr "[Drücken Sie q zum Beenden]"
 
-#: monitor.py:191
+#: django_q/monitor.py:223
 msgid "day"
 msgstr "Tag"
 
-#: monitor.py:212
+#: django_q/monitor.py:244
 msgid "second"
 msgstr "Sekunde"
 
-#: monitor.py:215
+#: django_q/monitor.py:247
 msgid "minute"
 msgstr "Minute"
 
-#: monitor.py:218
+#: django_q/monitor.py:250
 msgid "hour"
 msgstr "Stunde"
 
-#: monitor.py:228
-msgid ""
-"-- {Conf.PREFIX.capitalize()} { \".\".join(str(v) for v in VERSION)} on "
-"{broker.info()}  --"
-msgstr ""
-"-- {Conf.PREFIX.capitalize()} { \".\".join(str(v) for v in VERSION)} auf "
-"{broker.info()}  --"
+#: django_q/monitor.py:260
+#, python-brace-format
+msgid "-- {prefix} {version} on {info}  --"
+msgstr "-- {prefix} {version} auf {info}  --"
 
-#: monitor.py:234
+#: django_q/monitor.py:266
 msgid "Clusters"
 msgstr "Cluster"
 
-#: monitor.py:238
+#: django_q/monitor.py:270
 msgid "Workers"
 msgstr "Arbeiter"
 
-#: monitor.py:242
+#: django_q/monitor.py:274
 msgid "Restarts"
 msgstr "Neustarts"
 
-#: monitor.py:251
+#: django_q/monitor.py:283
 msgid "Successes"
 msgstr "Erfolge"
 
-#: monitor.py:260
+#: django_q/monitor.py:292
 msgid "Schedules"
 msgstr "Zeitpläne"
 
-#: monitor.py:264
+#: django_q/monitor.py:296
 #, fuzzy, python-brace-format
 #| msgid "Tasks/{}"
 msgid "Tasks/{per}"
 msgstr "Aufgaben/{per}"
 
-#: monitor.py:268
+#: django_q/monitor.py:300
 msgid "Avg time"
 msgstr "Durchschnittl. Zeit"
 
-#: signals.py:22
+#: django_q/monitor.py:348
+msgid "Available (%)"
+msgstr "Verfügbar (%)"
+
+#: django_q/monitor.py:354
+msgid "Available (MB)"
+msgstr "Verfügbar (MB)"
+
+#: django_q/monitor.py:359
+msgid "Total (MB)"
+msgstr "Insgesamt (MB)"
+
+#: django_q/monitor.py:364
+msgid "Sentinel (MB)"
+msgstr "Sentinel (MB)"
+
+#: django_q/monitor.py:370
+msgid "Monitor (MB)"
+msgstr "Monitor (MB)"
+
+#: django_q/monitor.py:376
+msgid "Workers (MB)"
+msgstr "Arbeiter (MB)"
+
+#: django_q/monitor.py:478
+msgid "Available lowest (%): {} ({})"
+msgstr "Niedrigste verfügbar (%): {} ({})"
+
+#: django_q/monitor.py:499
+msgid "No clusters appear to be running."
+msgstr "Es scheinen keine Cluster zu laufen."
+
+#: django_q/signals.py:22
 #, fuzzy, python-brace-format
 #| msgid "malformed return hook '{}' for [{}]"
-msgid "malformed return hook '{instance.hook}' for [{instance.name}]"
-msgstr "Ungültiger Return-Hook '{instance.hook}' für [{instance.name}]"
+msgid "malformed return hook '{hook}' for [{name}]"
+msgstr "Ungültiger Return-Hook '{hook}' für [{name}]"
 
-#: signals.py:30
-#, fuzzy
+#: django_q/signals.py:30
+#, fuzzy, python-brace-format
 #| msgid "return hook {} failed on [{}] because {}"
-msgid ""
-"return hook {instance.hook} failed on [{instance.name}] because {str(e)}"
+msgid "return hook {hook} failed on [{name}] because {error}"
 msgstr ""
-"Return-Hook {instance.hook} für [{instance.name}] ist gescheitert: {str(e)}"
+"Return-Hook {hook} für [{name}] ist gescheitert: {error}"
