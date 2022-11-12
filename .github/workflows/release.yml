@@ -22,9 +22,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install -U pip setuptools poetry gettext django
-          python -m pip install poetry
-          cd django_q
+          apt-get update
+          apt-get -y install gettext
+          python -m pip install pip setuptools django poetry
+          # compile messages to get .mo files
           django-admin compilemessages
       - name: Build and publish package
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
