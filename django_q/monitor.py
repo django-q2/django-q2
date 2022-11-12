@@ -257,7 +257,7 @@ def info(broker=None):
         term.black_on_green(
             term.center(
                 _(
-                    '-- {prefix} {version} on {info}  --'
+                    '-- %(prefix)s %(version)s on %(info)s --'
                     ) % {'prefix': Conf.PREFIX.capitalize(), 'version':  ".".join(str(v) for v in VERSION), 'info': broker.info()}
             )
         )
@@ -293,7 +293,7 @@ def info(broker=None):
         + term.move_x(1 * col_width)
         + term.white(str(models.Schedule.objects.count()))
         + term.move_x(2 * col_width)
-        + term.cyan(_("Tasks/{per}") % {'per': per})
+        + term.cyan(_("Tasks/%(per)s") % {'per': per})
         + term.move_x(3 * col_width)
         + term.white(f"{tasks_per:.2f}")
         + term.move_x(4 * col_width)
@@ -475,12 +475,9 @@ def memory(run_once=False, workers=False, broker=None):
             row += 1
             print(
                 term.move(row, 0)
-                + _("Available lowest (%): {} ({})").format(
-                    str(MEMORY_AVAILABLE_LOWEST_PERCENTAGE),
-                    MEMORY_AVAILABLE_LOWEST_PERCENTAGE_AT.strftime(
-                        "%Y-%m-%d %H:%M:%S+00:00"
-                    ),
-                )
+                + _("Available lowest (): %(memory_percent)s ((at)s)") % { 'memory_percent': str(MEMORY_AVAILABLE_LOWEST_PERCENTAGE), 'at': MEMORY_AVAILABLE_LOWEST_PERCENTAGE_AT.strftime(
+                    "%Y-%m-%d %H:%M:%S+00:00"
+                )}
             )
             # for testing
             if run_once:

@@ -74,7 +74,7 @@ class Cluster:
             ),
         )
         self.sentinel.start()
-        logger.info(_("Q Cluster {name} starting.") % {'name': self.name})
+        logger.info(_("Q Cluster %(name)s starting.") % {'name': self.name})
         while not self.start_event.is_set():
             sleep(0.1)
         return self.pid
@@ -82,10 +82,10 @@ class Cluster:
     def stop(self) -> bool:
         if not self.sentinel.is_alive():
             return False
-        logger.info(_("Q Cluster {name} stopping.") % {'name': self.name})
+        logger.info(_("Q Cluster %(name)s stopping.") % {'name': self.name})
         self.stop_event.set()
         self.sentinel.join()
-        logger.info(_("Q Cluster {name} has stopped.") % {'name': self.name})
+        logger.info(_("Q Cluster %(name)s has stopped.") % {'name': self.name})
         self.start_event = None
         self.stop_event = None
         return True
@@ -93,7 +93,7 @@ class Cluster:
     def sig_handler(self, signum, frame):
         logger.debug(
             _(
-                '{name} got signal {signal}'
+                '%(name)s got signal %(signal)s'
             ) % {'name': current_process().name, 'signal': Conf.SIGNAL_NAMES.get(signum, "UNKNOWN")}
         )
         self.stop()
@@ -216,21 +216,21 @@ class Sentinel:
             db.connections.close_all()
         if process == self.monitor:
             self.monitor = self.spawn_monitor()
-            logger.error(_("reincarnated monitor {name} after sudden death") % {'name': process.name})
+            logger.error(_("reincarnated monitor %(name)s after sudden death") % {'name': process.name})
         elif process == self.pusher:
             self.pusher = self.spawn_pusher()
-            logger.error(_("reincarnated pusher {name} after sudden death") % {'name': process.name})
+            logger.error(_("reincarnated pusher %(name)s after sudden death") % {'name': process.name})
         else:
             self.pool.remove(process)
             self.spawn_worker()
             if process.timer.value == 0:
                 # only need to terminate on timeout, otherwise we risk destabilizing the queues
                 process.terminate()
-                logger.warning(_("reincarnated worker {name} after timeout") % {'name': process.name})
+                logger.warning(_("reincarnated worker %(name)s after timeout") % {'name': process.name})
             elif int(process.timer.value) == -2:
-                logger.info(_("recycled worker {name}") % {'name': process.name})
+                logger.info(_("recycled worker %(name)s") % {'name': process.name})
             else:
-                logger.error(_("reincarnated worker {name} after death") % {'name': process.name})
+                logger.error(_("reincarnated worker %(name)s after death") % {'name': process.name})
 
         self.reincarnations += 1
 
@@ -253,12 +253,12 @@ class Sentinel:
     def guard(self):
         logger.info(
             _(
-                "{name} guarding cluster {cluster_name}"
+                "%(name)s guarding cluster %(cluster_name)s"
                 ) % {'name': current_process().name, 'cluster_name': humanize(self.cluster_id.hex)}
         )
         self.start_event.set()
         Stat(self).save()
-        logger.info(_("Q Cluster {cluster_name} running.") % {'cluster_name': humanize(self.cluster_id.hex)})
+        logger.info(_("Q Cluster %(cluster_name)s running.") % {'cluster_name': humanize(self.cluster_id.hex)})
         counter = 0
         cycle = Conf.GUARD_CYCLE  # guard loop sleep in seconds
         # Guard loop. Runs at least once
@@ -292,7 +292,7 @@ class Sentinel:
     def stop(self):
         Stat(self).save()
         name = current_process().name
-        logger.info(_("{name} stopping cluster processes") % {'name': name})
+        logger.info(_("%(name)s stopping cluster processes") % {'name': name})
         # Stopping pusher
         self.event_out.set()
         # Wait for it to stop
@@ -317,7 +317,7 @@ class Sentinel:
         self.result_queue.close()
         # Wait for the result queue to empty
         self.result_queue.join_thread()
-        logger.info(_("{name} waiting for the monitor.") % {'name': name})
+        logger.info(_("%(name)s waiting for the monitor.") % {'name': name})
         # Wait for everything to close or time out
         count = 0
         if not self.timeout:
@@ -339,7 +339,7 @@ def pusher(task_queue: Queue, event: Event, broker: Broker = None):
     """
     if not broker:
         broker = get_broker()
-    logger.info(_("{process_name} pushing tasks at {id}") % {'process_name': current_process().name, 'id': current_process().pid})
+    logger.info(_("%(process_name)s pushing tasks at %(id)s") % {'process_name': current_process().name, 'id': current_process().pid})
     while True:
         try:
             task_set = broker.dequeue()
@@ -360,10 +360,10 @@ def pusher(task_queue: Queue, event: Event, broker: Broker = None):
                     continue
                 task["ack_id"] = ack_id
                 task_queue.put(task)
-            logger.debug(_("queueing from {list_key}") % {'list_key': broker.list_key})
+            logger.debug(_("queueing from %(list_key)s") % {'list_key': broker.list_key})
         if event.is_set():
             break
-    logger.info(_("{name} stopped pushing tasks") % {'name': current_process().name})
+    logger.info(_("%(name)s stopped pushing tasks") % {'name': current_process().name})
 
 
 def monitor(result_queue: Queue, broker: Broker = None):
@@ -375,7 +375,7 @@ def monitor(result_queue: Queue, broker: Broker = None):
     if not broker:
         broker = get_broker()
     name = current_process().name
-    logger.info(_("{name} monitoring at {id}") % {'name': name, 'id': current_process().pid})
+    logger.info(_("%(name)s monitoring at %(id)s") % {'name': name, 'id': current_process().pid})
     for task in iter(result_queue.get, "STOP"):
         # save the result
         if task.get("cached", False):
@@ -392,11 +392,11 @@ def monitor(result_queue: Queue, broker: Broker = None):
         info_name = get_func_repr(task['func'])
         if task["success"]:
             # log success
-            logger.info(_("Processed '{info_name}' ({task_name})") % {'info_name': info_name, 'task_name': task['name']})
+            logger.info(_("Processed '%(info_name)s' (%(task_name)s)") % {'info_name': info_name, 'task_name': task['name']})
         else:
             # log failure
-            logger.error(_("Failed '{info_name}' ({task_name}) - {task_result}") % {'info_name': info_name, 'task_name': task['name'], 'task_result': task['result']})
-    logger.info(_("{name} stopped monitoring results") % {'name': name})
+            logger.error(_("Failed '%(info_name)s' (%(task_name)s) - %(task_result)s") % {'info_name': info_name, 'task_name': task['name'], 'task_result': task['result']})
+    logger.info(_("%(name)s stopped monitoring results") % {'name': name})
 
 
 def worker(
@@ -410,7 +410,7 @@ def worker(
     :type timer: multiprocessing.Value
     """
     proc_name = current_process().name
-    logger.info(_("{proc_name} ready for work at {id}") % {'proc_name': proc_name, 'id': current_process().pid})
+    logger.info(_("%(proc_name)s ready for work at %(id)s") % {'proc_name': proc_name, 'id': current_process().pid})
     task_count = 0
     if timeout is None:
         timeout = -1
@@ -422,7 +422,7 @@ def worker(
         # Get the function from the task
         func = task["func"]
         func_name = get_func_repr(func)
-        logger.info(_("{proc_name} processing '{func_name}' ({task_name})") % {'proc_name': proc_name, 'func_name': func_name, 'task_name': task['name']})
+        logger.info(_("%(proc_name)s processing '%(func_name)s' (%(task_name)s)") % {'proc_name': proc_name, 'func_name': func_name, 'task_name': task['name']})
         f = task["func"]
         # if it's not an instance try to get it from the string
         if not callable(task["func"]):
@@ -437,7 +437,7 @@ def worker(
             res = f(*task["args"], **task["kwargs"])
             result = (res, True)
         except Exception:
-            result = (_("Could not process '{func_name}'. Check the location of the function and the args/kwargs.") % {'func_name': func_name}, False)
+            result = (_("Could not process '%(func_name)s'. Check the location of the function and the args/kwargs.") % {'func_name': func_name}, False)
             if error_reporter:
                 error_reporter.report()
             if task.get("sync", False):
@@ -453,7 +453,7 @@ def worker(
             if task_count == Conf.RECYCLE or rss_check():
                 timer.value = -2  # Recycled
                 break
-    logger.info(_("{proc_name} stopped doing work") % {'proc_name': proc_name})
+    logger.info(_("%(proc_name)s stopped doing work") % {'proc_name': proc_name})
 
 def save_task(task, broker: Broker):
     """
@@ -669,13 +669,13 @@ def scheduler(broker: Broker = None):
                 if not s.task:
                     logger.error(
                         _(
-                            "{process_name} failed to create a task from schedule [{schedule}]"
+                            "%(process_name)s failed to create a task from schedule [%(schedule)s]"
                         ) % {'process_name': current_process().name, 'shedule': s.name or s.id}
                     )
                 else:
                     logger.info(
                         _(
-                            "{process_name} created a task from schedule [{schedule}]"
+                            "%(process_name)s created a task from schedule [%(schedule)s]"
                         ) % {'process_name': current_process().name, 'shedule': s.name or s.id}
                     )
                 # default behavior is to delete a ONCE schedule
@@ -741,7 +741,7 @@ def set_cpu_affinity(n: int, process_ids: list, actual: bool = not Conf.TESTING)
             p = psutil.Process(pid)
             if actual:
                 p.cpu_affinity(affinity)
-            logger.info(_("{pid} will use cpu {affinity}") % {'pid': pid, 'affinity': affinity})
+            logger.info(_("%(pid)s will use cpu %(affinity)s") % {'pid': pid, 'affinity': affinity})
 
 
 def rss_check():

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-10 01:33+0000\n"
+"POT-Creation-Date: 2022-11-12 01:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Ethem Güner <ethemguener@gmail.com>\n"
 "Language-Team: \n"
@@ -33,163 +33,142 @@ msgid "last_run"
 msgstr ""
 
 #: django_q/cluster.py:77
-#, fuzzy, python-brace-format
-#| msgid "Q Cluster {self.name} starting."
-msgid "Q Cluster {name} starting."
-msgstr "Q Cluster {name} başlatılıyor."
+#, python-format
+msgid "Q Cluster %(name)s starting."
+msgstr "Q Cluster %(name)s başlatılıyor."
 
 #: django_q/cluster.py:85
-#, fuzzy, python-brace-format
-#| msgid "Q Cluster {self.name} stopping."
-msgid "Q Cluster {name} stopping."
-msgstr "Q Cluster {name} durduruluyor."
+#, python-format
+msgid "Q Cluster %(name)s stopping."
+msgstr "Q Cluster %(name)s durduruluyor."
 
 #: django_q/cluster.py:88
-#, fuzzy, python-brace-format
-#| msgid "Q Cluster {self.name} has stopped."
-msgid "Q Cluster {name} has stopped."
-msgstr "Q Cluster {self.name} durduruldu."
+#, python-format
+msgid "Q Cluster %(name)s has stopped."
+msgstr "Q Cluster %(name)s durduruldu."
 
 #: django_q/cluster.py:96
-#, python-brace-format
-msgid "{name} got signal {signal}"
-msgstr ""
+#, python-format
+msgid "%(name)s got signal %(signal)s"
+msgstr "%(name)s, %(signal)s pid'inde izleniyor/monitoring yapılıyor."
 
 #: django_q/cluster.py:219
-#, fuzzy, python-brace-format
-#| msgid "reincarnated monitor {process.name} after sudden death"
-msgid "reincarnated monitor {name} after sudden death"
-msgstr "Monitor {name} ani ölüm sonrası tekrar dirildi"
+#, python-format
+msgid "reincarnated monitor %(name)s after sudden death"
+msgstr "Monitor %(name)s ani ölüm sonrası tekrar dirildi"
 
 #: django_q/cluster.py:222
-#, fuzzy, python-brace-format
-#| msgid "reincarnated pusher {process.name} after sudden death"
-msgid "reincarnated pusher {name} after sudden death"
-msgstr "Pusher {name} ani ölüm sonrası tekrar dirildi"
+#, python-format
+msgid "reincarnated pusher %(name)s after sudden death"
+msgstr "Pusher %(name)s ani ölüm sonrası tekrar dirildi"
 
 #: django_q/cluster.py:229
-#, fuzzy, python-brace-format
-#| msgid "reincarnated worker {process.name} after timeout"
-msgid "reincarnated worker {name} after timeout"
-msgstr "Worker {name} zaman aşımı sonrası tekrar dirildi"
+#, python-format
+msgid "reincarnated worker %(name)s after timeout"
+msgstr "Worker %(name)s zaman aşımı sonrası tekrar dirildi"
 
 #: django_q/cluster.py:231
-#, fuzzy, python-brace-format
-#| msgid "recycled worker {process.name}"
-msgid "recycled worker {name}"
-msgstr "Worker {name} geri döndürüldü"
+#, python-format
+msgid "recycled worker %(name)s"
+msgstr "Worker %(name)s geri döndürüldü"
 
 #: django_q/cluster.py:233
-#, fuzzy, python-brace-format
-#| msgid "reincarnated worker {process.name} after death"
-msgid "reincarnated worker {name} after death"
-msgstr "Worker {name} ani ölüm sonrası tekrar dirildi"
+#, python-format
+msgid "reincarnated worker %(name)s after death"
+msgstr "Worker %(name)s ani ölüm sonrası tekrar dirildi"
 
 #: django_q/cluster.py:256
-#, fuzzy, python-brace-format
-#| msgid ""
-#| "{current_process().name} guarding cluster {humanize(self.cluster_id.hex)}"
-msgid "{name} guarding cluster {cluster_name}"
-msgstr ""
-"{name}, {cluster_name} cluster'ını koruyor"
+#, python-format
+msgid "%(name)s guarding cluster %(cluster_name)s"
+msgstr "%(name)s, %(cluster_name)s cluster'ını koruyor"
 
 #: django_q/cluster.py:261
-#, fuzzy, python-brace-format
-#| msgid "Q Cluster {self.name} starting."
-msgid "Q Cluster {cluster_name} running."
-msgstr "Q Cluster {cluster_name} başlatılıyor."
+#, python-format
+msgid "Q Cluster %(cluster_name)s running."
+msgstr "Q Cluster %(cluster_name)s başlatılıyor."
 
 #: django_q/cluster.py:295
-#, python-brace-format
-msgid "{name} stopping cluster processes"
-msgstr "Cluster {name} işlemleri durduruluyor."
+#, python-format
+msgid "%(name)s stopping cluster processes"
+msgstr "Cluster %(name)s işlemleri durduruluyor."
 
 #: django_q/cluster.py:320
-#, python-brace-format
-msgid "{name} waiting for the monitor."
-msgstr "{name} monitor için bekliyor."
+#, python-format
+msgid "%(name)s waiting for the monitor."
+msgstr "%(name)s monitor için bekliyor."
 
 #: django_q/cluster.py:342
-#, fuzzy, python-brace-format
-#| msgid "{current_process().name} pushing tasks at {current_process().pid}"
-msgid "{process_name} pushing tasks at {id}"
-msgstr ""
-"{process_name, işleri {id} pid'ine gönderiyor."
+#, python-format
+msgid "%(process_name)s pushing tasks at %(id)s"
+msgstr "%(process_name)s, işleri %(id)s pid'ine gönderiyor."
 
 #: django_q/cluster.py:363
-#, python-brace-format
-msgid "queueing from {list_key}"
+#, python-format
+msgid "queueing from %(list_key)s"
 msgstr ""
 
 #: django_q/cluster.py:366
-#, fuzzy, python-brace-format
-#| msgid "{current_process().name} stopped pushing tasks"
-msgid "{name} stopped pushing tasks"
-msgstr "{name} işleri göndermeyi durdurdu"
+#, python-format
+msgid "%(name)s stopped pushing tasks"
+msgstr "%(name)s işleri göndermeyi durdurdu"
 
 #: django_q/cluster.py:378
-#, fuzzy, python-brace-format
-#| msgid "{name} monitoring at {current_process().pid}"
-msgid "{name} monitoring at {id}"
-msgstr ""
-"{name}, {id} pid'inde izleniyor/monitoring yapılıyor."
+#, python-format
+msgid "%(name)s monitoring at %(id)s"
+msgstr "%(name)s, %(id)s pid'inde izleniyor/monitoring yapılıyor."
 
 #: django_q/cluster.py:395
-#, fuzzy, python-brace-format
-#| msgid "Processed [{task['name']}]"
-msgid "Processed '{info_name}' ({task_name})"
-msgstr "[{task_name']}] - '{info_name} işlendi."
+#, python-format
+msgid "Processed '%(info_name)s' (%(task_name)s)"
+msgstr "[%(task_name)s] - '%(info_name)s işlendi."
 
 #: django_q/cluster.py:398
-#, fuzzy, python-brace-format
-#| msgid "Failed [{task['name']}] - {task['result']}"
-msgid "Failed '{info_name}' ({task_name}) - {task_result}"
-msgstr "[{task_name}] - '{info_name}' - {task_result} başarısız oldu"
+#, python-format
+msgid "Failed '%(info_name)s' (%(task_name)s) - %(task_result)s"
+msgstr "[%(task_name)s] - '%(info_name)s' - %(task_result)s başarısız oldu"
 
 #: django_q/cluster.py:399
-#, python-brace-format
-msgid "{name} stopped monitoring results"
-msgstr "{name} sonuçları göstermeyi bıraktı"
+#, python-format
+msgid "%(name)s stopped monitoring results"
+msgstr "%(name)s sonuçları göstermeyi bıraktı"
 
 #: django_q/cluster.py:413
-#, fuzzy, python-brace-format
-#| msgid "{name} ready for work at {current_process().pid}"
-msgid "{proc_name} ready for work at {id}"
-msgstr "{proc_name}, {id} pid'inde çalışmaya hazır"
+#, python-format
+msgid "%(proc_name)s ready for work at %(id)s"
+msgstr "%(proc_name)s, %(id)s pid'inde çalışmaya hazır"
 
 #: django_q/cluster.py:425
-#, fuzzy, python-brace-format
-#| msgid "{name} processing [{task[\"name\"]}]"
-msgid "{proc_name} processing '{func_name}' ({task_name})"
-msgstr "{proc_name}, [{tas_name}] işlerini işiyor"
+#, python-format
+msgid "%(proc_name)s processing '%(func_name)s' (%(task_name)s)"
+msgstr "%(proc_name)s, '%(func_name)s' [%(task_name)s] işlerini işiyor"
 
 #: django_q/cluster.py:440
-#, python-brace-format
+#, python-format
 msgid ""
-"Could not process '{func_name}'. Check the location of the function and the "
-"args/kwargs."
+"Could not process '%(func_name)s'. Check the location of the function and "
+"the args/kwargs."
 msgstr ""
-"{func_name}' işlenemedi. İşlevin konumunu ve args/kwargs öğelerini kontrol edin."
+"%(func_name)s' işlenemedi. İşlevin konumunu ve args/kwargs öğelerini kontrol "
+"edin."
 
 #: django_q/cluster.py:456
-#, fuzzy, python-brace-format
-#| msgid "{name} stopped doing work"
-msgid "{proc_name} stopped doing work"
-msgstr "{proc_name} çalışmayı bıraktı"
+#, python-format
+msgid "%(proc_name)s stopped doing work"
+msgstr "%(proc_name)s çalışmayı bıraktı"
 
 #: django_q/cluster.py:649 django_q/models.py:144
 msgid "Please install croniter to enable cron expressions"
 msgstr "Cron expressions'ları açmak için croniter yükleyin"
 
 #: django_q/cluster.py:672
-#, python-brace-format
-msgid "{process_name} failed to create a task from schedule [{schedule}]"
-msgstr ""
+#, python-format
+msgid "%(process_name)s failed to create a task from schedule [%(schedule)s]"
+msgstr "%(process_name)s programdan bir görev oluşturamadı [%(schedule)s]"
 
 #: django_q/cluster.py:678
-#, python-brace-format
-msgid "{process_name} created a task from schedule [{schedule}]"
-msgstr "{process_name} programdan bir görev oluşturamadı [{schedule}]"
+#, python-format
+msgid "%(process_name)s created a task from schedule [%(schedule)s]"
+msgstr "%(process_name)s programdan bir görev oluşturamadı [%(schedule)s]"
 
 #: django_q/cluster.py:718
 msgid "Skipping cpu affinity because psutil was not found."
@@ -200,17 +179,18 @@ msgid "Faking cpu affinity because it is not supported on this platform"
 msgstr "Bu platformda desteklenmediği için sahte cpu benzeşimi"
 
 #: django_q/cluster.py:744
-#, python-brace-format
-msgid "{pid} will use cpu {affinity}"
-msgstr "{pid} cpu {affinity} kullanacaktır"
+#, python-format
+msgid "%(pid)s will use cpu %(affinity)s"
+msgstr "%(pid)s cpu %(affinity)s kullanacaktır"
 
 #: django_q/conf.py:85
-#, python-brace-format
+#, python-format
 msgid ""
-"SAVE_LIMIT_PER ({option}) is not a valid option. Options are: 'group', "
+"SAVE_LIMIT_PER (%(option)s) is not a valid option. Options are: 'group', "
 "'name', 'func' and None. Default is None."
 msgstr ""
-"SAVE_LIMIT_PER ({option}) geçerli bir seçenek değil. Seçenekler şunlardır: 'group', 'name', 'func' ve None. Varsayılan değer None'dır."
+"SAVE_LIMIT_PER (%(option)s) geçerli bir seçenek değil. Seçenekler şunlardır: "
+"'group', 'name', 'func' ve None. Varsayılan değer None'dır."
 
 #. Translators: Cluster status descriptions
 #: django_q/conf.py:194
@@ -409,7 +389,7 @@ msgstr "Başarılı olanlar"
 msgid "Failures"
 msgstr "Başarısız olanlar"
 
-#: django_q/monitor.py:199 django_q/monitor.py:488
+#: django_q/monitor.py:199 django_q/monitor.py:485
 msgid "[Press q to quit]"
 msgstr "[Çıkmak için q'ya basın]"
 
@@ -430,9 +410,9 @@ msgid "hour"
 msgstr "saat"
 
 #: django_q/monitor.py:260
-#, python-brace-format
-msgid "-- {prefix} {version} on {info}  --"
-msgstr "-- {prefix} {version} üzerinde {info} --"
+#, python-format
+msgid "-- %(prefix)s %(version)s on %(info)s --"
+msgstr "-- %(prefix)s %(version)s üzerinde %(info)s --"
 
 #: django_q/monitor.py:266
 msgid "Clusters"
@@ -455,9 +435,9 @@ msgid "Schedules"
 msgstr "Zamanlanmışlar"
 
 #: django_q/monitor.py:296
-#, python-brace-format
-msgid "Tasks/{per}"
-msgstr "İş/{per}"
+#, python-format
+msgid "Tasks/%(per)s"
+msgstr "İş/%(per)s"
 
 #: django_q/monitor.py:300
 msgid "Avg time"
@@ -488,19 +468,20 @@ msgid "Workers (MB)"
 msgstr ""
 
 #: django_q/monitor.py:478
-msgid "Available lowest (%): {} ({})"
-msgstr "Mevcut en düşük (%): {} ({})"
+#, python-format
+msgid "Available lowest (): %(memory_percent)s ((at)s)"
+msgstr "Mevcut en düşük (): %(memory_percent)s ((at)s)"
 
-#: django_q/monitor.py:499
+#: django_q/monitor.py:496
 msgid "No clusters appear to be running."
 msgstr "Hiçbir küme çalışıyor görünmüyor."
 
 #: django_q/signals.py:22
-#, python-brace-format
-msgid "malformed return hook '{hook}' for [{name}]"
+#, python-format
+msgid "malformed return hook '%(hook)s' for [%(name)s]"
 msgstr ""
 
 #: django_q/signals.py:30
-#, python-brace-format
-msgid "return hook {hook} failed on [{name}] because {error}"
+#, python-format
+msgid "return hook %(hook)s failed on [%(name)s] because %(error)s"
 msgstr ""

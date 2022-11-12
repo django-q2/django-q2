@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-10 01:33+0000\n"
+"POT-Creation-Date: 2022-11-12 01:47+0000\n"
 "PO-Revision-Date: 2018-08-05 18:28+0200\n"
 "Last-Translator: Thierry BOULOGNE <contact@tng-concepts.com>\n"
 "Language-Team: \n"
@@ -32,162 +32,144 @@ msgid "last_run"
 msgstr ""
 
 #: django_q/cluster.py:77
-#, fuzzy, python-brace-format
-#| msgid "Q Cluster-{} starting."
-msgid "Q Cluster {name} starting."
-msgstr "Démarrage de Q Cluster-{name}."
+#, python-format
+msgid "Q Cluster %(name)s starting."
+msgstr "Démarrage de Q Cluster-%(name)s."
 
 #: django_q/cluster.py:85
-#, fuzzy, python-brace-format
-#| msgid "Q Cluster-{} stopping."
-msgid "Q Cluster {name} stopping."
-msgstr "Arrêt de Q Cluster-{name}."
+#, python-format
+msgid "Q Cluster %(name)s stopping."
+msgstr "Arrêt de Q Cluster-%(name)s."
 
 #: django_q/cluster.py:88
-#, fuzzy, python-brace-format
-#| msgid "Q Cluster-{} has stopped."
-msgid "Q Cluster {name} has stopped."
-msgstr "Q Cluster-{name} a été arrêté."
+#, python-format
+msgid "Q Cluster %(name)s has stopped."
+msgstr "Q Cluster-%(name)s a été arrêté."
 
 #: django_q/cluster.py:96
-#, fuzzy, python-brace-format
-#| msgid "{} got signal {}"
-msgid "{name} got signal {signal}"
-msgstr "{name} à reçu le signal {signal}"
+#, python-format
+msgid "%(name)s got signal %(signal)s"
+msgstr "%(name)s à reçu le signal %(signal)s"
 
 #: django_q/cluster.py:219
-#, fuzzy, python-brace-format
-#| msgid "reincarnated monitor {process.name} after sudden death"
-msgid "reincarnated monitor {name} after sudden death"
-msgstr "moniteur réintégré {name} après un arrêt intempestif"
+#, python-format
+msgid "reincarnated monitor %(name)s after sudden death"
+msgstr "moniteur réintégré %(name)s après un arrêt intempestif"
 
 #: django_q/cluster.py:222
-#, fuzzy, python-brace-format
-#| msgid "reincarnated pusher {process.name} after sudden death"
-msgid "reincarnated pusher {name} after sudden death"
-msgstr "pousseur réintégré {name} après un arrêt intempestif"
+#, python-format
+msgid "reincarnated pusher %(name)s after sudden death"
+msgstr "pousseur réintégré %(name)s après un arrêt intempestif"
 
 #: django_q/cluster.py:229
-#, fuzzy, python-brace-format
-#| msgid "reincarnated worker {process.name} after timeout"
-msgid "reincarnated worker {name} after timeout"
-msgstr ""
-"processus réintégré {name} après un arrêt une attente trop longue"
+#, python-format
+msgid "reincarnated worker %(name)s after timeout"
+msgstr "processus réintégré %(name)s après un arrêt une attente trop longue"
 
 #: django_q/cluster.py:231
-#, fuzzy, python-brace-format
-#| msgid "recycled worker {process.name}"
-msgid "recycled worker {name}"
-msgstr "processus recyclé {name}"
+#, python-format
+msgid "recycled worker %(name)s"
+msgstr "processus recyclé %(name)s"
 
 #: django_q/cluster.py:233
-#, fuzzy, python-brace-format
-#| msgid "reincarnated worker {process.name} after death"
-msgid "reincarnated worker {name} after death"
-msgstr "processus réintégré {name} après arrêt"
+#, python-format
+msgid "reincarnated worker %(name)s after death"
+msgstr "processus réintégré %(name)s après arrêt"
 
 #: django_q/cluster.py:256
-#, fuzzy, python-brace-format
-#| msgid "{} guarding cluster at {}"
-msgid "{name} guarding cluster {cluster_name}"
-msgstr "{name} surveillance du cluster à {cluster_name}"
+#, python-format
+msgid "%(name)s guarding cluster %(cluster_name)s"
+msgstr "%(name)s surveillance du cluster à %(cluster_name)s"
 
 #: django_q/cluster.py:261
-#, fuzzy, python-brace-format
-#| msgid "Q Cluster-{} starting."
-msgid "Q Cluster {cluster_name} running."
-msgstr "Démarrage de Q Cluster-{cluster_name}."
+#, python-format
+msgid "Q Cluster %(cluster_name)s running."
+msgstr "Démarrage de Q Cluster-%(cluster_name)s."
 
 #: django_q/cluster.py:295
-#, python-brace-format
-msgid "{name} stopping cluster processes"
-msgstr "{name} arrêt des processus de cluster"
+#, python-format
+msgid "%(name)s stopping cluster processes"
+msgstr "%(name)s arrêt des processus de cluster"
 
 #: django_q/cluster.py:320
-#, python-brace-format
-msgid "{name} waiting for the monitor."
-msgstr "{name} en attente du moniteur."
+#, python-format
+msgid "%(name)s waiting for the monitor."
+msgstr "%(name)s en attente du moniteur."
 
 #: django_q/cluster.py:342
-#, fuzzy, python-brace-format
-#| msgid "{} pushing tasks at {}"
-msgid "{process_name} pushing tasks at {id}"
-msgstr "{process_name} tâche envoyé à {id}"
+#, python-format
+msgid "%(process_name)s pushing tasks at %(id)s"
+msgstr "%(process_name)s tâche envoyé à %(id)s"
 
 #: django_q/cluster.py:363
-#, fuzzy, python-brace-format
-#| msgid "queueing from {broker.list_key}"
-msgid "queueing from {list_key}"
-msgstr "mise en file d'attente de {list_key}"
+#, python-format
+msgid "queueing from %(list_key)s"
+msgstr "mise en file d'attente de %(list_key)s"
 
 #: django_q/cluster.py:366
-#, fuzzy, python-brace-format
-#| msgid "{current_process().name} stopped pushing tasks"
-msgid "{name} stopped pushing tasks"
-msgstr "{name} a cessé de pousser les tâches"
+#, python-format
+msgid "%(name)s stopped pushing tasks"
+msgstr "%(name)s a cessé de pousser les tâches"
 
 #: django_q/cluster.py:378
-#, fuzzy, python-brace-format
-#| msgid "{name} monitoring at {current_process().pid}"
-msgid "{name} monitoring at {id}"
-msgstr "{name} Surveillance de {id}"
+#, python-format
+msgid "%(name)s monitoring at %(id)s"
+msgstr "%(name)s Surveillance de %(id)s"
 
 #: django_q/cluster.py:395
-#, fuzzy, python-brace-format
-#| msgid "Processed '{info_name}' ({task['name']})"
-msgid "Processed '{info_name}' ({task_name})"
-msgstr "traité '{info_name}' ({task_name})"
+#, python-format
+msgid "Processed '%(info_name)s' (%(task_name)s)"
+msgstr "traité '%(info_name)s' (%(task_name)s)"
 
 #: django_q/cluster.py:398
-#, fuzzy, python-brace-format
-#| msgid "Failed '{info_name}' ({task['name']}) - {task['result']}"
-msgid "Failed '{info_name}' ({task_name}) - {task_result}"
-msgstr "Manqué '{info_name}' ({task_name}) - {task_result}"
+#, python-format
+msgid "Failed '%(info_name)s' (%(task_name)s) - %(task_result)s"
+msgstr "Manqué '%(info_name)s' (%(task_name)s) - %(task_result)s"
 
 #: django_q/cluster.py:399
-#, python-brace-format
-msgid "{name} stopped monitoring results"
-msgstr "{name} arrêt des résultats de surveillance"
+#, python-format
+msgid "%(name)s stopped monitoring results"
+msgstr "%(name)s arrêt des résultats de surveillance"
 
 #: django_q/cluster.py:413
-#, fuzzy, python-brace-format
-#| msgid "{proc_name} ready for work at {current_process().pid}"
-msgid "{proc_name} ready for work at {id}"
-msgstr "{proc_name} prêt pour le travail à {id}"
+#, python-format
+msgid "%(proc_name)s ready for work at %(id)s"
+msgstr "%(proc_name)s prêt pour le travail à %(id)s"
 
 #: django_q/cluster.py:425
-#, fuzzy, python-brace-format
-#| msgid "{proc_name} processing '{func_name}' ({task['name']})"
-msgid "{proc_name} processing '{func_name}' ({task_name})"
-msgstr "{proc_name} en traitement '{func_name}' ({task_name})"
+#, python-format
+msgid "%(proc_name)s processing '%(func_name)s' (%(task_name)s)"
+msgstr "%(proc_name)s en traitement '%(func_name)s' (%(task_name)s)"
 
 #: django_q/cluster.py:440
-#, python-brace-format
+#, python-format
 msgid ""
-"Could not process '{func_name}'. Check the location of the function and the "
-"args/kwargs."
-msgstr "Impossible de traiter '{func_name}'. Vérifiez l'emplacement de la fonction et les args/kwargs."
+"Could not process '%(func_name)s'. Check the location of the function and "
+"the args/kwargs."
+msgstr ""
+"Impossible de traiter '%(func_name)s'. Vérifiez l'emplacement de la fonction "
+"et les args/kwargs."
 
 #: django_q/cluster.py:456
-#, python-brace-format
-msgid "{proc_name} stopped doing work"
-msgstr "{proc_name} arrêté de travailler"
+#, python-format
+msgid "%(proc_name)s stopped doing work"
+msgstr "%(proc_name)s arrêté de travailler"
 
 #: django_q/cluster.py:649 django_q/models.py:144
 msgid "Please install croniter to enable cron expressions"
 msgstr "Veuillez installer croniter pour activer les expressions croniques."
 
 #: django_q/cluster.py:672
-#, fuzzy, python-brace-format
-#| msgid "{} failed to create a task from schedule [{}]"
-msgid "{process_name} failed to create a task from schedule [{schedule}]"
-msgstr "{process_name} Echec de la création d'une tâche à partir de Schedule [{schedule}]"
+#, python-format
+msgid "%(process_name)s failed to create a task from schedule [%(schedule)s]"
+msgstr ""
+"%(process_name)s Echec de la création d'une tâche à partir de Schedule "
+"[%(schedule)s]"
 
 #: django_q/cluster.py:678
-#, fuzzy, python-brace-format
-#| msgid "{} created a task from schedule [{}]"
-msgid "{process_name} created a task from schedule [{schedule}]"
-msgstr "{process_name} a créé une tâche à partir de Schedule [{schedule}]"
+#, python-format
+msgid "%(process_name)s created a task from schedule [%(schedule)s]"
+msgstr "%(process_name)s a créé une tâche à partir de Schedule [%(schedule)s]"
 
 #: django_q/cluster.py:718
 msgid "Skipping cpu affinity because psutil was not found."
@@ -195,21 +177,23 @@ msgstr "Sauter l'affinité du processeur parce que psutil n'a pas été trouvé.
 
 #: django_q/cluster.py:723
 msgid "Faking cpu affinity because it is not supported on this platform"
-msgstr "Simulation de l'affinité du processeur parce qu'elle n'est pas supportée sur cette plateforme."
+msgstr ""
+"Simulation de l'affinité du processeur parce qu'elle n'est pas supportée sur "
+"cette plateforme."
 
 #: django_q/cluster.py:744
-#, fuzzy, python-brace-format
-#| msgid "{} will use cpu {}"
-msgid "{pid} will use cpu {affinity}"
-msgstr "{pid} utilisera le CPU {affinity}"
+#, python-format
+msgid "%(pid)s will use cpu %(affinity)s"
+msgstr "%(pid)s utilisera le CPU %(affinity)s"
 
 #: django_q/conf.py:85
-#, python-brace-format
+#, python-format
 msgid ""
-"SAVE_LIMIT_PER ({option}) is not a valid option. Options are: 'group', "
+"SAVE_LIMIT_PER (%(option)s) is not a valid option. Options are: 'group', "
 "'name', 'func' and None. Default is None."
 msgstr ""
-"SAVE_LIMIT_PER ({option}) n'est pas une option valide. Les options sont : 'group', 'name', 'func' et None. La valeur par défaut est None."
+"SAVE_LIMIT_PER (%(option)s) n'est pas une option valide. Les options sont : "
+"'group', 'name', 'func' et None. La valeur par défaut est None."
 
 #. Translators: Cluster status descriptions
 #: django_q/conf.py:194
@@ -410,7 +394,7 @@ msgstr "Succès"
 msgid "Failures"
 msgstr "Défaillances"
 
-#: django_q/monitor.py:199 django_q/monitor.py:488
+#: django_q/monitor.py:199 django_q/monitor.py:485
 msgid "[Press q to quit]"
 msgstr "[appuyez sur q pour quitter]"
 
@@ -431,10 +415,9 @@ msgid "hour"
 msgstr "heure"
 
 #: django_q/monitor.py:260
-#, fuzzy, python-brace-format
-#| msgid "-- {} {} on {}  --"
-msgid "-- {prefix} {version} on {info}  --"
-msgstr "--{prefix} {version} sur {info}--"
+#, python-format
+msgid "-- %(prefix)s %(version)s on %(info)s --"
+msgstr "--%(prefix)s %(version)s sur %(info)s --"
 
 #: django_q/monitor.py:266
 msgid "Clusters"
@@ -457,10 +440,9 @@ msgid "Schedules"
 msgstr "Planifications"
 
 #: django_q/monitor.py:296
-#, fuzzy, python-brace-format
-#| msgid "Tasks/{}"
-msgid "Tasks/{per}"
-msgstr "Tâches/{per}"
+#, python-format
+msgid "Tasks/%(per)s"
+msgstr "Tâches/%(per)s"
 
 #: django_q/monitor.py:300
 msgid "Avg time"
@@ -493,21 +475,20 @@ msgid "Workers (MB)"
 msgstr "Processus (MB)"
 
 #: django_q/monitor.py:478
-msgid "Available lowest (%): {} ({})"
-msgstr "Disponible le plus bas (%) : {} ({})"
+#, python-format
+msgid "Available lowest (): %(memory_percent)s ((at)s)"
+msgstr "Disponible le plus bas () : %(memory_percent)s ((at)s)"
 
-#: django_q/monitor.py:499
+#: django_q/monitor.py:496
 msgid "No clusters appear to be running."
 msgstr "Aucun cluster ne semble être en cours d'exécution."
 
 #: django_q/signals.py:22
-#, fuzzy, python-brace-format
-#| msgid "malformed return hook '{}' for [{}]"
-msgid "malformed return hook '{hook}' for [{name}]"
-msgstr "hook de retour mal formé' {hook} 'pour [{name}]"
+#, python-format
+msgid "malformed return hook '%(hook)s' for [%(name)s]"
+msgstr "hook de retour mal formé' %(hook)s 'pour [%(name)s]"
 
 #: django_q/signals.py:30
-#, fuzzy, python-brace-format
-#| msgid "return hook {} failed on [{}] because {}"
-msgid "return hook {hook} failed on [{name}] because {error}"
-msgstr "le crochet de retour {hook} a échoué sur [{name}] parce que {error}"
+#, python-format
+msgid "return hook %(hook)s failed on [%(name)s] because %(error)s"
+msgstr "le crochet de retour %(hook)s a échoué sur [%(name)s] parce que %(error)s"
