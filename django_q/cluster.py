@@ -670,13 +670,13 @@ def scheduler(broker: Broker = None):
                     logger.error(
                         _(
                             "%(process_name)s failed to create a task from schedule [%(schedule)s]"
-                        ) % {'process_name': current_process().name, 'shedule': s.name or s.id}
+                        ) % {'process_name': current_process().name, 'schedule': s.name or s.id}
                     )
                 else:
                     logger.info(
                         _(
                             "%(process_name)s created a task from schedule [%(schedule)s]"
-                        ) % {'process_name': current_process().name, 'shedule': s.name or s.id}
+                        ) % {'process_name': current_process().name, 'schedule': s.name or s.id}
                     )
                 # default behavior is to delete a ONCE schedule
                 if s.schedule_type == s.ONCE:
