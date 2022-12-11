@@ -211,6 +211,9 @@ class Conf:
     # to manage workarounds during testing
     TESTING = conf.get("testing", False)
 
+    # Timezone for next_run, overrules Django timezone
+    TIME_ZONE = conf.get("time_zone", settings.TIME_ZONE)
+
 
 # logger
 logger = logging.getLogger("django-q")

@@ -84,6 +84,47 @@ MULTIPLE_APPS_DATABASES = {
 
 
 @pytest.mark.django_db
+def test_scheduler_daylight_saving_time(broker, monkeypatch):
+    from datetime import datetime
+    import pytz
+
+    # Set up a startdate in the Amsterdam timezone. The 28th of March 2021 is the day
+    # when sunlight saving starts (at 2 am)
+    monkeypatch.setattr(Conf, "TIME_ZONE", "Europe/Amsterdam")
+    broker.list_key = "scheduler_test:q"
+    tz = pytz.timezone("Europe/Amsterdam")
+    start_date = datetime(2021, 3, 28)
+    start_date = tz.localize(start_date)
+
+    # Confirm that we are currently 1 hour ahead of UTC
+    assert start_date.utcoffset() == timedelta(hours=1)
+    assert str(start_date) == "2021-03-28 00:00:00+01:00"
+
+    # Create schedule with the next run date on the start date. It will move one day
+    # forward when we run the scheduler
+    schedule = create_schedule(
+        "math.copysign",
+        1,
+        -1,
+        name="test math",
+        schedule_type=Schedule.DAILY,
+        next_run=start_date,
+    )
+    # Run scheduler so we get the next run date
+    scheduler(broker=broker)
+    schedule.refresh_from_db()
+    # Convert it to the same timezone as above so we can compare the dates
+    next_run = schedule.next_run
+    next_run = timezone.localtime(next_run, tz)
+
+    # offset is different and date, time is the same
+    assert next_run.utcoffset() == timedelta(hours=2)
+    assert next_run.date() == start_date.date() + timedelta(days=1)
+    assert next_run.time() == start_date.time()
+    assert str(next_run) == "2021-03-29 00:00:00+02:00"
+
+
+@pytest.mark.django_db
 def test_scheduler(broker, monkeypatch):
     broker.list_key = "scheduler_test:q"
     broker.delete_queue()
