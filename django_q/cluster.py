@@ -701,7 +701,7 @@ def scheduler(broker: Broker = None):
                 if s.schedule_type != s.ONCE:
                     next_run = s.next_run
                     while True:
-                        next_run = s.calculate_next_run()
+                        next_run = s.calculate_next_run(next_run)
                         if Conf.CATCH_UP or next_run > localtime():
                             break
 

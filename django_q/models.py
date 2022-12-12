@@ -212,8 +212,8 @@ class Schedule(models.Model):
     task = models.CharField(max_length=100, null=True, editable=False)
     cluster = models.CharField(max_length=100, default=None, null=True, blank=True)
 
-    def calculate_next_run(self):
-        next_run = self.next_run
+    def calculate_next_run(self, next_run=None):
+        next_run = next_run or self.next_run
 
         # next_run is in UTC in the database, so change it to the new timezone if there
         # is one set, if not the normal datetime is returned
@@ -245,9 +245,12 @@ class Schedule(models.Model):
         elif self.schedule_type == self.YEARLY:
             add = timedelta(days=(add_years(local_next_run, 1) - local_next_run).days)
 
-        next_run = datetime.combine(local_next_run.date() + add, local_next_run.time())
+        next_run = datetime.combine(local_next_run.date(), local_next_run.time()) + add
+
         if is_aware(self.next_run):
-            next_run = local_next_run.tzinfo.localize(next_run)
+            import pytz
+            tz = pytz.timezone(Conf.TIME_ZONE)
+            next_run = next_run.astimezone(tz)
 
         return next_run
 
