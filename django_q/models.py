@@ -213,16 +213,13 @@ class Schedule(models.Model):
     cluster = models.CharField(max_length=100, default=None, null=True, blank=True)
 
     def calculate_next_run(self, next_run=None):
+        # next run is always in UTC
         next_run = next_run or self.next_run
-
-        # next_run is in UTC in the database, so change it to the new timezone if there
-        # is one set, if not the normal datetime is returned
-        local_next_run = localtime(self.next_run)
 
         if self.schedule_type == self.CRON:
             if not croniter:
                 raise ImportError(
-                    _("Please install croniter to enable cron " "expressions")
+                    _("Please install croniter to enable cron expressions")
                 )
             return croniter(self.cron, localtime()).get_next(datetime)
 
@@ -237,20 +234,33 @@ class Schedule(models.Model):
         elif self.schedule_type == self.BIWEEKLY:
             add = timedelta(weeks=2)
         elif self.schedule_type == self.MONTHLY:
-            add = timedelta(days=(add_months(local_next_run, 1) - local_next_run).days)
+            add = timedelta(days=(add_months(next_run, 1) - next_run).days)
         elif self.schedule_type == self.BIMONTHLY:
-            add = timedelta(days=(add_months(local_next_run, 2) - local_next_run).days)
+            add = timedelta(days=(add_months(next_run, 2) - next_run).days)
         elif self.schedule_type == self.QUARTERLY:
-            add = timedelta(days=(add_months(local_next_run, 3) - local_next_run).days)
+            add = timedelta(days=(add_months(next_run, 3) - next_run).days)
         elif self.schedule_type == self.YEARLY:
-            add = timedelta(days=(add_years(local_next_run, 1) - local_next_run).days)
+            add = timedelta(days=(add_years(next_run, 1) - next_run).days)
 
-        next_run = datetime.combine(local_next_run.date(), local_next_run.time()) + add
+        # Get localtimes and then remove the tzinfo, so we can get the actual difference
+        current_next_run = localtime(next_run).replace(tzinfo=None)
+        new_next_run = localtime(next_run + add).replace(tzinfo=None)
 
-        if is_aware(self.next_run):
-            import pytz
-            tz = pytz.timezone(Conf.TIME_ZONE)
-            next_run = next_run.astimezone(tz)
+        # add normal timedelta, we will correct this later based on timezone
+        next_run += add
+
+        # only run this when it's not in minutes/hourly/yearly, as it doesn't matter there
+        if self.schedule_type not in [self.MINUTES, self.HOURLY, self.YEARLY]:
+            # get the difference between them, this should be 1 or 0.5 hour
+            # (positive/negative) based on DST active or not
+            extra_diff = (new_next_run - current_next_run) - add
+
+            # if we have one positive hour difference, then subtract it, so we are even
+            # and vice versa
+            if extra_diff > timedelta(hours=0):
+                next_run -= extra_diff
+            else:
+                next_run += extra_diff
 
         return next_run
 
