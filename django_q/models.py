@@ -242,21 +242,22 @@ class Schedule(models.Model):
         elif self.schedule_type == self.YEARLY:
             add = timedelta(days=(add_years(next_run, 1) - next_run).days)
 
-        # Get localtimes and then remove the tzinfo, so we can get the actual difference
-        current_next_run = localtime(next_run).replace(tzinfo=None)
-        new_next_run = localtime(next_run + add).replace(tzinfo=None)
-
         # add normal timedelta, we will correct this later based on timezone
         next_run += add
 
-        # only run this when it's not in minutes/hourly/yearly, as it doesn't matter there
+        # DST differencers don't matter with minutes, hourly or yearly, so skip those
         if self.schedule_type not in [self.MINUTES, self.HOURLY, self.YEARLY]:
-            # get the difference between them, this should be 1 or 0.5 hour
-            # (positive/negative) based on DST active or not
+            # Get localtimes and then remove the tzinfo, so we can get the actual difference
+            current_next_run = localtime(next_run).replace(tzinfo=None)
+            new_next_run = localtime(next_run + add).replace(tzinfo=None)
+
+            # get the difference between them, this should be (-)1 or (-)0.5 hour
+            # based on DST active or not
             extra_diff = (new_next_run - current_next_run) - add
 
             # if we have one positive hour difference, then subtract it, so we are even
-            # and vice versa
+            # and vice versa. In most cases, this will be 0, as there won't be a
+            # timezone diff
             if extra_diff > timedelta(hours=0):
                 next_run -= extra_diff
             else:

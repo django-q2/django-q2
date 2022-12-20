@@ -70,6 +70,13 @@ Set this to something that makes sense for your project. Can be overridden for i
 
 See :ref:`retry` for details how to set values for timeout and retry.
 
+.. _time_zone:
+
+time_zone
+~~~~~~~
+
+The timezone that is used for task scheduling. This can be used if you want to use a different timezone than Django handles in the app. It will also fix DST issues. Defaults to `settings.TIME_ZONE` if `TZ` is enabled.
+
 .. _ack_failures:
 
 ack_failures
