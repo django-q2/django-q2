@@ -212,7 +212,9 @@ class Conf:
     TESTING = conf.get("testing", False)
 
     # Timezone for next_run, overrules Django timezone
-    TIME_ZONE = conf.get("time_zone", settings.TIME_ZONE)
+    TIME_ZONE = conf.get("time_zone", None)
+    if settings.USE_TZ and TIME_ZONE is None:
+        TIME_ZONE = settings.TIME_ZONE
 
 
 # logger

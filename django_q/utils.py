@@ -49,7 +49,7 @@ def get_func_repr(func):
 
 def localtime(value=None) -> datetime:
     """Override for timezone.localtime to deal with naive times and local times"""
-    if settings.USE_TZ:
+    if Conf.TIME_ZONE:
         return timezone.localtime(value=value, timezone=pytz.timezone(Conf.TIME_ZONE))
     if value is None:
         return datetime.now()

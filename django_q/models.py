@@ -248,8 +248,8 @@ class Schedule(models.Model):
         # DST differencers don't matter with minutes, hourly or yearly, so skip those
         if self.schedule_type not in [self.MINUTES, self.HOURLY, self.YEARLY]:
             # Get localtimes and then remove the tzinfo, so we can get the actual difference
-            current_next_run = localtime(next_run).replace(tzinfo=None)
-            new_next_run = localtime(next_run + add).replace(tzinfo=None)
+            current_next_run = localtime(next_run - add).replace(tzinfo=None)
+            new_next_run = localtime(next_run).replace(tzinfo=None)
 
             # get the difference between them, this should be (-)1 or (-)0.5 hour
             # based on DST active or not
