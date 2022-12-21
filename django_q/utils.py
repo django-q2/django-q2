@@ -16,7 +16,8 @@ else:
     try:
         from zoneinfo import ZoneInfo
     except ImportError:
-        from backports.zoninfo import ZoneInfo
+        from backports.zoneinfo import ZoneInfo
+
 
 # credits: https://stackoverflow.com/a/4131114
 # Made them aware of timezone

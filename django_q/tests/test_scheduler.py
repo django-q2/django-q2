@@ -31,7 +31,7 @@ else:
     try:
         from zoneinfo import ZoneInfo
     except ImportError:
-        from backports.zoninfo import ZoneInfo
+        from backports.zoneinfo import ZoneInfo
 
 
 @pytest.fixture
