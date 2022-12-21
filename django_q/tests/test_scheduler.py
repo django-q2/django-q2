@@ -34,7 +34,6 @@ else:
         from backports.zoninfo import ZoneInfo
 
 
-
 @pytest.fixture
 def broker(monkeypatch) -> Broker:
     """
