@@ -1,7 +1,7 @@
 A multiprocessing distributed task queue for Django
 ---------------------------------------------------
 
-|image0| |image1| |docs|
+|image0| |image1| |docs| |downloads|
 
 ::
 
