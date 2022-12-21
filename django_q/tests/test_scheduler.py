@@ -2,12 +2,9 @@ import os
 from datetime import datetime, timedelta
 from multiprocessing import Event, Value
 from unittest import mock
-try:
-    import zoneinfo
-except ImportError:
-    from backports import zoneinfo
 
 import pytest
+import django
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import override_settings
@@ -26,6 +23,16 @@ from django_q.tests.testing_utilities.multiple_database_routers import (
     TestingReplicaDatabaseRouter,
 )
 from django_q.utils import add_months
+
+if django.VERSION < (4, 0):
+    # pytz is the default in django 3.2. Remove when no support for 3.2
+    from pytz import timezone as ZoneInfo
+else:
+    try:
+        from zoneinfo import ZoneInfo
+    except ImportError:
+        from backports.zoninfo import ZoneInfo
+
 
 
 @pytest.fixture
@@ -93,7 +100,7 @@ def test_scheduler_daylight_saving_time_daily(broker, monkeypatch):
     # 28th of March 2021 is the day when sunlight saving starts (at 2 am)
 
     monkeypatch.setattr(Conf, "TIME_ZONE", "Europe/Amsterdam")
-    tz = zoneinfo.ZoneInfo('Europe/Amsterdam')
+    tz = ZoneInfo('Europe/Amsterdam')
     broker.list_key = "scheduler_test:q"
     # Let's start a schedule at 1 am on the 27th of March. This is in AMS timezone.
     # So, 2021-03-27 00:00:00 when saved (due to TZ being Amsterdam and saved in UTC)

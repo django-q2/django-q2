@@ -3,16 +3,20 @@ import calendar
 import inspect
 from datetime import date
 
+import django
 from django.utils import timezone
 from django.conf import settings
 
 from django_q.conf import Conf
 
-try:
-    import zoneinfo
-except ImportError:
-    from backports import zoneinfo
-
+if django.VERSION < (4, 0):
+    # pytz is the default in django 3.2. Remove when no support for 3.2
+    from pytz import timezone as ZoneInfo
+else:
+    try:
+        from zoneinfo import ZoneInfo
+    except ImportError:
+        from backports.zoninfo import ZoneInfo
 
 # credits: https://stackoverflow.com/a/4131114
 # Made them aware of timezone
@@ -60,7 +64,7 @@ def localtime(value=None) -> datetime:
 
             convert_to_tz = pytz.timezone(Conf.TIME_ZONE)
         else:
-            convert_to_tz = zoneinfo.ZoneInfo(Conf.TIME_ZONE)
+            convert_to_tz = ZoneInfo(Conf.TIME_ZONE)
 
         return timezone.localtime(value=value, timezone=convert_to_tz)
     if value is None:
