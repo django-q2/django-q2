@@ -55,7 +55,14 @@ def get_func_repr(func):
 def localtime(value=None) -> datetime:
     """Override for timezone.localtime to deal with naive times and local times"""
     if settings.USE_TZ:
-        return timezone.localtime(value=value, timezone=zoneinfo.ZoneInfo(Conf.TIME_ZONE))
+        if settings.USE_DEPRECATED_PYTZ:
+            import pytz
+
+            convert_to_tz = pytz.timezone(Conf.TIME_ZONE)
+        else:
+            convert_to_tz = zoneinfo.ZoneInfo(Conf.TIME_ZONE)
+
+        return timezone.localtime(value=value, timezone=convert_to_tz)
     if value is None:
         return datetime.now()
     else:
