@@ -75,7 +75,7 @@ See :ref:`retry` for details how to set values for timeout and retry.
 time_zone
 ~~~~~~~
 
-The timezone that is used for task scheduling. This can be used if you want to use a different timezone than Django handles in the app. It will also fix DST issues. Defaults to `settings.TIME_ZONE` if `TZ` is enabled.
+The timezone that is used for task scheduling. Use this if you are having issue with DST. The scheduler uses UTC to calculate the next date and will therefore ignore any DST changes. This will cause 1 hour or 0.5 hour changes in the schedule when time is moved one hour ahead or back. Defaults to `settings.TIME_ZONE` if `USE_TZ` is enabled.
 
 .. _ack_failures:
 
