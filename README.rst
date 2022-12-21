@@ -242,7 +242,9 @@ Acknowledgements
    :target: https://github.com/GDay/django-q2/actions?query=workflow%3Atests
 .. |image1| image:: https://coveralls.io/repos/github/GDay/django-q2/badge.svg?branch=master
    :target: https://coveralls.io/github/GDay/django-q2?branch=master
-.. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=latest
+.. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=master
     :alt: Documentation Status
     :scale: 100
-    :target: https://django-q.readthedocs.org/
+    :target: https://django-q2.readthedocs.org/
+.. |downloads| image:: https://img.shields.io/pypi/dm/django-q2
+   :target: https://img.shields.io/pypi/dm/django-q2
