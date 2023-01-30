@@ -110,7 +110,8 @@ class Cluster:
 
     @property
     def name(self) -> str:
-        return humanize(self.cluster_id.hex)
+        # multi-queue: cluster name is (broker's) queue_name
+        return humanize(self.cluster_id.hex) + f" [{self.broker.queue_name}]"
 
     @property
     def is_starting(self) -> bool:
@@ -401,6 +402,7 @@ def pusher(task_queue: Queue, event: Event, broker: Broker = None):
                     logger.exception("Failed to push task to queue")
                     broker.fail(ack_id)
                     continue
+                task["cluster"] = broker.queue_name  # save actual cluster name to orm task table
                 task["ack_id"] = ack_id
                 task_queue.put(task)
             logger.debug(
@@ -614,6 +616,7 @@ def save_task(task, broker: Broker):
                 hook=task.get("hook"),
                 args=task["args"],
                 kwargs=task["kwargs"],
+                cluster=task["cluster"],
                 started=task["started"],
                 stopped=task["stopped"],
                 result=task["result"],
@@ -691,7 +694,7 @@ def scheduler(broker: Broker = None):
                 .exclude(repeats=0)
                 .filter(next_run__lt=timezone.now())
                 .filter(
-                    db.models.Q(cluster__isnull=True) | db.models.Q(cluster=Conf.PREFIX)
+                    db.models.Q(cluster__isnull=True) | db.models.Q(cluster=broker.queue_name)
                 )
             ):
                 args = ()
@@ -733,14 +736,11 @@ def scheduler(broker: Broker = None):
 
                     s.next_run = next_run
                     s.repeats += -1
-                # send it to the cluster
-                scheduled_broker = broker
-                try:
-                    scheduled_broker = get_broker(q_options["broker_name"])
-                except:  # noqa: E722
-                    # invalid broker_name or non existing broker with broker_name
-                    pass
-                q_options["broker"] = scheduled_broker
+                # send it to the cluster; any cluster name is allowed in multi-queue scenarios
+                # because `broker_name` is confusing, using `cluster` name is recommended and takes precedence
+                q_options["cluster"] = s.cluster or q_options.get("cluster", q_options.pop("broker_name", None))
+                if q_options['cluster'] is None or q_options['cluster'] == broker.queue_name:
+                    q_options["broker"] = broker
                 q_options["group"] = q_options.get("group", s.name or s.id)
                 kwargs["q_options"] = q_options
                 s.task = django_q.tasks.async_task(s.func, *args, **kwargs)

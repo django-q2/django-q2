@@ -11,8 +11,13 @@ except ImportError:
 
 
 class Redis(Broker):
-    def __init__(self, list_key: str = Conf.PREFIX):
+    def __init__(self, list_key: str = None):
+        list_key = list_key or Conf.cluster_name()
         super(Redis, self).__init__(list_key=f"django_q:{list_key}:q")
+
+    @property
+    def queue_name(self):
+        return self.list_key[self.list_key.find(":") + 1: self.list_key.rfind(":")]
 
     def enqueue(self, task):
         return self.connection.rpush(self.list_key, task)
@@ -57,7 +62,7 @@ class Redis(Broker):
             return self.connection.mget(keys)
 
     @staticmethod
-    def get_connection(list_key: str = Conf.PREFIX) -> Redis:
+    def get_connection(list_key: str = None) -> Redis:
         if django_redis and Conf.DJANGO_REDIS:
             return django_redis.get_redis_connection(Conf.DJANGO_REDIS)
         if isinstance(Conf.REDIS, str):

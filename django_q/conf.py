@@ -70,7 +70,18 @@ class Conf:
     MONGO_DB = conf.get("mongo_db", None)
 
     # Name of the cluster or site. For when you run multiple sites on one redis server
+    # It's also the `salt` for signing OrmQ, and part of the Redis stats caching key
     PREFIX = conf.get("name", "default")
+
+    # Support alternative cluster name to use multiple queues in one site.
+    #   cluster name and queue name are interchangeable, same thing.
+    @classmethod
+    def cluster_name(cls):
+        # For async_task() and schedule():
+        #   if `cluster` is set, only clusters with matching name will run the task or do the schedule;
+        #   if `cluster` is not set, async_task() is handled by the default cluster,
+        #                            schedule() may be handled by any active cluster.
+        return os.getenv("Q_CLUSTER_NAME", cls.PREFIX)
 
     # Log output level
     LOG_LEVEL = conf.get("log_level", "INFO")

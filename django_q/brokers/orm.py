@@ -16,7 +16,7 @@ def _timeout():
 
 class ORM(Broker):
     @staticmethod
-    def get_connection(list_key: str = Conf.PREFIX):
+    def get_connection(list_key: str = None):
         if transaction.get_autocommit(
             using=Conf.ORM
         ):  # Only True when not in an atomic block
