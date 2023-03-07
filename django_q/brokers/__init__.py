@@ -9,7 +9,6 @@ from django_q.conf import Conf
 class Broker:
     def __init__(self, list_key: str = None):
         # With same BROKER_CLASS, `list_key` is just a synonym for `queue_name` except for RedisBroker
-        # Anyway @property broker.queue_name must be the queue_name for information
         list_key = list_key or Conf.CLUSTER_NAME
         self.connection = self.get_connection(list_key)
         self.list_key = list_key

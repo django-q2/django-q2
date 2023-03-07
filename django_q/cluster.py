@@ -49,7 +49,7 @@ from .utils import get_func_repr, localtime
 class Cluster:
     def __init__(self, broker: Broker = None):
         # Cluster do not need an init or default broker except for testing,
-        # The sentinel will spawn its broker and utilize ALT_CLUSTERS config in Conf.
+        # The sentinel will create a broker for cluster and utilize ALT_CLUSTERS config in Conf.
         self.broker = broker  # DON'T USE get_broker() to set a default broker here.
         self.sentinel = None
         self.stop_event = None
@@ -551,7 +551,6 @@ def worker(
         # execute the payload
         timer.value = timer_value  # Busy
 
-
         try:
             if Conf.FAIL_ON_TIMEOUT:
                 _check_task_timed_out(working_tasks_key, task)
@@ -725,7 +724,7 @@ def scheduler(broker: Broker = None):
         broker = get_broker()
     close_old_django_connections()
     try:
-        # Only default cluster will handler schedule with default(null) cluster argument
+        # Only default cluster will handler schedule with default(null) cluster
         Q_default = db.models.Q(cluster__isnull=True) if Conf.CLUSTER_NAME == Conf.PREFIX else db.models.Q(pk__in=[])
 
         with db.transaction.atomic(using=db.router.db_for_write(Schedule)):
