@@ -52,7 +52,7 @@ class Conf:
             alt_conf = alt_conf.get(_Q_CLUSTER_NAME)
             if isinstance(alt_conf, dict):
                 alt_conf.pop('name', None)
-                alt_conf.pop('cluster_ame', None)
+                alt_conf.pop('cluster_name', None)
                 conf.update(alt_conf)
 
     # Redis server configuration . Follows standard redis keywords
@@ -83,15 +83,11 @@ class Conf:
 
     # Name of the cluster or site. For when you run multiple sites on one redis server
     # It's also the `salt` for signing OrmQ, and part of the Redis stats caching key
-    # For all clusters in one site, PREFIX should be the same value to be able to decrypt payload
+    # For all clusters in one site, PREFIX should be the same value to be able to decrypt payloads
     PREFIX = conf.get("name", "default")
 
     # Support alternative cluster name to use multiple queues in one site.
     #   cluster name and queue name are interchangeable, same thing.
-    # For async_task() and schedule():
-    #   if `cluster` is set, only clusters with matching name will run the task or do the schedule;
-    #   if `cluster` is not set, async_task() is handled by the default cluster,
-    #                            schedule() may be handled by any active cluster.
     CLUSTER_NAME = conf.get("cluster_name", PREFIX)
 
     # Log output level

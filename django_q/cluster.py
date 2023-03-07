@@ -112,8 +112,7 @@ class Cluster:
 
     @property
     def name(self) -> str:
-        # multi-queue: cluster name is (broker's) queue_name
-        return humanize(self.cluster_id.hex) + f" [{Conf.CLUSTER_NAME}]"
+        return humanize(self.cluster_id.hex)
 
     @property
     def is_starting(self) -> bool:
@@ -173,6 +172,7 @@ class Sentinel:
             self.start()
 
     def queue_name(self):
+        # multi-queue: cluster name is (broker's) queue_name
         return self.broker.list_key if self.broker else '--'
 
     def start(self):
@@ -725,13 +725,16 @@ def scheduler(broker: Broker = None):
         broker = get_broker()
     close_old_django_connections()
     try:
+        # Only default cluster will handler schedule with default(null) cluster argument
+        Q_default = db.models.Q(cluster__isnull=True) if Conf.CLUSTER_NAME == Conf.PREFIX else db.models.Q(pk__in=[])
+
         with db.transaction.atomic(using=db.router.db_for_write(Schedule)):
             for s in (
                 Schedule.objects.select_for_update()
                 .exclude(repeats=0)
                 .filter(next_run__lt=timezone.now())
                 .filter(
-                    db.models.Q(cluster__isnull=True) | db.models.Q(cluster=Conf.CLUSTER_NAME)
+                    Q_default | db.models.Q(cluster=Conf.CLUSTER_NAME)
                 )
             ):
                 args = ()
