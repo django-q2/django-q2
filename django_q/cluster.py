@@ -48,7 +48,9 @@ from .utils import get_func_repr, localtime
 
 class Cluster:
     def __init__(self, broker: Broker = None):
-        self.broker = broker or get_broker()
+        # Cluster do not need an init or default broker except for testing,
+        # The sentinel will spawn its broker and utilize ALT_CLUSTERS config in Conf.
+        self.broker = broker  # DON'T USE get_broker() to set a default broker here.
         self.sentinel = None
         self.stop_event = None
         self.start_event = None
@@ -111,7 +113,7 @@ class Cluster:
     @property
     def name(self) -> str:
         # multi-queue: cluster name is (broker's) queue_name
-        return humanize(self.cluster_id.hex) + f" [{self.broker.queue_name}]"
+        return humanize(self.cluster_id.hex) + f" [{Conf.CLUSTER_NAME}]"
 
     @property
     def is_starting(self) -> bool:
@@ -169,6 +171,9 @@ class Sentinel:
         self.pusher = None
         if start:
             self.start()
+
+    def queue_name(self):
+        return self.broker.list_key if self.broker else '--'
 
     def start(self):
         self.broker.ping()
@@ -288,14 +293,14 @@ class Sentinel:
             _("%(name)s guarding cluster %(cluster_name)s")
             % {
                 "name": current_process().name,
-                "cluster_name": humanize(self.cluster_id.hex),
+                "cluster_name": humanize(self.cluster_id.hex) + f" [{self.queue_name()}]",
             }
         )
         self.start_event.set()
         Stat(self).save()
         logger.info(
             _("Q Cluster %(cluster_name)s running.")
-            % {"cluster_name": humanize(self.cluster_id.hex)}
+            % {"cluster_name": humanize(self.cluster_id.hex) + f" [{self.queue_name()}]"}
         )
         counter = 0
         cycle = Conf.GUARD_CYCLE  # guard loop sleep in seconds
@@ -402,7 +407,7 @@ def pusher(task_queue: Queue, event: Event, broker: Broker = None):
                     logger.exception("Failed to push task to queue")
                     broker.fail(ack_id)
                     continue
-                task["cluster"] = broker.queue_name  # save actual cluster name to orm task table
+                task["cluster"] = Conf.CLUSTER_NAME  # save actual cluster name to orm task table
                 task["ack_id"] = ack_id
                 task_queue.put(task)
             logger.debug(
@@ -648,7 +653,7 @@ def save_task(task, broker: Broker):
                 hook=task.get("hook"),
                 args=task["args"],
                 kwargs=task["kwargs"],
-                cluster=task["cluster"],
+                cluster=task.get("cluster"),
                 started=task["started"],
                 stopped=task["stopped"],
                 result=task["result"],
@@ -726,7 +731,7 @@ def scheduler(broker: Broker = None):
                 .exclude(repeats=0)
                 .filter(next_run__lt=timezone.now())
                 .filter(
-                    db.models.Q(cluster__isnull=True) | db.models.Q(cluster=broker.queue_name)
+                    db.models.Q(cluster__isnull=True) | db.models.Q(cluster=Conf.CLUSTER_NAME)
                 )
             ):
                 args = ()
@@ -771,7 +776,7 @@ def scheduler(broker: Broker = None):
                 # send it to the cluster; any cluster name is allowed in multi-queue scenarios
                 # because `broker_name` is confusing, using `cluster` name is recommended and takes precedence
                 q_options["cluster"] = s.cluster or q_options.get("cluster", q_options.pop("broker_name", None))
-                if q_options['cluster'] is None or q_options['cluster'] == broker.queue_name:
+                if q_options['cluster'] is None or q_options['cluster'] == Conf.CLUSTER_NAME:
                     q_options["broker"] = broker
                 q_options["group"] = q_options.get("group", s.name or s.id)
                 kwargs["q_options"] = q_options

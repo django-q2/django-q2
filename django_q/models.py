@@ -217,7 +217,10 @@ class Schedule(models.Model):
         help_text=_("Cron expression"),
     )
     task = models.CharField(max_length=100, null=True, editable=False)
-    cluster = models.CharField(max_length=100, default=None, null=True, blank=True)
+    cluster = models.CharField(
+        max_length=100, default=None, null=True, blank=True,
+        help_text=_("Name of the target cluster (Empty for any active cluster)")
+    )
     intended_date_kwarg = models.CharField(
         max_length=100,
         null=True,
@@ -304,9 +307,9 @@ class Schedule(models.Model):
 
 
 class OrmQ(models.Model):
-    key = models.CharField(max_length=100)
+    key = models.CharField(max_length=100, help_text=_("Name of the target cluster"))
     payload = models.TextField()
-    lock = models.DateTimeField(null=True)
+    lock = models.DateTimeField(null=True, help_text=_("Prevent any cluster from pulling until"))
 
     @cached_property
     def task(self):
@@ -326,6 +329,16 @@ class OrmQ(models.Model):
 
     def group(self):
         return self.task.get("group")
+
+    def args(self):
+        return self.task.get("args")
+
+    def kwargs(self):
+        return self.task.get("kwargs")
+
+    def q_options(self):
+        exclude = {"id", "name", "group", "func", "args", "kwargs"}
+        return {k: v for k, v in self.task.items() if k not in exclude}
 
     class Meta:
         app_label = "django_q"

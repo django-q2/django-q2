@@ -47,6 +47,6 @@ class IronMQBroker(Broker):
 
     @staticmethod
     def get_connection(list_key: str = None) -> Queue:
-        list_key = list_key or Conf.cluster_name()
+        list_key = list_key or Conf.CLUSTER_NAME
         ironmq = IronMQ(name=None, **Conf.IRON_MQ)
         return ironmq.queue(queue_name=list_key)

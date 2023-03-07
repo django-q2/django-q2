@@ -72,7 +72,7 @@ def async_task(func, *args, **kwargs):
         return _sync(pack)
     # push it
     enqueue_id = broker.enqueue(pack)
-    logger.info(f"Enqueued [{broker.queue_name}] {enqueue_id}")
+    logger.info(f"Enqueued [{broker.list_key}] {enqueue_id}")
     logger.debug(f"Pushed {tag}")
     return task["id"]
 
@@ -274,7 +274,7 @@ def fetch_cached(task_id, wait=0, broker=None):
                 hook=task.get("hook"),
                 args=task["args"],
                 kwargs=task["kwargs"],
-                cluster=task["cluster"],
+                cluster=task.get("cluster"),
                 started=task["started"],
                 stopped=task["stopped"],
                 result=task["result"],
@@ -345,7 +345,7 @@ def fetch_group_cached(group_id, failures=True, wait=0, count=None, broker=None)
                         hook=task.get("hook"),
                         args=task["args"],
                         kwargs=task["kwargs"],
-                        cluster=task["cluster"],
+                        cluster=task.get("cluster"),
                         started=task["started"],
                         stopped=task["stopped"],
                         result=task["result"],

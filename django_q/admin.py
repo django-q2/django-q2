@@ -36,7 +36,8 @@ class TaskAdmin(admin.ModelAdmin):
 def retry_failed(FailAdmin, request, queryset):
     """Submit selected tasks back to the queue."""
     for task in queryset:
-        async_task(task.func, *task.args or (), hook=task.hook, **task.kwargs or {})
+        async_task(task.func, *task.args or (), hook=task.hook,
+                   group=task.group, cluster=task.cluster, **task.kwargs or {})
         task.delete()
 
 
@@ -123,6 +124,8 @@ class QueueAdmin(admin.ModelAdmin):
     """queue admin for ORM broker"""
 
     list_display = ("id", "key", "name", "group", "func", "lock", "task_id")
+    fields = ("key", "lock", "task_id", "name", "group", "func", "args", "kwargs", "q_options")
+    readonly_fields = fields[2:]
 
     def save_model(self, request, obj, form, change):
         obj.save(using=Conf.ORM)

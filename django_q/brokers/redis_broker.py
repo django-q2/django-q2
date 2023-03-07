@@ -12,12 +12,8 @@ except ImportError:
 
 class Redis(Broker):
     def __init__(self, list_key: str = None):
-        list_key = list_key or Conf.cluster_name()
+        list_key = list_key or Conf.CLUSTER_NAME
         super(Redis, self).__init__(list_key=f"django_q:{list_key}:q")
-
-    @property
-    def queue_name(self):
-        return self.list_key[self.list_key.find(":") + 1: self.list_key.rfind(":")]
 
     def enqueue(self, task):
         return self.connection.rpush(self.list_key, task)

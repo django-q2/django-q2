@@ -26,7 +26,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        # Try to set an alternative name before creating the cluster (cluster_name is broker's queue_name, too)
+        # Set alternative cluster_name before creating the cluster (cluster_name is broker's queue_name, too)
         cluster_name = options.get("cluster_name")
         if cluster_name:
             os.environ["Q_CLUSTER_NAME"] = cluster_name
