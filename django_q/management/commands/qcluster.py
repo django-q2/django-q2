@@ -22,7 +22,8 @@ class Command(BaseCommand):
             "--name",
             dest="cluster_name",
             default=None,
-            help="Set alternative cluster name instead of the name in Q_CLUSTER settings (for multi-queue setup)."
+            help="Set alternative cluster name instead of the name in Q_CLUSTER settings (for multi-queue setup). "
+                 "On Linux you should set name through `Q_CLUSTER_NAME=cluster_name python manage.py qcluster` instead."
         )
 
     def handle(self, *args, **options):

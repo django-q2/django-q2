@@ -60,6 +60,10 @@ You can have multiple queues in one Django site, and use multiple cluster to wor
 Different queues are identified by different queue names which are also cluster names.
 To run an alternate cluster, e.g. to work on the 'long' queue, start your cluster with command::
 
+    # On Linux
+    $ Q_CLUSTER_NAME=long python manage.py qcluster
+
+    # On Windows
     $ python manage.py qcluster --name long
 
 You can set different Q_CLUSTER options for alternative clusters, such as 'timeout', 'queue_limit'
