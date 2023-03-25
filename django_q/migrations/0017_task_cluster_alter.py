@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
             field=models.CharField(
                 blank=True,
                 default=None,
-                help_text="Name of the target cluster (Empty for any active cluster)",
+                help_text="Name of the target cluster",
                 max_length=100,
                 null=True,
             ),

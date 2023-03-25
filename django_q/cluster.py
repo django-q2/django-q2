@@ -57,7 +57,7 @@ class Cluster:
         self.pid = current_process().pid
         self.cluster_id = uuid.uuid4()
         self.host = socket.gethostname()
-        self.timeout = Conf.TIMEOUT
+        self.timeout = None
         signal.signal(signal.SIGTERM, self.sig_handler)
         signal.signal(signal.SIGINT, self.sig_handler)
 
@@ -143,7 +143,7 @@ class Sentinel:
         start_event,
         cluster_id,
         broker=None,
-        timeout=Conf.TIMEOUT,
+        timeout=None,
         start=True,
     ):
         # Make sure we catch signals for the pool
@@ -160,7 +160,7 @@ class Sentinel:
         self.start_event = start_event
         self.pool_size = Conf.WORKERS
         self.pool = []
-        self.timeout = timeout
+        self.timeout = timeout or Conf.TIMEOUT
         self.task_queue = (
             Queue(maxsize=Conf.QUEUE_LIMIT) if Conf.QUEUE_LIMIT else Queue()
         )

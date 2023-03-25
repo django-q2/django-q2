@@ -219,7 +219,7 @@ class Schedule(models.Model):
     task = models.CharField(max_length=100, null=True, editable=False)
     cluster = models.CharField(
         max_length=100, default=None, null=True, blank=True,
-        help_text=_("Name of the target cluster (Empty for any active cluster)")
+        help_text=_("Name of the target cluster")
     )
     intended_date_kwarg = models.CharField(
         max_length=100,
