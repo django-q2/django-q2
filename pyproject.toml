@@ -71,7 +71,7 @@ black = "^22.10.0"
 isort = {extras = ["requirements_deprecated_finder"], version = "^5.10.1"}
 
 [tool.poetry.extras]
-requires = ["poetry_core>=1.0.0"]
+requires = ["poetry_core"]
 build-backend = ["poetry.core.masonry.api"]
 testing = ["django-redis", "croniter", "hiredis", "psutil", "iron-mq", "boto3", "pymongo", "blessed", "redis", "setproctitle"]
 rollbar = ["django-q-rollbar"]
@@ -80,7 +80,3 @@ sentry = ["django-q-sentry"]
 [tool.isort]
 profile = "black"
 multi_line_output = 3
-
-[build-system]
-requires = ["poetry-core>=1.0.8"]
-build-backend = "poetry.core.masonry.api"
