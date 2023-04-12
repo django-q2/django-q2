@@ -9,7 +9,7 @@ import pkg_resources
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from django_q.queues import Queue
+from queue import Queue
 
 # optional
 try:
@@ -91,7 +91,7 @@ class Conf:
     CLUSTER_NAME = conf.get("cluster_name", PREFIX)
 
     # Log output level
-    LOG_LEVEL = conf.get("log_level", "INFO")
+    LOG_LEVEL = conf.get("log_level", "DEBUG")
 
     # Maximum number of successful tasks kept in the database. 0 saves everything.
     # -1 saves none
@@ -112,7 +112,7 @@ class Conf:
         )
 
     # Guard loop sleep in seconds. Should be between 0 and 60 seconds.
-    GUARD_CYCLE = conf.get("guard_cycle", 0.5)
+    GUARD_CYCLE = conf.get("guard_cycle", 1)
 
     # Disable the scheduler
     SCHEDULER = conf.get("scheduler", True)
@@ -239,6 +239,7 @@ class Conf:
 
 # logger
 logger = logging.getLogger("django-q")
+
 
 # Set up standard logging handler in case there is none
 if not logger.hasHandlers():

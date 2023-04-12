@@ -41,14 +41,7 @@ class Stat(Status):
         self.status = sentinel.status()
         self.done_q_size = 0
         self.task_q_size = 0
-        if Conf.QSIZE:
-            self.done_q_size = sentinel.result_queue.qsize()
-            self.task_q_size = sentinel.task_queue.qsize()
-        if sentinel.monitor:
-            self.monitor = sentinel.monitor.pid
-        if sentinel.pusher:
-            self.pusher = sentinel.pusher.pid
-        self.workers = [w.pid for w in sentinel.pool]
+        self.workers = [w.process.pid for w in sentinel.pool.workers]
 
     def uptime(self) -> float:
         return (timezone.now() - self.tob).total_seconds()

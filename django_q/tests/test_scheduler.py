@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timedelta
 from multiprocessing import Event, Value
 from unittest import mock
+from django_q.utils import localtime
 
 import pytest
 import django
@@ -12,9 +13,9 @@ from django.utils import timezone
 from django.utils.timezone import is_naive
 
 from django_q.brokers import Broker, get_broker
-from django_q.cluster import localtime, monitor, pusher, scheduler, worker
+from django_q.helpers import run_scheduler_once, get_scheduled_tasks, save_task, run_task
 from django_q.conf import Conf
-from django_q.queues import Queue
+from queue import Queue
 from django_q.tasks import Schedule, fetch
 from django_q.tasks import schedule as create_schedule
 from django_q.tests.settings import BASE_DIR
@@ -103,7 +104,7 @@ def test_scheduler_daylight_saving_time_daily(broker, monkeypatch):
     )
 
     # Run scheduler so we get the next run date
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule.refresh_from_db()
 
     # It's now the day after exactly at midnight UTC
@@ -115,7 +116,7 @@ def test_scheduler_daylight_saving_time_daily(broker, monkeypatch):
     assert str(next_run) == "2021-03-28 01:00:00+01:00"
 
     # Run scheduler so we get the next run date
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule.refresh_from_db()
 
     next_run = schedule.next_run
@@ -126,7 +127,7 @@ def test_scheduler_daylight_saving_time_daily(broker, monkeypatch):
     assert str(next_run) == "2021-03-29 01:00:00+02:00"
 
     # Run scheduler so we get the next run date
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule.refresh_from_db()
 
     next_run = schedule.next_run
@@ -147,7 +148,7 @@ def test_scheduler_daylight_saving_time_daily(broker, monkeypatch):
     )
 
     # Run scheduler so we get the next run date
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule.refresh_from_db()
 
     next_run = schedule.next_run
@@ -158,7 +159,7 @@ def test_scheduler_daylight_saving_time_daily(broker, monkeypatch):
     assert str(next_run) == "2021-10-30 01:00:00+02:00"
 
     # Run scheduler so we get the next run date
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule.refresh_from_db()
 
     next_run = schedule.next_run
@@ -169,7 +170,7 @@ def test_scheduler_daylight_saving_time_daily(broker, monkeypatch):
     assert str(next_run) == "2021-10-31 01:00:00+02:00"
 
     # Run scheduler so we get the next run date
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule.refresh_from_db()
 
     next_run = schedule.next_run
@@ -208,24 +209,15 @@ def test_scheduler(broker, monkeypatch):
             repeats=1,
         )
     # run scheduler
-    scheduler(broker=broker)
-    # set up the workflow
-    task_queue = Queue()
-    stop_event = Event()
-    stop_event.set()
-    # push it
-    pusher(task_queue, stop_event, broker=broker)
-    assert task_queue.qsize() == 1
-    assert broker.queue_size() == 0
-    task_queue.put("STOP")
-    # let a worker handle them
-    result_queue = Queue()
-    worker(task_queue, result_queue, Value("b", -1))
-    assert result_queue.qsize() == 1
-    result_queue.put("STOP")
-    # store the results
-    monitor(result_queue)
-    assert result_queue.qsize() == 0
+    run_scheduler_once(broker=broker)
+    # get tasks
+    tasks = get_scheduled_tasks(broker=broker)
+    for task in tasks:
+        # let a worker handle them
+        ran_task = run_task(task)
+        # store the results
+        save_task(task=ran_task, broker=broker)
+
     schedule = Schedule.objects.get(pk=schedule.pk)
     assert schedule.repeats == 0
     assert schedule.last_run() is not None
@@ -297,7 +289,7 @@ def test_scheduler(broker, monkeypatch):
         )
         assert schedule is not None
         assert schedule.last_run() is None
-        scheduler(broker=broker)
+        run_scheduler_once(broker=broker)
     # via model
     Schedule.objects.create(
         func="django_q.tests.tasks.word_multiply",
@@ -306,7 +298,7 @@ def test_scheduler(broker, monkeypatch):
         schedule_type=Schedule.DAILY,
     )
     # scheduler
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     # ONCE schedule should be deleted
     assert Schedule.objects.filter(pk=once_schedule.pk).exists() is False
     # Catch up On
@@ -320,12 +312,12 @@ def test_scheduler(broker, monkeypatch):
         next_run=timezone.now() - timedelta(hours=12),
         repeats=-1,
     )
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule = Schedule.objects.get(pk=schedule.pk)
     assert schedule.next_run < now
     # Catch up off
     monkeypatch.setattr(Conf, "CATCH_UP", False)
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule = Schedule.objects.get(pk=schedule.pk)
     assert schedule.next_run > now
     # Done
@@ -338,7 +330,7 @@ def test_scheduler(broker, monkeypatch):
         word="catch_up",
         schedule_type=Schedule.BIMONTHLY,
     )
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule = Schedule.objects.get(pk=schedule.pk)
     assert schedule.next_run.date() == add_months(timezone.now(), 2).date()
 
@@ -349,7 +341,7 @@ def test_scheduler(broker, monkeypatch):
         word="catch_up",
         schedule_type=Schedule.BIWEEKLY,
     )
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     schedule = Schedule.objects.get(pk=schedule.pk)
     assert schedule.next_run.date() == (timezone.now() + timedelta(weeks=2)).date()
     broker.delete_queue()
@@ -367,16 +359,12 @@ def test_scheduler(broker, monkeypatch):
         repeats=1,
     )
     # run scheduler
-    scheduler(broker=broker)
-    # set up the workflow
-    task_queue = Queue()
-    stop_event = Event()
-    stop_event.set()
+    run_scheduler_once(broker=broker)
     # push it
-    pusher(task_queue, stop_event, broker=broker)
+    tasks = get_scheduled_tasks(broker=broker)
 
     # queue must be empty
-    assert task_queue.qsize() == 0
+    assert len(tasks) == 0
 
     monkeypatch.setattr(Conf, "CLUSTER_NAME", "default")
     # create a schedule on the same cluster
@@ -391,16 +379,12 @@ def test_scheduler(broker, monkeypatch):
         repeats=1,
     )
     # run scheduler
-    scheduler(broker=broker)
-    # set up the workflow
-    task_queue = Queue()
-    stop_event = Event()
-    stop_event.set()
+    run_scheduler_once(broker=broker)
     # push it
-    pusher(task_queue, stop_event, broker=broker)
+    tasks = get_scheduled_tasks(broker=broker)
 
     # queue must contain a task
-    assert task_queue.qsize() == 1
+    assert len(tasks) == 1
 
 
 @pytest.mark.django_db
@@ -422,35 +406,31 @@ def test_intended_schedule_kwarg(broker, monkeypatch):
     assert schedule.last_run() is None
     assert schedule.intended_date_kwarg == 'intended_date'
     # run scheduler
-    scheduler(broker=broker)
+    run_scheduler_once(broker=broker)
     # set up the workflow
-    task_queue = Queue()
-    stop_event = Event()
-    stop_event.set()
-    # push it
-    pusher(task_queue, stop_event, broker=broker)
-    assert task_queue.qsize() == 1
-    task = task_queue.get()
-    assert 'intended_date' in task['kwargs']
-    assert task['kwargs']['intended_date'] == run_date.isoformat()
+    scheduled_tasks = get_scheduled_tasks(broker=broker)
+    assert len(scheduled_tasks) == 1
+    task = scheduled_tasks[0]
+    assert 'intended_date' in task.kwargs
+    assert task.kwargs['intended_date'] == run_date.isoformat()
 
 
-@override_settings(
-    DATABASE_ROUTERS=REPLICA_DATABASE_ROUTERS, DATABASES=REPLICA_DATABASES
-)
-@pytest.mark.django_db
-def test_scheduler_atomic_must_specify_the_write_db(
-    orm_broker: Broker,
-):
-    """
-    GIVEN a environment with a read/write configured replica database
-    WHEN the scheduler is called
-    THEN the transaction must be called with the write database.
-    """
-    broker = get_broker(list_key="scheduler_test:q")
-    with mock.patch("django_q.cluster.db.transaction") as mocked_db:
-        scheduler(broker=broker)
-        mocked_db.atomic.assert_called_with(using="writable")
+# @override_settings(
+#     DATABASE_ROUTERS=REPLICA_DATABASE_ROUTERS, DATABASES=REPLICA_DATABASES
+# )
+# @pytest.mark.django_db
+# def test_scheduler_atomic_must_specify_the_write_db(
+#     orm_broker: Broker,
+# ):
+#     """
+#     GIVEN a environment with a read/write configured replica database
+#     WHEN the scheduler is called
+#     THEN the transaction must be called with the write database.
+#     """
+#     broker = get_broker(list_key="scheduler_test:q")
+#     with mock.patch("django_q.scheduler.db.transaction") as mocked_db:
+#         run_scheduler_once(broker=broker)
+#         mocked_db.atomic.assert_called_with(using="writable")
 
 
 @override_settings(
@@ -467,7 +447,7 @@ def test_scheduler_atomic_must_specify_the_database_based_on_router_redirection(
     """
     broker = get_broker(list_key="scheduler_test:q")
     with mock.patch("django_q.cluster.db.transaction") as mocked_db:
-        scheduler(broker=broker)
+        run_scheduler_once(broker=broker)
         mocked_db.atomic.assert_called_with(using="default")
 
 

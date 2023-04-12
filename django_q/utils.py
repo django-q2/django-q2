@@ -1,13 +1,13 @@
 from datetime import datetime
+from django import db
 import calendar
-import inspect
 from datetime import date
 
 import django
 from django.utils import timezone
 from django.conf import settings
 
-from django_q.conf import Conf
+from django_q.conf import Conf, logger
 
 if django.VERSION < (4, 0):
     # pytz is the default in django 3.2. Remove when no support for 3.2
@@ -45,18 +45,6 @@ def add_years(d, years):
         return d.replace(year=new_date.year, month=new_date.month, day=new_date.day)
 
 
-def get_func_repr(func):
-    # convert func to string
-    if inspect.isfunction(func):
-        return f"{func.__module__}.{func.__name__}"
-    elif inspect.ismethod(func) and hasattr(func.__self__, "__name__"):
-        return (
-            f"{func.__self__.__module__}." f"{func.__self__.__name__}.{func.__name__}"
-        )
-    else:
-        return str(func) if func else None
-
-
 def localtime(value=None) -> datetime:
     """Override for timezone.localtime to deal with naive times and local times"""
     if settings.USE_TZ:
@@ -72,3 +60,18 @@ def localtime(value=None) -> datetime:
         return datetime.now()
     else:
         return value
+
+
+def close_old_django_connections():
+    """
+    Close django connections unless running with sync=True.
+    """
+    if Conf.SYNC:
+        logger.warning(
+            "Preserving django database connections because sync=True. Beware "
+            "that tasks are now injected in the calling context/transactions "
+            "which may result in unexpected behaviour."
+        )
+    else:
+        db.close_old_connections()
+

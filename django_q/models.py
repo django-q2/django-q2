@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from keyword import iskeyword
+import ast
 
 # Django
 from django import get_version
@@ -21,8 +22,6 @@ from picklefield.fields import dbsafe_decode
 from django_q.conf import croniter, Conf
 from django_q.signing import SignedPackage
 from django_q.utils import localtime, add_months, add_years
-
-from .utils import get_func_repr
 
 
 class Task(models.Model):
@@ -229,6 +228,34 @@ class Schedule(models.Model):
         help_text=_("Name of kwarg to pass intended schedule date"),
     )
 
+    def parse_kwargs(self):
+        if not self.kwargs:
+            return {}
+        try:
+            # first try the dict syntax
+            return ast.literal_eval(self.kwargs)
+        except (SyntaxError, ValueError):
+            # else use the kwargs syntax
+            try:
+                parsed_kwargs = (
+                    ast.parse(f"f({self.kwargs})").body[0].value.keywords
+                )
+                return {
+                    kwarg.arg: ast.literal_eval(kwarg.value)
+                    for kwarg in parsed_kwargs
+                }
+            except (SyntaxError, ValueError):
+                return {}
+
+    def parse_args(self):
+        if not self.args:
+            return tuple()
+        args = ast.literal_eval(self.args)
+        # single value won't eval to tuple, so:
+        if type(args) != tuple:
+            args = (args,)
+        return args
+
     def calculate_next_run(self, next_run=None):
         # next run is always in UTC
         next_run = next_run or self.next_run
@@ -311,6 +338,7 @@ class OrmQ(models.Model):
     payload = models.TextField()
     lock = models.DateTimeField(null=True, help_text=_("Prevent any cluster from pulling until"))
 
+
     @cached_property
     def task(self):
         try:
@@ -319,16 +347,24 @@ class OrmQ(models.Model):
             return {"id": "*" + e.__class__.__name__}
 
     def func(self):
-        return get_func_repr(self.task.get("func"))
+        if isinstance(self.task, dict):
+            return self.task.get("func_name", "")
+        return self.task.func_name
 
     def task_id(self):
-        return self.task.get("id")
+        if isinstance(self.task, dict):
+            return self.task.get("id", "")
+        return self.task.id
 
     def name(self):
-        return self.task.get("name")
+        if isinstance(self.task, dict):
+            return self.task["name"]
+        return self.task.name
 
     def group(self):
-        return self.task.get("group")
+        if isinstance(self.task, dict):
+            return self.task.get("group", "")
+        return self.task.group
 
     def args(self):
         return self.task.get("args")

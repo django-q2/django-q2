@@ -3,10 +3,6 @@ Monitor
 .. py:currentmodule::django_q.monitor
 
 
-.. warning::
-    Blessed needs to be installed to get this to work! See: https://pypi.org/project/blessed/
-
-
 The cluster monitor shows live information about all the Q clusters connected to your project.
 
 Start the monitor with Django's `manage.py` command::

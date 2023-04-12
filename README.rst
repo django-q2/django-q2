@@ -104,11 +104,6 @@ For full configuration options, see the `configuration documentation <https://dj
 Management Commands
 ~~~~~~~~~~~~~~~~~~~
 
-::
-
-    For the management commands to work, you will need to install Blessed: <https://github.com/jquast/blessed>
-
-
 Start a cluster with::
 
     $ python manage.py qcluster
