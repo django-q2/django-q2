@@ -32,6 +32,7 @@ class TaskAdmin(admin.ModelAdmin):
     """model admin for success tasks."""
 
     list_display = ("name", "group", "func", "cluster", "started", "stopped", "time_taken")
+    actions = [resubmit_task]
 
     def has_add_permission(self, request):
         """Don't allow adds."""
