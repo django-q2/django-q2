@@ -60,7 +60,7 @@ class FailAdmin(admin.ModelAdmin):
         """Don't allow adds."""
         return False
 
-    actions = [retry_failed]
+    actions = [resubmit_task]
     search_fields = ("name", "func", "group")
     list_filter = ("group", "cluster")
     readonly_fields = []
