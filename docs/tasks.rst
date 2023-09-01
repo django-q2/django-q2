@@ -265,7 +265,7 @@ Reference
     Gets the result of a previously executed task
 
     :param str task_id: the uuid or name of the task
-    :param int wait: optional milliseconds to wait for a result. -1 for indefinite, but be sure the result will be not be `None` otherwise it will wait indefinitely!
+    :param int wait: optional milliseconds to wait for a result. -1 for indefinite, but be sure the result will not be `None` otherwise it will wait indefinitely!
     :param bool cached: run this against the cache backend.
     :returns: The result of the executed task
 
