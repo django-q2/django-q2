@@ -4,7 +4,7 @@ from multiprocessing.queues import Queue
 from django import db
 from django.utils.translation import gettext_lazy as _
 
-import django_q.tasks
+from django_q.tasks import async_chain
 from django_q.brokers import Broker, get_broker
 from django_q.conf import Conf, logger, setproctitle
 from django_q.models import Success, Task
@@ -77,7 +77,7 @@ def save_task(task, broker: Broker):
         return
     # enqueues next in a chain
     if task.get("chain", None):
-        django_q.tasks.async_chain(
+        async_chain(
             task["chain"],
             group=task["group"],
             cached=task["cached"],
@@ -185,7 +185,7 @@ def save_cached(task, broker: Broker):
             broker.cache.set(group_key, group_list, timeout)
             # async_task next in a chain
             if task.get("chain", None):
-                django_q.tasks.async_chain(
+                async_chain(
                     task["chain"],
                     group=group,
                     cached=task["cached"],
