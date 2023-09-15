@@ -4,12 +4,12 @@ from multiprocessing.queues import Queue
 from django import db
 from django.utils.translation import gettext_lazy as _
 
-from django_q.tasks import async_chain
 from django_q.brokers import Broker, get_broker
 from django_q.conf import Conf, logger, setproctitle
 from django_q.models import Success, Task
 from django_q.signals import post_execute
 from django_q.signing import SignedPackage
+from django_q.tasks import async_chain
 from django_q.utils import close_old_django_connections, get_func_repr
 
 try:
