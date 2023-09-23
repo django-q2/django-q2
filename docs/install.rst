@@ -43,7 +43,7 @@ Then migrate the database to get the latest tables/fields::
 Requirements
 ------------
 
-Django Q2 is tested for Python 3.8, 3.9, 3.10 and 3.11
+Django Q2 is tested for Python 3.8, 3.9, 3.10, 3.11 and 3.12
 
 -  `Django <https://www.djangoproject.com>`__
 
@@ -145,7 +145,7 @@ Other known issues are:
 
 Python
 ~~~~~~
-Current tests are performed with 3.8, 3.9, 3.10 and 3.11
+Current tests are performed with 3.8, 3.9, 3.10, 3.11 and 3.12
 If you do encounter any regressions with earlier versions, please submit an issue on `github <https://github.com/GDay/django-q2>`__
 
 Open-source packages
