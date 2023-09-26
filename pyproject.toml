@@ -47,7 +47,7 @@ include = ['CHANGELOG.md']
 [tool.poetry.dependencies]
 python = ">=3.8, <4"
 django = [
-    { version = ">=3.2, <5", markers = "python_version >= '3.8'" }
+    { version = ">=3.2, <5", markers = "python_version >= '3.8'" },
     { version = "^5", markers = "python_version >= '3.10'" }
 ]
 django-picklefield = "^3.1"
