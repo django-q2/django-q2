@@ -48,7 +48,7 @@ include = ['CHANGELOG.md']
 python = ">=3.8,<4"
 django = [
     { version = ">=3.2, <5", python = ">= 3.8" },
-    { version = "^5.0a", python = ">= 3.10", allow-prereleases = true }
+    { version = "^5.0a1", python = ">= 3.10", allow-prereleases = true }
 ]
 django-picklefield = "^3.1"
 
