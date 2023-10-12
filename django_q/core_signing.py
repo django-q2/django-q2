@@ -9,7 +9,8 @@ from django.core.signing import TimestampSigner as TsS
 from django.core.signing import b64_decode, dumps
 
 if django.VERSION < (5, 0):
-    from django.utils.baseconv.base62 import decode as b62_decode
+    from django.utils.baseconv import base62
+    b62_decode = base62.decode
 else:
     from django.core.signing import b62_decode
 
