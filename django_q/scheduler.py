@@ -82,7 +82,7 @@ def scheduler(broker: Broker = None):
                             break
 
                     s.next_run = next_run
-                    s.repeats += -1
+                    # s.repeats += -1 # Do not count the runs here, maybe use another variable for it
                 # send it to the cluster; any cluster name is allowed in multi-queue scenarios
                 # because `broker_name` is confusing, using `cluster` name is recommended and takes precedence
                 q_options["cluster"] = s.cluster or q_options.get(
