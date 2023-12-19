@@ -40,6 +40,7 @@ except ModuleNotFoundError:
 
 
 class Conf:
+
     """
     Configuration class
     """
@@ -52,8 +53,8 @@ class Conf:
     _Q_CLUSTER_NAME = os.getenv("Q_CLUSTER_NAME")
     if (
         _Q_CLUSTER_NAME
-        and _Q_CLUSTER_NAME != conf.get("name")
-        and _Q_CLUSTER_NAME != conf.get("cluster_name")
+        and conf.get("name") != _Q_CLUSTER_NAME
+        and conf.get("cluster_name") != _Q_CLUSTER_NAME
     ):
         conf["cluster_name"] = _Q_CLUSTER_NAME
         alt_conf = conf.pop("ALT_CLUSTERS")
@@ -79,6 +80,9 @@ class Conf:
 
     # ORM broker
     ORM = conf.get("orm", None)
+
+    # PUBSUB broker
+    PUBSUB = conf.get("pubsub", None)
 
     # Custom broker class
     BROKER_CLASS = conf.get("broker_class", None)
@@ -115,9 +119,9 @@ class Conf:
         warn(
             _(
                 "SAVE_LIMIT_PER (%(option)s) is not a valid option. Options are: "
-                "'group', 'name', 'func' and None. Default is None."
+                "'group', 'name', 'func' and None. Default is None.",
             )
-            % {"option": SAVE_LIMIT_PER}
+            % {"option": SAVE_LIMIT_PER},
         )
 
     # Guard loop sleep in seconds. Should be between 0 and 60 seconds.
@@ -175,7 +179,7 @@ class Conf:
             "Retry and timeout are misconfigured. Set retry larger than timeout,"
             "failure to do so will cause the tasks to be retriggered before completion."
             "See https://django-q2.readthedocs.io/en/master/configure.html#retry "
-            "for details."
+            "for details.",
         )
 
     # Sets the amount of tasks the cluster will try to pop off the broker.
@@ -254,7 +258,7 @@ if not logger.hasHandlers():
     logger.setLevel(level=getattr(logging, Conf.LOG_LEVEL))
     logger.propagate = False
     formatter = logging.Formatter(
-        fmt="%(asctime)s [Q] %(levelname)s %(message)s", datefmt="%H:%M:%S"
+        fmt="%(asctime)s [Q] %(levelname)s %(message)s", datefmt="%H:%M:%S",
     )
     handler = logging.StreamHandler()
     handler.setFormatter(formatter)
@@ -301,5 +305,5 @@ def get_ppid():
     else:
         raise OSError(
             "Your OS does not support `os.getppid`. Please install `psutil` as an "
-            "alternative provider."
+            "alternative provider.",
         )
