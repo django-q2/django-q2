@@ -196,6 +196,11 @@ def get_broker(list_key: str = None) -> Broker:
         from django_q.brokers import mongo
 
         return mongo.Mongo(list_key=list_key)
+    # Google Cloud PubSub
+    elif Conf.PUBSUB:
+        from django_q.brokers import google_pubsub
+
+        return google_pubsub.Pubsub(list_key=list_key)
     # default to redis
     else:
         from django_q.brokers import redis_broker

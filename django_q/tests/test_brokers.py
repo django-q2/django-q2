@@ -59,7 +59,67 @@ def test_custom(monkeypatch):
 
 
 @pytest.mark.skipif(
-    not os.getenv("IRON_MQ_TOKEN"), reason="requires IronMQ credentials"
+    not os.getenv("GOOGLE_APPLICATION_CREDENTIALS"), reason="requires Google Cloud credentials",
+)
+def test_pubsub(monkeypatch):
+    monkeypatch.setattr(
+        Conf,
+        "PUBSUB",
+        {
+            "google_cloud_project": os.getenv("GOOGLE_CLOUD_PROJECT"),
+            "google_application_credentials": os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),
+        },
+    )
+    # check broker
+    broker = get_broker(list_key=uuid()[0])
+    assert broker.ping() is True
+    assert broker.info() is not None
+    # assert broker.queue_size() == 0
+    # async_task
+    broker.enqueue("test")
+    # dequeue
+    task = broker.dequeue()[0]
+    assert task[1] == "test"
+    broker.acknowledge(task[0])
+    assert broker.dequeue() is None
+    # Retry test
+    monkeypatch.setattr(Conf, "RETRY", 1)
+    broker.enqueue("test")
+    sleep(2)
+    task = broker.dequeue()[0]
+    assert len(task) > 0
+    broker.acknowledge(task[0])
+    sleep(2)
+    # delete job
+    monkeypatch.setattr(Conf, "RETRY", 60)
+    broker.enqueue("test")
+    sleep(1)
+    task = broker.dequeue()[0]
+    task_id = task[0]
+    broker.delete(task_id)
+    assert broker.dequeue() is None
+    # fail
+    broker.enqueue("test")
+    task = broker.dequeue()[0]
+    broker.fail(task[0])
+    # bulk test
+    for n in range(10):
+        broker.enqueue(f"test {n}")
+    monkeypatch.setattr(Conf, "BULK", 12)
+    tasks = broker.dequeue()
+    for task in tasks:
+        assert task is not None
+        broker.acknowledge(task[0])
+    # duplicate acknowledge
+    broker.acknowledge(task[0])
+    # assert broker.lock_size() == 0
+    # delete queue
+    broker.enqueue("test")
+    broker.delete_queue()
+
+
+@pytest.mark.skipif(
+    not os.getenv("IRON_MQ_TOKEN"), reason="requires IronMQ credentials",
 )
 def test_ironmq(monkeypatch):
     monkeypatch.setattr(
@@ -122,7 +182,7 @@ def test_ironmq(monkeypatch):
 
 
 @pytest.mark.skipif(
-    not os.getenv("AWS_ACCESS_KEY_ID"), reason="requires AWS credentials"
+    not os.getenv("AWS_ACCESS_KEY_ID"), reason="requires AWS credentials",
 )
 def canceled_sqs(monkeypatch):
     monkeypatch.setattr(
@@ -191,7 +251,7 @@ def canceled_sqs(monkeypatch):
     broker.delete_queue()
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_orm(monkeypatch):
     monkeypatch.setattr(Conf, "ORM", "default")
     # check broker
@@ -248,7 +308,7 @@ def test_orm(monkeypatch):
     assert broker.queue_size() == 0
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_mongo(monkeypatch):
     monkeypatch.setattr(Conf, "MONGO", {"host": MONGO_HOST, "port": 27017})
     # check broker
