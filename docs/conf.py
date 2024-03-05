@@ -64,7 +64,7 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = "Django Q2"
+project = "Django Q"
 copyright = "2015-2021, Ilan Steemers - 2022, Stan Triepels"
 author = "Ilan Steemers, Stan Triepels"
 
@@ -231,7 +231,7 @@ html_static_path = ["_static"]
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "DjangoQ2doc"
+htmlhelp_basename = "DjangoQdoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -250,7 +250,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "DjangoQ2.tex", "Django Q2 Documentation", "Ilan Steemers", "manual"),
+    (master_doc, "DjangoQ.tex", "Django Q Documentation", "Ilan Steemers", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -278,7 +278,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "djangoq2", "Django Q2 Documentation", [author], 1)]
+man_pages = [(master_doc, "djangoq", "Django Q Documentation", [author], 1)]
 
 
 # If true, show URL addresses after external links.
@@ -293,10 +293,10 @@ man_pages = [(master_doc, "djangoq2", "Django Q2 Documentation", [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        "DjangoQ2",
-        "Django Q2 Documentation",
+        "DjangoQ",
+        "Django Q Documentation",
         author,
-        "DjangoQ2",
+        "DjangoQ",
         "A multiprocessing distributed task queue for Django.",
         "Miscellaneous",
     ),

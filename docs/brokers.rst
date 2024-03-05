@@ -1,7 +1,7 @@
 Brokers
 =======
 
-The broker sits between your Django instances and your Django Q2 cluster instances; accepting, saving and delivering task packages.
+The broker sits between your Django instances and your Django Q cluster instances; accepting, saving and delivering task packages.
 Currently we support a variety of brokers.
 
 The default Redis broker does not support message receipts.
@@ -11,7 +11,7 @@ Keep in mind this is not the same as a failing task. If a tasks code crashes, th
 Even though this might be acceptable in some use cases, you might prefer brokers with message receipts support.
 These guarantee delivery by waiting for the cluster to send a receipt after the task has been processed.
 In case a receipt has not been received after a set time, the task package is put back in the queue.
-Django Q2 supports this behavior by setting the :ref:`retry` timer on brokers that support message receipts.
+Django Q supports this behavior by setting the :ref:`retry` timer on brokers that support message receipts.
 
 Some pointers:
 
@@ -29,7 +29,7 @@ Support for more brokers is being worked on.
 
 Redis
 -----
-The default broker for Django Q2 clusters.
+The default broker for Django Q clusters.
 
 * Atomic
 * Requires `Redis-py <https://github.com/andymccurdy/redis-py>`__ client library: ``pip install redis``
@@ -102,7 +102,7 @@ You can override the :class:`Broker` or any of its existing derived broker types
         def info(self):
             return 'My Custom Broker'
 
-Using the :ref:`broker_class` configuration setting you can then instruct Django Q2 to use this instead of one of the existing brokers:
+Using the :ref:`broker_class` configuration setting you can then instruct Django Q to use this instead of one of the existing brokers:
 
 .. code-block:: python
 

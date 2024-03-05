@@ -16,7 +16,7 @@ Configuration is handled via the ``Q_CLUSTER`` dictionary in your :file:`setting
         'save_limit': 250,
         'queue_limit': 500,
         'cpu_affinity': 1,
-        'label': 'Django Q2',
+        'label': 'Django Q',
         'redis': {
             'host': '127.0.0.1',
             'port': 6379,
@@ -114,7 +114,7 @@ Only works with brokers that support delivery receipts. Defaults to 60.
 
 The value must be bigger than the time it takes to complete longest task, i.e. :ref:`timeout` must be less than retry value and all tasks must complete
 in less time than the selected retry time. If this does not hold, i.e. the retry value is less than timeout or less than it takes to finish a task,
-Django-Q2 will start the task again if the used broker supports receipts.
+Django-Q will start the task again if the used broker supports receipts.
 
 For example, with the following code
 
@@ -193,7 +193,7 @@ Defaults to ``workers**2``.
 label
 ~~~~~
 
-The label used for the Django Admin page. Defaults to ``'Django Q2'``
+The label used for the Django Admin page. Defaults to ``'Django Q'``
 
 .. _catch_up:
 
@@ -251,7 +251,7 @@ of the cache connection you want to use instead of a direct Redis connection::
 
 
 .. tip::
-    Django Q2 uses your ``SECRET_KEY`` to sign task packages and prevent task crossover. So make sure you have it set up in your Django settings.
+    Django Q uses your ``SECRET_KEY`` to sign task packages and prevent task crossover. So make sure you have it set up in your Django settings.
 
 .. _ironmq_configuration:
 
@@ -410,7 +410,7 @@ Defaults to ``True``
 
 error_reporter
 ~~~~~~~~~~~~~~
-You can redirect worker exceptions directly to various error reporters (for example `Rollbar <https://rollbar.com/>`__ or `Sentry <https://docs.sentry.io/>`__) by installing Django Q2 with the necessary `extras <https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies>`__.
+You can redirect worker exceptions directly to various error reporters (for example `Rollbar <https://rollbar.com/>`__ or `Sentry <https://docs.sentry.io/>`__) by installing Django Q with the necessary `extras <https://setuptools.readthedocs.io/en/latest/setuptools.html#declaring-extras-optional-features-with-their-own-dependencies>`__.
 
 To enable installed error reporters, you must provide the configuration settings required by an error reporter extension::
 
@@ -419,12 +419,12 @@ To enable installed error reporters, you must provide the configuration settings
         'error_reporter': {
             'rollbar': {
                 'access_token': '32we33a92a5224jiww8982',
-                'environment': 'Django-Q2'
+                'environment': 'Django-Q'
             }
         }
     }
 
-For more information on error reporters and developing error reporting plugins for Django Q2, see :doc:`errors<errors>`.
+For more information on error reporters and developing error reporting plugins for Django Q, see :doc:`errors<errors>`.
 
 cpu_affinity
 ~~~~~~~~~~~~

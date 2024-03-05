@@ -19,16 +19,7 @@ Features
 -  Multi cluster monitor
 -  Redis, IronMQ, SQS, MongoDB or ORM
 -  Rollbar and Sentry support
-
-Changes compared to the original Django-Q:
-
-- Dropped support for Disque (hasn't been updated in a long time)
-- Dropped Redis, Arrow and Blessed dependencies
-- Updated all current dependencies
-- Added tests for Django 4.x and 5.x
-- Added Turkish language
-- Improved admin area
-- Fixed a lot of issues
+-  Low amount of dependencies (only 1 package)
 
 See the `changelog <https://github.com/GDay/django-q2/blob/master/CHANGELOG.md>`__ for all changes.
 
@@ -53,7 +44,7 @@ Installation
 
 -  Install the latest version with pip::
 
-    $ pip install django-q2
+    $ pip install django-q
 
 
 -  Add `django_q` to your `INSTALLED_APPS` in your projects `settings.py`::
@@ -230,10 +221,10 @@ Acknowledgements
 
 -  JetBrains for their `Open Source Support Program <https://www.jetbrains.com/community/opensource>`__
 
-.. |image0| image:: https://github.com/GDay/django-q2/actions/workflows/test.yml/badge.svg?branche=master
+.. |image0| image:: https://github.com/django-q2/django-q2/actions/workflows/test.yml/badge.svg?branche=master
    :target: https://github.com/GDay/django-q2/actions?query=workflow%3Atests
-.. |image1| image:: https://coveralls.io/repos/github/GDay/django-q2/badge.svg?branch=master
-   :target: https://coveralls.io/github/GDay/django-q2?branch=master
+.. |image1| image:: https://coveralls.io/repos/github/django-q2/django-q2/badge.svg?branch=master
+   :target: https://coveralls.io/github/django-q2/django-q2?branch=master
 .. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=latest
     :alt: Documentation Status
     :scale: 100

@@ -4,7 +4,7 @@ Installation
 
 -  Install the latest version with pip::
 
-    $ pip install django-q2
+    $ pip install django-q
 
 
 -  Add :mod:`django_q` to ``INSTALLED_APPS`` in your projects :file:`settings.py`::
@@ -20,34 +20,25 @@ Installation
 
 -  Choose a message :doc:`broker<brokers>`, configure it and install the appropriate client library.
 
--  Run Django Q2 cluster in order to handle tasks async::
+-  Run Django Q cluster in order to handle tasks async::
 
     $ python manage.py qcluster
 
 
-Migrate from Django-Q to Django-Q2
+Difference between Django Q and Django Q2
 ----------------------------------
 
-If you have an application with django-q running right now, you can simply swap the libraries and you should be good to go.::
-
-
-    $ pip uninstall django-q # you might have to uninstall django-q add-ons as well
-    $ pip install django-q2
-
-
-Then migrate the database to get the latest tables/fields::
-
-    $ python manage.py migrate
+These packages are identical. You can use either. Django Q2 used to be the improved version, but since Feb 2024, Django Q2 has been merged in to Django Q.
 
 
 Requirements
 ------------
 
-Django Q2 is tested for Python 3.8, 3.9, 3.10, 3.11 and 3.12
+Django Q is tested for Python 3.8, 3.9, 3.10, 3.11 and 3.12
 
 -  `Django <https://www.djangoproject.com>`__
 
-    Django Q2 aims to use as much of Django's standard offerings as possible.
+    Django Q aims to use as much of Django's standard offerings as possible.
     The code is tested against Django versions `3.2.x`, `4.1.x`, `4.2.x` and `5.0.x`.
 
 -  `Django-picklefield <https://github.com/gintas/django-picklefield>`__
@@ -91,7 +82,7 @@ Optional
 
     $ pip install pymongo
 
-- `Redis <http://redis.io/>`__ server is the default broker for Django Q2. It provides the best performance and does not require Django's cache framework for monitoring.
+- `Redis <http://redis.io/>`__ server is the default broker for Django Q. It provides the best performance and does not require Django's cache framework for monitoring.
 
 - `MongoDB <https://www.mongodb.org/>`__ is a highly scalable NoSQL database which makes for a very fast and reliably persistent at-least-once message broker. Usually available on most PaaS providers.
 
@@ -126,10 +117,10 @@ Add-ons
 
 OS X
 ~~~~
-Running Django Q2 on OS X should work fine, except for the following known issues:
+Running Django Q on OS X should work fine, except for the following known issues:
 
 * :meth:`multiprocessing.Queue.qsize()` is not supported. This leads to the monitor not reporting the internal queue size of clusters running under OS X.
-* CPU count through :func:`multiprocessing.cpu_count()` does not work. Installing :ref:`psutil<psutil_package>` provides Django Q2 with an alternative way of determining the number of CPU's on your system
+* CPU count through :func:`multiprocessing.cpu_count()` does not work. Installing :ref:`psutil<psutil_package>` provides Django Q with an alternative way of determining the number of CPU's on your system
 * CPU affinity is provided by :ref:`psutil<psutil_package>` which at this time does not support this feature on OSX. The code however is aware of this and will fake the CPU affinity assignment in the logs without actually assigning it. This way you can still develop with this setting.
 
 Windows
@@ -140,7 +131,7 @@ This will run all ``async`` calls inline through a single cluster worker without
 Other known issues are:
 
 * :func:`os.getppid()` is only supported under windows since Python 3.2. If you use an older version you need to install :ref:`psutil<psutil_package>` as an alternative.
-* CPU count through :func:`multiprocessing.cpu_count()` occasionally fails on servers. Installing :ref:`psutil<psutil_package>` provides Django Q2 with an alternative way of determining the number of CPU's on your system
+* CPU count through :func:`multiprocessing.cpu_count()` occasionally fails on servers. Installing :ref:`psutil<psutil_package>` provides Django Q with an alternative way of determining the number of CPU's on your system
 * The monitor and info commands rely on the Curses package which is not officially supported on windows. There are however some ports available like `this one <http://www.lfd.uci.edu/~gohlke/pythonlibs/#curses>`__ by Christoph Gohlke.
 
 Python
@@ -150,7 +141,7 @@ If you do encounter any regressions with earlier versions, please submit an issu
 
 Open-source packages
 ~~~~~~~~~~~~~~~~~~~~
-Django Q2 is always tested with the latest versions of the required and optional Python packages. We try to keep the dependencies as up to date as possible.
+Django Q is always tested with the latest versions of the required and optional Python packages. We try to keep the dependencies as up to date as possible.
 You can reference the `requirements <https://github.com/GDay/django-q2/blob/master/requirements.txt>`__ file to determine which versions are currently being used for tests and development.
 
 Django
