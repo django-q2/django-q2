@@ -1,5 +1,6 @@
 # Standard
 import signal
+import sys
 import socket
 import uuid
 from multiprocessing import Event, Process, Value, current_process
@@ -43,8 +44,14 @@ class Cluster:
         self.cluster_id = uuid.uuid4()
         self.host = socket.gethostname()
         self.timeout = None
-        signal.signal(signal.SIGTERM, self.sig_handler)
-        signal.signal(signal.SIGINT, self.sig_handler)
+        if sys.platform == "win32":
+            import win32api
+            win32api.SetConsoleCtrlHandler(self.sig_handler_windows, True)
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
+            signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        else:
+            signal.signal(signal.SIGTERM, self.sig_handler)
+            signal.signal(signal.SIGINT, self.sig_handler)
 
     def start(self) -> int:
         if setproctitle:
@@ -89,6 +96,9 @@ class Cluster:
             }
         )
         self.stop()
+
+    def sig_handler_windows(self, signum):
+        self.sig_handler(signum, None)
 
     @property
     def stat(self) -> Status:
