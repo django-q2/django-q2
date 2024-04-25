@@ -11,25 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12.0-rc.3" ]
-        django: [ "3.2", "4.1", "4.2", "5.0a1"]
+        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+        django: [ "4.2", "5.0"]
         exclude:
           # django 5.0 does not support 3.8 and 3.9
           - python-version: "3.8"
-            django: "5.0a1" 
+            django: "5.0" 
           - python-version: "3.9"
-            django: "5.0a1" 
+            django: "5.0" 
           # django 4.2 does not support 3.12
-          - python-version: "3.12.0-rc.3"
+          - python-version: "3.12"
             django: "4.2" 
-          # django 4.1 does not support 3.12
-          - python-version: "3.12.0-rc.3"
-            django: "4.1" 
-          # django 3.2 does not support 3.11 and 3.12
-          - python-version: "3.11"
-            django: "3.2" 
-          - python-version: "3.12.0-rc.3"
-            django: "3.2" 
 
     services:
       disque:
