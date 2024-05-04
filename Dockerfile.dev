@@ -8,10 +8,10 @@ ENV PYTHONUNBUFFERED 1
 ENV SHELL /bin/bash
 
 # Upgrades pip
-RUN pip install --upgrade pip 
+RUN pip install -U pip setuptools
 
 # Install poetry
-RUN pip install poetry
+RUN pip install poetry==1.8.2
 
 WORKDIR /app
 
