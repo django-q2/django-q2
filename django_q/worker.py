@@ -19,6 +19,7 @@ except core.exceptions.AppRegistryNotReady:
 from django_q.conf import Conf, error_reporter, logger, resource, setproctitle
 from django_q.signals import post_spawn, pre_execute
 from django_q.utils import close_old_django_connections, get_func_repr
+from django_q.exceptions import TimeoutException, TimeoutHandler
 
 try:
     import psutil
@@ -88,20 +89,33 @@ def worker(
         # signal execution
         pre_execute.send(sender="django_q", func=f, task=task)
         # execute the payload
-        timer.value = timer_value  # Busy
+        timer.value = timer_value + 3  # Busy. Add buffer so that guard doesn't kill the process before it gets processed
 
         try:
             if f is None:
                 # raise a meaningfull error if task["func"] is not a valid function
                 raise ValueError(f"Function {task['func']} is not defined")
-            res = f(*task["args"], **task["kwargs"])
+            with TimeoutHandler(timer_value):
+                res = f(*task["args"], **task["kwargs"])
             result = (res, True)
+
+        except TimeoutException as e:
+            result = (f"{e} : {traceback.format_exc()}", False)
+            task["result"] = result[0]
+            task["success"] = result[1]
+            task["stopped"] = timezone.now()
+            result_queue.put(task)
+            # force destroy process due to timeout
+            timer.value = 0
+            return
+
         except Exception as e:
             result = (f"{e} : {traceback.format_exc()}", False)
             if error_reporter:
                 error_reporter.report()
             if task.get("sync", False):
                 raise
+
         with timer.get_lock():
             # Process result
             task["result"] = result[0]
