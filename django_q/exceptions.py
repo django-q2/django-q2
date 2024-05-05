@@ -7,7 +7,7 @@ class TimeoutException(SystemExit):
 
 
 class TimeoutHandler(Exception):
-    def __init__(self, timeout: Optional[int] = None):
+    def __init__(self, timeout: int):
         self._timeout = timeout
 
     def raise_timeout_exception(self, signum, frame):
@@ -15,13 +15,13 @@ class TimeoutHandler(Exception):
                               '({0} seconds)'.format(self._timeout))
 
     def __enter__(self):
-        if self._timeout is None:
+        if self._timeout == -1:
             return
         signal.signal(signal.SIGALRM, self.raise_timeout_exception)
         signal.alarm(self._timeout)
 
     def __exit__(self, exc_type, exc_value, traceback):
-        if self._timeout is None:
+        if self._timeout == -1:
             return
         """When getting out of the timeout, reset the alarm, so it won't trigger"""
         signal.alarm(0)

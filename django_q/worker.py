@@ -89,7 +89,9 @@ def worker(
         # signal execution
         pre_execute.send(sender="django_q", func=f, task=task)
         # execute the payload
-        timer.value = timer_value + 3  # Busy. Add buffer so that guard doesn't kill the process before it gets processed
+        timer.value = timer_value # Busy
+        if timer.value != -1:
+            timer.value += 3  # Add buffer so that guard doesn't kill the process on timeout before it gets processed
 
         try:
             if f is None:
@@ -115,7 +117,6 @@ def worker(
                 error_reporter.report()
             if task.get("sync", False):
                 raise
-
         with timer.get_lock():
             # Process result
             task["result"] = result[0]
