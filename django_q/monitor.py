@@ -117,25 +117,19 @@ def save_task(task, broker: Broker):
 
         # check if this task has previous results
         try:
-            existing_task = Task.objects.get(id=task["id"], name=task["name"])
+            task_obj = Task.objects.get(id=task["id"], name=task["name"])
             # only update the result if it hasn't succeeded yet
-            if not existing_task.success:
-                existing_task.stopped = task["stopped"]
-                existing_task.result = task["result"]
-                existing_task.success = task["success"]
-                existing_task.attempt_count = existing_task.attempt_count + 1
-                existing_task.save()
-
-            if (
-                Conf.MAX_ATTEMPTS > 0
-                and existing_task.attempt_count >= Conf.MAX_ATTEMPTS
-            ):
-                broker.acknowledge(task["ack_id"])
+            if not task_obj.success:
+                task_obj.stopped = task["stopped"]
+                task_obj.result = task["result"]
+                task_obj.success = task["success"]
+                task_obj.attempt_count = task_obj.attempt_count + 1
+                task_obj.save()
 
         except Task.DoesNotExist:
             # convert func to string
             func = get_func_repr(task["func"])
-            Task.objects.create(
+            task_obj = Task.objects.create(
                 id=task["id"],
                 name=task["name"],
                 func=func,
@@ -150,6 +144,13 @@ def save_task(task, broker: Broker):
                 success=task["success"],
                 attempt_count=1,
             )
+
+        if (
+            Conf.MAX_ATTEMPTS > 0
+            and task_obj.attempt_count >= Conf.MAX_ATTEMPTS
+        ):
+            broker.acknowledge(task["ack_id"])
+
     except Exception:
         logger.exception("Could not save task result")
 
