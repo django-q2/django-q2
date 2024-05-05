@@ -150,8 +150,6 @@ def save_task(task, broker: Broker):
                 success=task["success"],
                 attempt_count=1,
             )
-
-
     except Exception:
         logger.exception("Could not save task result")
 
