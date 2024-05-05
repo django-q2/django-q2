@@ -93,6 +93,7 @@ def worker(
         if timer.value != -1:
             timer.value += 3  # Add buffer so that guard doesn't kill the process on timeout before it gets processed
 
+        timeout_error = False
         try:
             if f is None:
                 # raise a meaningfull error if task["func"] is not a valid function
@@ -100,29 +101,26 @@ def worker(
             with TimeoutHandler(timer_value):
                 res = f(*task["args"], **task["kwargs"])
             result = (res, True)
-
-        except TimeoutException as e:
-            result = (f"{e} : {traceback.format_exc()}", False)
-            task["result"] = result[0]
-            task["success"] = result[1]
-            task["stopped"] = timezone.now()
-            result_queue.put(task)
-            # force destroy process due to timeout
-            timer.value = 0
-            return
-
-        except Exception as e:
+        except (Exception, TimeoutException) as e:
+            if isinstance(e, TimeoutException):
+                timeout_error = True
             result = (f"{e} : {traceback.format_exc()}", False)
             if error_reporter:
                 error_reporter.report()
             if task.get("sync", False):
                 raise
+
         with timer.get_lock():
             # Process result
             task["result"] = result[0]
             task["success"] = result[1]
             task["stopped"] = timezone.now()
             result_queue.put(task)
+            if timeout_error:
+                # force destroy process due to timeout
+                timer.value = 0
+                break
+
             timer.value = -1  # Idle
             if setproctitle:
                 setproctitle.setproctitle(f"qcluster {proc_name} idle")
