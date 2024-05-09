@@ -114,12 +114,12 @@ def save_task(task, broker: Broker):
             filters[Conf.SAVE_LIMIT_PER] = value
 
         with db.transaction.atomic(using=db.router.db_for_write(Success)):
-            list(Success.objects.filter(**filters).select_for_update())
+            last = Success.objects.filter(**filters).select_for_update().last()
             if (
                 task["success"]
                 and 0 < Conf.SAVE_LIMIT <= Success.objects.filter(**filters).count()
             ):
-                Success.objects.filter(**filters).last().delete()
+                last.delete()
 
         # check if this task has previous results
         try:
