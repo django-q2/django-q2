@@ -2,10 +2,9 @@ import ast
 from multiprocessing.process import current_process
 
 from django import core, db
+from django.apps.registry import apps
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-
-from django.apps.registry import apps
 
 try:
     apps.check_apps_ready()
@@ -86,7 +85,7 @@ def scheduler(broker: Broker = None):
                     # Little Fix for already broken numbers
                     if s.repeats < -1:
                         s.repeats = -1
-                    
+
                     # Check if the value is not zero
                     if s.repeats > 0:
                         s.repeats -= 1

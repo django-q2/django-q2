@@ -2,8 +2,8 @@ from multiprocessing.process import current_process
 from multiprocessing.queues import Queue
 
 from django import core, db
-from django.utils.translation import gettext_lazy as _
 from django.apps.registry import apps
+from django.utils.translation import gettext_lazy as _
 
 try:
     apps.check_apps_ready()
@@ -145,10 +145,7 @@ def save_task(task, broker: Broker):
                 attempt_count=1,
             )
 
-        if (
-            Conf.MAX_ATTEMPTS > 0
-            and task_obj.attempt_count >= Conf.MAX_ATTEMPTS
-        ):
+        if Conf.MAX_ATTEMPTS > 0 and task_obj.attempt_count >= Conf.MAX_ATTEMPTS:
             broker.acknowledge(task["ack_id"])
 
     except Exception:

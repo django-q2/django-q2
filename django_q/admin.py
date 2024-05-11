@@ -1,4 +1,5 @@
 """Admin module for Django."""
+
 from django.contrib import admin
 from django.db.models.expressions import OuterRef, Subquery
 from django.urls import reverse

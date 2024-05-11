@@ -2,6 +2,7 @@
 The code is derived from
 https://github.com/althonos/pronto/commit/3384010dfb4fc7c66a219f59276adef3288a886b
 """
+
 import multiprocessing
 import multiprocessing.queues
 import sys

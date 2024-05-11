@@ -263,7 +263,6 @@ if not logger.hasHandlers():
 
 # Error Reporting Interface
 class ErrorReporter:
-
     # initialize with iterator of reporters (better name, targets?)
     def __init__(self, reporters):
         self.targets = [target for target in reporters]

@@ -10,7 +10,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import format_html
-from django.utils.timezone import is_aware
 from django.utils.translation import gettext_lazy as _
 
 # External
@@ -18,7 +17,7 @@ from picklefield import PickledObjectField
 from picklefield.fields import dbsafe_decode
 
 # Local
-from django_q.conf import Conf, croniter
+from django_q.conf import croniter
 from django_q.signing import SignedPackage
 from django_q.utils import add_months, add_years, localtime
 

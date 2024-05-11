@@ -4,8 +4,8 @@ from multiprocessing.queues import Queue
 from time import sleep
 
 from django import core
-from django.utils.translation import gettext_lazy as _
 from django.apps.registry import apps
+from django.utils.translation import gettext_lazy as _
 
 try:
     apps.check_apps_ready()
@@ -58,9 +58,9 @@ def pusher(task_queue: Queue, event: Event, broker: Broker = None):
                     logger.exception("Failed to push task to queue")
                     broker.fail(ack_id)
                     continue
-                task[
-                    "cluster"
-                ] = Conf.CLUSTER_NAME  # save actual cluster name to orm task table
+                task["cluster"] = (
+                    Conf.CLUSTER_NAME
+                )  # save actual cluster name to orm task table
                 task["ack_id"] = ack_id
                 task_queue.put(task)
             logger.debug(
