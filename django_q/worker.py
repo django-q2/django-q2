@@ -5,9 +5,9 @@ from multiprocessing.process import current_process
 from multiprocessing.queues import Queue
 
 from django import core
-from django.apps.registry import apps
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
+from django.apps.registry import apps
 
 try:
     apps.check_apps_ready()
@@ -88,7 +88,7 @@ def worker(
         # signal execution
         pre_execute.send(sender="django_q", func=f, task=task)
         # execute the payload
-        timer.value = timer_value  # Busy
+        timer.value = int(timer_value)  # Busy
 
         try:
             if f is None:

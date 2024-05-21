@@ -357,7 +357,7 @@ class Sentinel:
         count = 0
         if not self.timeout:
             self.timeout = 30
-        while self.status() == Conf.STOPPING and count < self.timeout * 10:
+        while self.status() == Conf.STOPPING and count < int(self.timeout) * 10:
             sleep(0.1)
             Stat(self).save()
             count += 1

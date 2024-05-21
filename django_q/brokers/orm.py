@@ -11,7 +11,7 @@ from django_q.models import OrmQ
 
 
 def _timeout():
-    return timezone.now() + timedelta(seconds=Conf.RETRY)
+    return timezone.now() + timedelta(seconds=int(Conf.RETRY))
 
 
 class ORM(Broker):
