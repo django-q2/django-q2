@@ -81,7 +81,7 @@ def save_task(task, broker: Broker):
     :type broker: brokers.Broker
     """
     # SAVE LIMIT < 0 : Don't save success
-    if not task.get("save", Conf.SAVE_LIMIT >= 0) and task["success"]:
+    if not task.get("save", int(Conf.SAVE_LIMIT) >= 0) and task["success"]:
         return
     # enqueues next in a chain
     if task.get("chain", None):
