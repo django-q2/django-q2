@@ -145,7 +145,9 @@ def save_task(task, broker: Broker):
                 attempt_count=1,
             )
 
-        if Conf.MAX_ATTEMPTS > 0 and task_obj.attempt_count >= Conf.MAX_ATTEMPTS:
+        if int(Conf.MAX_ATTEMPTS) > 0 and task_obj.attempt_count >= int(
+            Conf.MAX_ATTEMPTS
+        ):
             broker.acknowledge(task["ack_id"])
 
     except Exception:
