@@ -6,7 +6,6 @@ import django_q.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("django_q", "0015_alter_schedule_schedule_type"),
     ]

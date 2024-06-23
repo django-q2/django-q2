@@ -1,4 +1,5 @@
 """Provides task functionality."""
+
 # Standard
 from multiprocessing import Value
 from time import sleep, time
@@ -569,7 +570,9 @@ class Chain:
     A sequential chain of tasks
     """
 
-    def __init__(self, chain=None, group=None, cached=Conf.CACHED, sync=Conf.SYNC, broker=None):
+    def __init__(
+        self, chain=None, group=None, cached=Conf.CACHED, sync=Conf.SYNC, broker=None
+    ):
         self.chain = chain or []
         self.group = group or ""
         self.broker = broker or get_broker()
@@ -729,17 +732,14 @@ class AsyncTask:
         return self.id
 
     def result(self, wait=0):
-
         if self.started:
             return result(self.id, wait=wait, cached=self.cached)
 
     def fetch(self, wait=0):
-
         if self.started:
             return fetch(self.id, wait=wait, cached=self.cached)
 
     def result_group(self, failures=False, wait=0, count=None):
-
         if self.started and self.group:
             return result_group(
                 self.group,
@@ -750,7 +750,6 @@ class AsyncTask:
             )
 
     def fetch_group(self, failures=True, wait=0, count=None):
-
         if self.started and self.group:
             return fetch_group(
                 self.group,

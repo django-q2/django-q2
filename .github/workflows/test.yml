@@ -7,6 +7,15 @@ on:
     branches:
       - master
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v3
+        - name: Lint with ruff
+          run: |
+            pipx install ruff==0.4.4
+            ruff format . --check && ruff check .
+
   test:
     runs-on: ubuntu-latest
     strategy:
