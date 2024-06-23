@@ -1,18 +1,19 @@
 import signal
-from typing import Optional
 
 class TimeoutException(SystemExit):
-    """Exception for when a worker takes too long to complete a task"""
+    """
+    Exception for when a worker takes too long to complete a task
+    Raising SystemExit will make sure the function terminates gracefully.
+    """
     pass
 
 
-class TimeoutHandler(Exception):
+class TimeoutHandler:
     def __init__(self, timeout: int):
         self._timeout = timeout
 
     def raise_timeout_exception(self, signum, frame):
-        raise TimeoutException('Task exceeded maximum timeout value '
-                              '({0} seconds)'.format(self._timeout))
+        raise TimeoutException(f"Task exceeded maximum timeout value ({self._timeout} seconds)")
 
     def __enter__(self):
         if self._timeout == -1:

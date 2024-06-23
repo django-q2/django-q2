@@ -19,7 +19,8 @@ except core.exceptions.AppRegistryNotReady:
 from django_q.conf import Conf, error_reporter, logger, resource, setproctitle
 from django_q.signals import post_spawn, pre_execute
 from django_q.utils import close_old_django_connections, get_func_repr
-from django_q.exceptions import TimeoutException, TimeoutHandler
+from django_q.exceptions import TimeoutException
+from django_q.timeout import TimeoutHandler
 
 try:
     import psutil
