@@ -79,6 +79,8 @@ timeout
 The number of seconds a worker is allowed to spend on a task before it's terminated. Defaults to ``None``, meaning it will never time out.
 Set this to something that makes sense for your project. Can be overridden for individual tasks.
 
+Note: for systems that don't have `SIGALRM` available (e.g. Windows), it will not raise an error properly. It will kill the task, but it will keep retrying until it finishes within the given time.
+
 See :ref:`retry` for details how to set values for timeout and retry.
 
 .. _time_zone:
