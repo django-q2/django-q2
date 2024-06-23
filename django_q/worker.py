@@ -17,10 +17,10 @@ except core.exceptions.AppRegistryNotReady:
     django.setup()
 
 from django_q.conf import Conf, error_reporter, logger, resource, setproctitle
-from django_q.signals import post_spawn, pre_execute
-from django_q.utils import close_old_django_connections, get_func_repr
 from django_q.exceptions import TimeoutException
+from django_q.signals import post_spawn, pre_execute
 from django_q.timeout import TimeoutHandler
+from django_q.utils import close_old_django_connections, get_func_repr
 
 try:
     import psutil
@@ -90,7 +90,7 @@ def worker(
         # signal execution
         pre_execute.send(sender="django_q", func=f, task=task)
         # execute the payload
-        timer.value = timer_value # Busy
+        timer.value = timer_value  # Busy
         if timer.value != -1:
             timer.value += 3  # Add buffer so that guard doesn't kill the process on timeout before it gets processed
 

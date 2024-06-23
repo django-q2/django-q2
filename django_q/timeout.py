@@ -1,7 +1,10 @@
-from .exceptions import TimeoutException
 import signal
+
 from django.utils.translation import gettext_lazy as _
+
 from django_q.conf import logger
+
+from .exceptions import TimeoutException
 
 
 class TimeoutHandler:
@@ -9,7 +12,9 @@ class TimeoutHandler:
         self._timeout = timeout
 
     def raise_timeout_exception(self, signum, frame):
-        raise TimeoutException(f"Task exceeded maximum timeout value ({self._timeout} seconds)")
+        raise TimeoutException(
+            f"Task exceeded maximum timeout value ({self._timeout} seconds)"
+        )
 
     def __enter__(self):
         # if the timeout is -1, then there is no timeout and the task will always keep running until it's done or manually killed
@@ -18,9 +23,7 @@ class TimeoutHandler:
         try:
             signal.signal(signal.SIGALRM, self.raise_timeout_exception)
         except ValueError:  # ValueError is raised for Windows users
-            logger.debug(
-                _("SIGALARM is not available on your platform")
-            )
+            logger.debug(_("SIGALARM is not available on your platform"))
 
         signal.alarm(self._timeout)
 
@@ -32,6 +35,4 @@ class TimeoutHandler:
             signal.alarm(0)
             signal.signal(signal.SIGALRM, signal.SIG_DFL)
         except ValueError:  # ValueError is raised for Windows users
-            logger.debug(
-                _("SIGALARM is not available on your platform")
-            )
+            logger.debug(_("SIGALARM is not available on your platform"))
