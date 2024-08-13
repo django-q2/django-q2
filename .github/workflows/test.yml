@@ -21,8 +21,13 @@ jobs:
     strategy:
       matrix:
         python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
-        django: [ "4.2", "5.0"]
+        django: [ "4.2", "5.0", "5.1"]
         exclude:
+          # django 5.1 does not support 3.8 and 3.9
+          - python-version: "3.8"
+            django: "5.1"
+          - python-version: "3.9"
+            django: "5.1"
           # django 5.0 does not support 3.8 and 3.9
           - python-version: "3.8"
             django: "5.0" 
