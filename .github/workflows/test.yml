@@ -28,9 +28,6 @@ jobs:
             django: "5.0" 
           - python-version: "3.9"
             django: "5.0" 
-          # django 4.2 does not support 3.12
-          - python-version: "3.12"
-            django: "4.2" 
 
     services:
       disque:
