@@ -38,6 +38,11 @@ try:
 except ModuleNotFoundError:
     setproctitle = None
 
+try:
+    from prometheus_client import multiprocess as prometheus_multiprocess
+except ModuleNotFoundError:
+    prometheus_multiprocess = None
+
 
 class Conf:
     """

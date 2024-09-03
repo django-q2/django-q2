@@ -21,7 +21,7 @@ from django.utils.translation import gettext_lazy as _
 
 # Local
 from django_q.brokers import Broker, get_broker
-from django_q.conf import Conf, get_ppid, logger, psutil, setproctitle
+from django_q.conf import Conf, get_ppid, logger, psutil, setproctitle, prometheus_multiprocess
 from django_q.humanhash import humanize
 from django_q.monitor import monitor
 from django_q.pusher import pusher
@@ -223,6 +223,8 @@ class Sentinel:
                 % {"name": process.name}
             )
         else:
+            if prometheus_multiprocess:
+                prometheus_multiprocess.mark_process_dead(process.pid)
             self.pool.remove(process)
             self.spawn_worker()
             if process.timer.value == 0:
