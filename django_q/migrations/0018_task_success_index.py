@@ -12,6 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddIndex(
             model_name='task',
-            index=models.Index(condition=models.Q(('success', True)), fields=['group', 'name', 'func', 'success'], name='success_index'),
+            index=models.Index(condition=models.Q(('success', True)), fields=['group', 'name', 'func'], name='success_index'),
         ),
     ]
