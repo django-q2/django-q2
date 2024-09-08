@@ -197,6 +197,24 @@ Admin page or directly from your code:
 
 For more info check the `Schedules <https://django-q2.readthedocs.org/en/latest/schedules.html>`__ documentation.
 
+Development
+~~~~~~~
+
+There is an example project that you can use to develop with. Docker (compose) is being used to set everything up.
+Please note that you will have to restart the django-q container when changes have been made to tasks or django-q.
+You can start the example project with:
+
+.. code:: bash
+
+    make dev
+
+Create a superuser with:
+
+.. code:: bash
+
+    make createsuperuser
+
+
 Testing
 ~~~~~~~
 
@@ -204,19 +222,13 @@ Running tests is easy with docker compose, it will also start the necessary data
 
 .. code:: bash
 
-    docker-compose -f test-services-docker-compose.yaml run --rm django-q2 poetry run pytest
+    make test
 
 Locale
 ~~~~~~
 
 Currently available in English, German, Turkish, and French.
 Translation pull requests are always welcome.
-
-Todo
-~~~~
-
--  Better tests and coverage
--  Less dependencies?
 
 Acknowledgements
 ~~~~~~~~~~~~~~~~
