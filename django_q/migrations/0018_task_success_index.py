@@ -4,14 +4,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('django_q', '0017_task_cluster_alter'),
+        ("django_q", "0017_task_cluster_alter"),
     ]
 
     operations = [
         migrations.AddIndex(
-            model_name='task',
-            index=models.Index(condition=models.Q(('success', True)), fields=['group', 'name', 'func'], name='success_index'),
+            model_name="task",
+            index=models.Index(
+                condition=models.Q(("success", True)),
+                fields=["group", "name", "func"],
+                name="success_index",
+            ),
         ),
     ]

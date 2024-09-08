@@ -113,7 +113,11 @@ class Task(models.Model):
         app_label = "django_q"
         ordering = ["-stopped"]
         indexes = [
-            models.Index(name="success_index", fields=['group', 'name', 'func'], condition=Q(success=True)),
+            models.Index(
+                name="success_index",
+                fields=["group", "name", "func"],
+                condition=Q(success=True),
+            ),
         ]
 
 
