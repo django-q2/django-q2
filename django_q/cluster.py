@@ -25,9 +25,9 @@ from django_q.conf import (
     Conf,
     get_ppid,
     logger,
+    prometheus_multiprocess,
     psutil,
     setproctitle,
-    prometheus_multiprocess,
 )
 from django_q.humanhash import humanize
 from django_q.monitor import monitor
