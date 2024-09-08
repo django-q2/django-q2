@@ -15,8 +15,10 @@ def new_task(run_for_minutes):
 
 def add_task(request):
     task_id = tasks.async_task(new_task, 5)
-    result_url = reverse('get_result', args=[task_id])
-    return HttpResponse(f"Added async task with <a href='{result_url}'>Go to results</a>")
+    result_url = reverse("get_result", args=[task_id])
+    return HttpResponse(
+        f"Added async task with <a href='{result_url}'>Go to results</a>"
+    )
 
 
 def get_result(request, task_id):

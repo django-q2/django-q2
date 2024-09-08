@@ -21,7 +21,14 @@ from django.utils.translation import gettext_lazy as _
 
 # Local
 from django_q.brokers import Broker, get_broker
-from django_q.conf import Conf, get_ppid, logger, psutil, setproctitle, prometheus_multiprocess
+from django_q.conf import (
+    Conf,
+    get_ppid,
+    logger,
+    psutil,
+    setproctitle,
+    prometheus_multiprocess,
+)
 from django_q.humanhash import humanize
 from django_q.monitor import monitor
 from django_q.pusher import pusher
