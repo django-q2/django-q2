@@ -214,7 +214,6 @@ Create a superuser with:
 
     make createsuperuser
 
-
 Testing
 ~~~~~~~
 
