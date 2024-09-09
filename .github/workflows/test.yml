@@ -15,6 +15,11 @@ jobs:
           run: |
             pipx install ruff==0.4.10
             ruff format . --check && ruff check .
+        - name: Check twine
+          run: |
+            python -m pip install twine poetry
+            poetry build
+            twine check dist
 
   test:
     runs-on: ubuntu-latest
@@ -93,15 +98,7 @@ jobs:
       - name: Upload to coveralls
         run: |
           python -m pip install --upgrade pip
-          python -m pip install coveralls flake8 black twine poetry
+          python -m pip install coveralls twine poetry
           coveralls --service=github --finish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Check flake8/black
-        run: |
-          flake8 .
-          black --check .
-      - name: Check twine
-        run: |
-          poetry build
-          twine check dist
