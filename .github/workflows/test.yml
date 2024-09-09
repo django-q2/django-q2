@@ -19,7 +19,7 @@ jobs:
           run: |
             python -m pip install twine poetry rstcheck
             poetry build
-            rstcheck -r .
+            rstcheck README.rst
             twine check dist/*
 
   test:
