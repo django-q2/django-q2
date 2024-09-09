@@ -1,7 +1,7 @@
 A multiprocessing distributed task queue for Django
 ---------------------------------------------------
 
-|image0| |image1| |docs| |downloads|
+|image0| |image1| |downloads|
 
 Django Q2 is a fork of Django Q. Big thanks to Ilan Steemers for starting this project. Unfortunately, development has stalled since June 2021. Django Q2 is the new updated version of Django Q, with dependencies updates, docs updates and several bug fixes. Original repository: https://github.com/Koed00/django-q
 
@@ -245,9 +245,5 @@ Acknowledgements
    :target: https://github.com/GDay/django-q2/actions?query=workflow%3Atests
 .. |image1| image:: https://coveralls.io/repos/github/GDay/django-q2/badge.svg?branch=master
    :target: https://coveralls.io/github/GDay/django-q2?branch=master
-.. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=latest
-    :alt: Documentation Status
-    :scale: 100
-    :target: https://django-q2.readthedocs.org/
 .. |downloads| image:: https://img.shields.io/pypi/dm/django-q2
    :target: https://img.shields.io/pypi/dm/django-q2
