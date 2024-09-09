@@ -19,7 +19,7 @@ jobs:
           run: |
             python -m pip install twine poetry
             poetry build
-            twine check sdist
+            twine check dist/*
 
   test:
     runs-on: ubuntu-latest
