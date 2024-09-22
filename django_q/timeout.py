@@ -22,7 +22,7 @@ class TimeoutHandler:
             return
         try:
             signal.signal(signal.SIGALRM, self.raise_timeout_exception)
-        except ValueError:  # ValueError is raised for Windows users
+        except AttributeError:  # AttributeError is raised for Windows users
             logger.debug(_("SIGALARM is not available on your platform"))
 
         signal.alarm(self._timeout)
@@ -34,5 +34,5 @@ class TimeoutHandler:
         try:
             signal.alarm(0)
             signal.signal(signal.SIGALRM, signal.SIG_DFL)
-        except ValueError:  # ValueError is raised for Windows users
+        except AttributeError:  # AttributeError is raised for Windows users
             logger.debug(_("SIGALARM is not available on your platform"))
