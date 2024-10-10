@@ -199,8 +199,16 @@ def test_asynctask_class(broker, monkeypatch):
     assert a.group == "async_class_test"
     a.save = False
     assert not a.save
+
     a.hook = "djq.tests.tasks.hello"
     assert a.hook == "djq.tests.tasks.hello"
+
+    a.timeout_hook = "djq.tests.tasks.hello"
+    assert a.timeout_hook == "djq.tests.tasks.hello"
+
+    a.failure_hook = "djq.tests.tasks.hello"
+    assert a.failure_hook == "djq.tests.tasks.hello"
+
     assert a.started is False
     a.run()
     assert a.result_group() == [-1]
