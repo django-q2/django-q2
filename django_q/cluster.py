@@ -1,4 +1,5 @@
 # Standard
+import os
 import signal
 import socket
 import uuid
@@ -231,7 +232,10 @@ class Sentinel:
             )
         else:
             if prometheus_multiprocess:
-                prometheus_multiprocess.mark_process_dead(process.pid)
+                prometheus_path = os.getenv("PROMETHEUS_MULTIPROC_DIR")
+
+                if prometheus_path:
+                    prometheus_multiprocess.mark_process_dead(process.pid)
             self.pool.remove(process)
             self.spawn_worker()
             if process.timer.value == 0:
