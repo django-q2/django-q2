@@ -65,7 +65,7 @@ def scheduler(broker: Broker = None):
                 if s.args:
                     args = ast.literal_eval(s.args)
                     # single value won't eval to tuple, so:
-                    if type(args) != tuple:
+                    if type(args) is not tuple:
                         args = (args,)
                 q_options = kwargs.get("q_options", {})
                 if s.intended_date_kwarg:
