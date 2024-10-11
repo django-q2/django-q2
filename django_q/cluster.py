@@ -232,7 +232,7 @@ class Sentinel:
             )
         else:
             # check if prometheus is proper configurated
-            prometheus_path = os.getenv("PROMETHEUS_MULTIPROC_DIR")
+            prometheus_path = os.getenv("PROMETHEUS_MULTIPROC_DIR", os.getenv('prometheus_multiproc_dir'))
 
             if prometheus_multiprocess and prometheus_path:
                 prometheus_multiprocess.mark_process_dead(process.pid)
