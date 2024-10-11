@@ -231,11 +231,12 @@ class Sentinel:
                 % {"name": process.name}
             )
         else:
-            if prometheus_multiprocess:
-                prometheus_path = os.getenv("PROMETHEUS_MULTIPROC_DIR")
+            # check if prometheus is proper configurated
+            prometheus_path = os.getenv("PROMETHEUS_MULTIPROC_DIR")
 
-                if prometheus_path:
-                    prometheus_multiprocess.mark_process_dead(process.pid)
+            if prometheus_multiprocess and prometheus_path:
+                prometheus_multiprocess.mark_process_dead(process.pid)
+
             self.pool.remove(process)
             self.spawn_worker()
             if process.timer.value == 0:
