@@ -23,6 +23,8 @@ def async_task(func, *args, **kwargs):
     keywords = kwargs.copy()
     opt_keys = (
         "hook",
+        "timeout_hook",
+        "failure_hook",
         "group",
         "save",
         "sync",
@@ -86,6 +88,8 @@ def schedule(func, *args, **kwargs):
     :param args: function arguments.
     :param name: optional name for the schedule.
     :param hook: optional result hook function.
+    :param timeout_hook: optional timeout hook function.
+    :param failure_hook: optional failure hook function.
     :type schedule_type: Schedule.TYPE
     :param repeats: how many times to repeat. 0=never, -1=always.
     :param next_run: Next scheduled run.
@@ -99,6 +103,8 @@ def schedule(func, *args, **kwargs):
     """
     name = kwargs.pop("name", None)
     hook = kwargs.pop("hook", None)
+    timeout_hook = kwargs.pop("timeout_hook", None)
+    failure_hook = kwargs.pop("failure_hook", None)
     schedule_type = kwargs.pop("schedule_type", Schedule.ONCE)
     minutes = kwargs.pop("minutes", None)
     repeats = kwargs.pop("repeats", -1)
@@ -116,6 +122,8 @@ def schedule(func, *args, **kwargs):
         name=name,
         func=func,
         hook=hook,
+        timeout_hook=timeout_hook,
+        failure_hook=failure_hook,
         args=args,
         kwargs=kwargs,
         schedule_type=schedule_type,
@@ -273,6 +281,8 @@ def fetch_cached(task_id, wait=0, broker=None):
                 name=task["name"],
                 func=task["func"],
                 hook=task.get("hook"),
+                timeout_hook=task.get("timeout_hook"),
+                failure_hook=task.get("failure_hook"),
                 args=task["args"],
                 kwargs=task["kwargs"],
                 cluster=task.get("cluster"),
@@ -344,6 +354,8 @@ def fetch_group_cached(group_id, failures=True, wait=0, count=None, broker=None)
                         name=task["name"],
                         func=task["func"],
                         hook=task.get("hook"),
+                        timeout_hook=task.get("timeout_hook"),
+                        failure_hook=task.get("failure_hook"),
                         args=task["args"],
                         kwargs=task["kwargs"],
                         cluster=task.get("cluster"),
@@ -452,6 +464,8 @@ def async_iter(func, args_iter, **kwargs):
     # clean up the kwargs
     options = kwargs.get("q_options", kwargs)
     options.pop("hook", None)
+    options.pop("timeout_hook", None)
+    options.pop("failure_hook", None)
     options["broker"] = options.get("broker", get_broker())
     options["group"] = iter_group
     options["iter_count"] = iter_count
@@ -696,6 +710,22 @@ class AsyncTask:
     @hook.setter
     def hook(self, value):
         self._set_option("hook", value)
+
+    @property
+    def timeout_hook(self):
+        return self._get_option("timeout_hook", None)
+
+    @timeout_hook.setter
+    def timeout_hook(self, value):
+        self._set_option("timeout_hook", value)
+
+    @property
+    def failure_hook(self):
+        return self._get_option("failure_hook", None)
+    
+    @failure_hook.setter
+    def failure_hook(self, value):
+        self._set_option("failure_hook", value)
 
     @property
     def group(self):

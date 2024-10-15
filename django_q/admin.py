@@ -1,4 +1,5 @@
 """Admin module for Django."""
+from django.contrib.admin import ModelAdmin
 
 from django.contrib import admin
 from django.db.models.expressions import OuterRef, Subquery
@@ -10,7 +11,6 @@ from django_q.conf import Conf, croniter
 from django_q.models import Failure, OrmQ, Schedule, Success, Task
 from django_q.tasks import async_task
 
-
 def resubmit_task(model_admin, request, queryset):
     """Submit selected tasks back to the queue."""
     for task in queryset:
@@ -18,6 +18,8 @@ def resubmit_task(model_admin, request, queryset):
             task.func,
             *task.args or (),
             hook=task.hook,
+            timeout_hook=task.timeout_hook,
+            failure_hook=task.failure_hook,
             group=task.group,
             cluster=task.cluster,
             **task.kwargs or {},
@@ -29,7 +31,7 @@ def resubmit_task(model_admin, request, queryset):
 resubmit_task.short_description = _("Resubmit selected tasks to queue")
 
 
-class TaskAdmin(admin.ModelAdmin):
+class TaskAdmin(ModelAdmin):
     """model admin for success tasks."""
 
     list_display = (
@@ -61,7 +63,7 @@ class TaskAdmin(admin.ModelAdmin):
         return list(self.readonly_fields) + [field.name for field in obj._meta.fields]
 
 
-class FailAdmin(admin.ModelAdmin):
+class FailAdmin(ModelAdmin):
     """model admin for failed tasks."""
 
     list_display = (
@@ -88,7 +90,7 @@ class FailAdmin(admin.ModelAdmin):
         return list(self.readonly_fields) + [field.name for field in obj._meta.fields]
 
 
-class ScheduleAdmin(admin.ModelAdmin):
+class ScheduleAdmin(ModelAdmin):
     """model admin for schedules"""
 
     list_display = (
@@ -145,7 +147,7 @@ class ScheduleAdmin(admin.ModelAdmin):
     get_last_run.short_description = _("last_run")
 
 
-class QueueAdmin(admin.ModelAdmin):
+class QueueAdmin(ModelAdmin):
     """queue admin for ORM broker"""
 
     list_display = ("id", "key", "name", "group", "func", "lock", "task_id")
