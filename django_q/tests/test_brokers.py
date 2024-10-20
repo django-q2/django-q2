@@ -51,7 +51,7 @@ def test_redis(monkeypatch):
 
 
 def test_custom(monkeypatch):
-    monkeypatch.setattr(Conf, "BROKER_CLASS", "brokers.redis_broker.Redis")
+    monkeypatch.setattr(Conf, "BROKER_CLASS", "django_q.brokers.redis_broker.Redis")
     broker = get_broker()
     assert broker.ping() is True
     assert broker.info() is not None
