@@ -487,7 +487,7 @@ def test_max_rss(broker, monkeypatch):
     stop_event = Event()
     cluster_id = uuidlib.uuid4()
     # override settings
-    monkeypatch.setattr(Conf, "MAX_RSS", 40000)
+    monkeypatch.setattr(Conf, "MAX_RSS", 20000)
     monkeypatch.setattr(Conf, "WORKERS", 1)
     # set a timer to stop the Sentinel
     threading.Timer(3, stop_event.set).start()
