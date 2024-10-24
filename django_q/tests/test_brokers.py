@@ -124,7 +124,7 @@ def test_ironmq(monkeypatch):
 @pytest.mark.skipif(
     not os.getenv("AWS_ACCESS_KEY_ID"), reason="requires AWS credentials"
 )
-def canceled_sqs(monkeypatch):
+def test_sqs(monkeypatch):
     monkeypatch.setattr(
         Conf,
         "SQS",
@@ -132,11 +132,13 @@ def canceled_sqs(monkeypatch):
             "aws_region": os.getenv("AWS_REGION"),
             "aws_access_key_id": os.getenv("AWS_ACCESS_KEY_ID"),
             "aws_secret_access_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
-            "receive_message_wait_time_seconds": 20,
+            "receive_message_wait_time_seconds": 5,
         },
     )
     # check broker
-    broker = get_broker(list_key=uuid()[0])
+    broker = get_broker(list_key="testing")
+    assert "receive_message_wait_time_seconds" in Conf.SQS
+    assert "aws_region" in Conf.SQS
     assert broker.ping() is True
     assert broker.info() is not None
     assert broker.queue_size() == 0
@@ -173,7 +175,7 @@ def canceled_sqs(monkeypatch):
     broker.enqueue("test")
     while task is None:
         task = broker.dequeue()[0]
-    broker.fail(task[0])
+    broker.fail(task[0][0])
     # bulk test
     for _ in range(10):
         broker.enqueue("test")

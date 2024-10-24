@@ -7,6 +7,10 @@ ENV PYTHONUNBUFFERED 1
 # Sets the default shell to bash
 ENV SHELL /bin/bash
 
+RUN set -ex \
+    && apt update \
+    && apt-get install gcc python3-dev --yes
+
 # Upgrades pip
 RUN pip install -U pip setuptools
 
