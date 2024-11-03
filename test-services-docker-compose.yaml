@@ -28,7 +28,6 @@ services:
       DEBUG: 1
       LS_LOG: trace
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
       - ./containers/localstack:/etc/localstack/init/ready.d
     networks:
       - main
