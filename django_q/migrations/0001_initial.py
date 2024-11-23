@@ -12,8 +12,9 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.AutoField(
+                    models.CharField(
                         verbose_name="ID",
+                        max_length=32,
                         auto_created=True,
                         serialize=False,
                         primary_key=True,
