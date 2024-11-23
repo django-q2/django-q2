@@ -28,16 +28,5 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "Successful tasks",
                 "verbose_name": "Successful task",
             },
-        ),
-        migrations.RemoveField(
-            model_name="task",
-            name="id",
-        ),
-        migrations.AddField(
-            model_name="task",
-            name="id",
-            field=models.CharField(
-                max_length=32, primary_key=True, editable=False, serialize=False
-            ),
-        ),
+        )
     ]
