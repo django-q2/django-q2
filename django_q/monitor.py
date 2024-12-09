@@ -107,13 +107,15 @@ def save_task(task, broker: Broker):
                 value = get_func_repr(value)
             filters[Conf.SAVE_LIMIT_PER] = value
 
-        with db.transaction.atomic(using=db.router.db_for_write(Success)):
-            list(Success.objects.filter(**filters).select_for_update())
-            if (
-                task["success"]
-                and 0 < Conf.SAVE_LIMIT <= Success.objects.filter(**filters).count()
-            ):
-                Success.objects.filter(**filters).last().delete()
+        # check if we should clean the success tasks
+        if Conf.SAVE_LIMIT > 0:
+            with db.transaction.atomic(using=db.router.db_for_write(Success)):
+                list(Success.objects.filter(**filters).select_for_update())
+                if (
+                    task["success"]
+                    and 0 < Conf.SAVE_LIMIT <= Success.objects.filter(**filters).count()
+                ):
+                    Success.objects.filter(**filters).last().delete()
 
         # check if this task has previous results
         try:
