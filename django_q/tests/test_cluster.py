@@ -399,7 +399,7 @@ def test_timeout_task_finishes(broker, cluster_config_timeout, async_task_kwargs
 
 
 @pytest.mark.django_db
-def test_recycle(broker, monkeypatch):
+def test_recycle(broker, monkeypatch, django_assert_num_queries):
     # set up the Sentinel
     broker.list_key = "test_recycle_test:q"
     async_task("django_q.tests.tasks.multiply", 2, 2, broker=broker)
@@ -432,7 +432,8 @@ def test_recycle(broker, monkeypatch):
     monkeypatch.setattr(Conf, "SAVE_LIMIT", 1)
     result_queue.put("STOP")
     # run monitor
-    monitor(result_queue)
+    with django_assert_num_queries(12):
+        monitor(result_queue)
     assert Success.objects.count() == Conf.SAVE_LIMIT
     broker.delete_queue()
 
