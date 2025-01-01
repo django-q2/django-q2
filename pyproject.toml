@@ -39,7 +39,10 @@ classifiers = [
     'Topic :: System :: Distributed Computing',
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
-include = ['CHANGELOG.md']
+
+include = [
+ { path = "CHANGELOG.md", format = "sdist" },
+]
 
 [tool.poetry.plugins] # Optional super table
 
