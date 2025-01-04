@@ -118,6 +118,11 @@ class Task(models.Model):
                 fields=["group", "name", "func"],
                 condition=Q(success=True),
             ),
+            models.Index(
+                fields=['-stopped'],
+                name='task_success_stopped_partial_idx',
+                condition=models.Q(success=True),
+            ),
         ]
 
 
