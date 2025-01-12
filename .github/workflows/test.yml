@@ -73,7 +73,7 @@ jobs:
         - name: Install dependencies with Django ${{ matrix.django }}
           run: |
             python -m pip install --upgrade pip
-            pip install poetry
+            pip install poetry==1.8.5
             poetry add "django==${{ matrix.django }}" --python=${{ matrix.python-version }}
             poetry install -E testing
         - name: Run Tests
