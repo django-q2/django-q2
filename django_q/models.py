@@ -59,7 +59,7 @@ class Task(models.Model):
                 .exclude(success=False)
                 .values_list("result", flat=True)
             )
-        return decode_results(values)
+        return values
 
     def group_result(self, failures=False):
         if self.group:
@@ -356,11 +356,3 @@ class OrmQ(models.Model):
         app_label = "django_q"
         verbose_name = _("Queued task")
         verbose_name_plural = _("Queued tasks")
-
-
-# Backwards compatibility for Django 1.7
-def decode_results(values):
-    if get_version().split(".")[1] == "7":
-        # decode values in 1.7
-        return [dbsafe_decode(v) for v in values]
-    return values
