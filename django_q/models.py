@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from keyword import iskeyword
 
 # Django
-from django import get_version
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
@@ -15,7 +14,6 @@ from django.utils.translation import gettext_lazy as _
 
 # External
 from picklefield import PickledObjectField
-from picklefield.fields import dbsafe_decode
 
 # Local
 from django_q.conf import croniter
