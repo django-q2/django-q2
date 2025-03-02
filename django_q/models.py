@@ -302,6 +302,12 @@ class Schedule(models.Model):
     def __str__(self):
         return self.func
 
+    def save(self, *args, **kwargs):
+        if self.pk is None and self.schedule_type == self.CRON:
+            self.next_run = self.calculate_next_run()
+
+        return super().save(*args, **kwargs)
+
     success.boolean = True
     success.short_description = _("success")
     last_run.allow_tags = True
