@@ -296,7 +296,7 @@ class Schedule(models.Model):
                 url = reverse("admin:django_q_success_change", args=(task.id,))
             else:
                 url = reverse("admin:django_q_failure_change", args=(task.id,))
-            return format_html(f'<a href="{url}">[{task.name}]</a>')
+            return format_html(f'<a href="{}">[{}]</a>', url, task.name)
         return None
 
     def __str__(self):
