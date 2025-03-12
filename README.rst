@@ -38,7 +38,10 @@ Requirements
 -  `Django <https://www.djangoproject.com>`__ > = 4.2
 -  `Django-picklefield <https://github.com/gintas/django-picklefield>`__
 
-Tested with: Python 3.8, 3.9, 3.10, 3.11 and 3.12. Works with Django 4.2.X and 5.0.X
+Tested with:
+
+* Python 3.9 to 3.13.
+* Django 4.2 to 5.2.
 
 Brokers
 ~~~~~~~
