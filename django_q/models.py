@@ -28,6 +28,8 @@ class Task(models.Model):
     name = models.CharField(max_length=100, editable=False)
     func = models.CharField(max_length=256)
     hook = models.CharField(max_length=256, null=True)
+    timeout_hook = models.CharField(max_length=256, null=True)
+    failure_hook = models.CharField(max_length=256, null=True)
     args = PickledObjectField(null=True, protocol=-1)
     kwargs = PickledObjectField(null=True, protocol=-1)
     result = PickledObjectField(null=True, protocol=-1)
@@ -173,6 +175,18 @@ class Schedule(models.Model):
         null=True,
         blank=True,
         help_text="e.g. module.tasks.result_function",
+    )
+    timeout_hook = models.CharField(
+        max_length=256,
+        null=True,
+        blank=True,
+        help_text="e.g. module.tasks.timeout_function",
+    )
+    failure_hook = models.CharField(
+        max_length=256,
+        null=True,
+        blank=True,
+        help_text="e.g. module.tasks.failure_function",
     )
     args = models.TextField(null=True, blank=True, help_text=_("e.g. 1, 2, 'John'"))
     kwargs = models.TextField(
