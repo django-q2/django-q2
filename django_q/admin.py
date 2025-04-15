@@ -138,7 +138,7 @@ class ScheduleAdmin(admin.ModelAdmin):
                 url = reverse("admin:django_q_success_change", args=(obj.task_id,))
             else:
                 url = reverse("admin:django_q_failure_change", args=(obj.task_id,))
-            return format_html(f'<a href="{url}">[{obj.task_name}]</a>')
+            return format_html('<a href="{}">[{}]</a>', url, obj.task_name)
         return None
 
     get_last_run.allow_tags = True
