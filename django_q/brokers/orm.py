@@ -25,7 +25,6 @@ class ORM(Broker):
             logger.debug("Broker in an atomic transaction")
         return OrmQ.objects.using(Conf.ORM)
 
-
     def timeout(self, task):
         return timezone.now() + timedelta(seconds=Conf.RETRY)
 
