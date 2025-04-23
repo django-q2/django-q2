@@ -10,7 +10,6 @@ from django_q.conf import Conf, logger
 from django_q.models import OrmQ
 
 
-
 class ORM(Broker):
     @staticmethod
     def get_connection(list_key: str = None):
