@@ -73,8 +73,7 @@ class Cluster:
         )
         self.sentinel.start()
         logger.info(_("Q Cluster %(name)s starting.") % {"name": self.name})
-        while not self.start_event.is_set():
-            sleep(0.1)
+        self.start_event.wait()
         return self.pid
 
     def stop(self) -> bool:
@@ -313,7 +312,7 @@ class Sentinel:
         counter = 0
         cycle = Conf.GUARD_CYCLE  # guard loop sleep in seconds
         # Guard loop. Runs at least once
-        while not self.stop_event.is_set() or not counter:
+        while True:
             # Check Workers
             for p in self.pool:
                 with p.timer.get_lock():
@@ -337,7 +336,8 @@ class Sentinel:
                 scheduler(broker=self.broker)
             # Save current status
             Stat(self).save()
-            sleep(cycle)
+            if self.stop_event.wait(cycle):
+                break
         self.stop()
 
     def stop(self):
