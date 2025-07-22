@@ -61,6 +61,8 @@ def worker(
         timer.value = -1  # Idle
         task_count += 1
         f = task["func"]
+        timeout_callback_f = task.get("timeout_hook", None)
+        failure_callback_f = task.get("failure_hook", None)
 
         # Log task creation and set process name
         # Get the function from the task
@@ -105,6 +107,35 @@ def worker(
         except (Exception, TimeoutException) as e:
             if isinstance(e, TimeoutException):
                 timeout_error = True
+                if timeout_callback_f is not None:
+                    try:
+                        # determine if the callback is a string or a function
+                        if not callable(timeout_callback_f):
+                            timeout_callback_f = pydoc.locate(timeout_callback_f)
+                        timeout_callback_f(task)
+                    except Exception as e:
+                        logger.error(
+                            _(
+                                "%(proc_name)s raised an exception in the timeout hook: %(error)s"
+                            )
+                            % {"proc_name": proc_name, "error": e}
+                        )
+
+            if not timeout_error:
+                try:
+                    if failure_callback_f is not None:
+                        # determine if the callback is a string or a function
+                        if not callable(failure_callback_f):
+                            failure_callback_f = pydoc.locate(failure_callback_f)
+                        failure_callback_f(task)
+                except Exception as e:
+                    logger.error(
+                        _(
+                            "%(proc_name)s raised an exception in the failure hook: %(error)s"
+                        )
+                        % {"proc_name": proc_name, "error": e}
+                    )
+
             result = (f"{e} : {traceback.format_exc()}", False)
             if error_reporter:
                 error_reporter.report()
