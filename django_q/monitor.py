@@ -93,7 +93,8 @@ def save_task(task, broker: Broker):
             broker=broker,
         )
     # SAVE LIMIT > 0: Prune database, SAVE_LIMIT 0: No pruning
-    close_old_django_connections()
+    if not task.get("sync", False):
+        close_old_django_connections()
 
     try:
         filters = {}
