@@ -41,7 +41,7 @@ Requirements
 Tested with:
 
 * Python 3.9 to 3.13.
-* Django 4.2 to 5.2.
+* Django 4.2 to 6.0.
 
 Brokers
 ~~~~~~~

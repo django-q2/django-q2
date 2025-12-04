@@ -36,6 +36,7 @@ jobs:
         - "5.0"
         - "5.1"
         - "5.2"
+        - "6.0"
         exclude:
           # django 5.2 does not support 3.9
           - python-version: "3.9"
@@ -49,6 +50,13 @@ jobs:
           # django 4.2 does not support 3.13
           - python-version: "3.13"
             django: "4.2"
+          # django 6.0 does not support earlier than 3.12
+          - python-version: "3.9"
+            django: "6.0"
+          - python-version: "3.10"
+            django: "6.0"
+          - python-version: "3.11"
+            django: "6.0"
 
     services:
       mongodb:
