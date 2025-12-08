@@ -3,7 +3,7 @@ import os
 import sys
 from copy import deepcopy
 from multiprocessing import cpu_count
-from signal import signal
+import signal
 from warnings import warn
 
 from django.conf import settings
