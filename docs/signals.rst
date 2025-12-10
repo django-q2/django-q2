@@ -32,8 +32,14 @@ executed by a worker. This signal provides two arguments:
 
 After executing a task
 """"""""""""""""""""""
-The ``django_q.signals.post_execute`` signal is emitted after a task is
-executed by a worker and processed by the monitor. It included the ``task`` dictionary with the result.
+- The ``django_q.signals.post_execute_in_worker`` signal is emitted after a task
+  is executed by a worker and processed by the **worker**. It included the ``task``
+  dictionary with the result. Note that this signal is **emitted from, and handled
+  by, the worker process itself**, not the monitor, unlike the ``post_execute``
+  signal below.
+- The ``django_q.signals.post_execute`` signal is emitted after a task is
+  executed by a worker and processed by the **monitor**. It included the ``task``
+  dictionary with the result.
 
 
 Subscribing to a signal
@@ -55,6 +61,10 @@ signal::
 
     @receiver(post_execute)
     def my_post_execute_callback(sender, task, **kwargs):
+        print(f"Task {task['name']} was executed with result {task['result']}")
+    
+    @receiver(post_execute_in_worker)
+    def my_post_execute_in_worker_callback(sender, func, task, **kwargs):
         print(f"Task {task['name']} was executed with result {task['result']}")
 
     @receiver(post_spawn)

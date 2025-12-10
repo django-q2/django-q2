@@ -18,7 +18,7 @@ except core.exceptions.AppRegistryNotReady:
 
 from django_q.conf import Conf, error_reporter, logger, resource, setproctitle
 from django_q.exceptions import TimeoutException
-from django_q.signals import post_spawn, pre_execute
+from django_q.signals import post_execute_in_worker, post_spawn, pre_execute
 from django_q.timeout import TimeoutHandler
 from django_q.utils import close_old_django_connections, get_func_repr
 
@@ -109,6 +109,7 @@ def worker(
             if error_reporter:
                 error_reporter.report()
             if task.get("sync", False):
+                post_execute_in_worker.send(sender="django_q", func=f, task=task)
                 raise
 
         with timer.get_lock():
@@ -116,6 +117,7 @@ def worker(
             task["result"] = result[0]
             task["success"] = result[1]
             task["stopped"] = timezone.now()
+            post_execute_in_worker.send(sender="django_q", func=f, task=task)
             result_queue.put(task)
             if timeout_error:
                 # force destroy process due to timeout

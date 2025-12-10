@@ -43,3 +43,6 @@ pre_execute = Signal()
 
 # args: task
 post_execute = Signal()
+
+# args: func, task
+post_execute_in_worker = Signal()
