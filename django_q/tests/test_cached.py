@@ -141,7 +141,7 @@ def test_iter_default_cache_timeout(broker, settings):
     cache timeout expires.
     """
     cache_settings = deepcopy(settings.CACHES)
-    cache_settings['default']['TIMEOUT'] = 1
+    cache_settings["default"]["TIMEOUT"] = 1
     settings.CACHES = cache_settings
     broker.purge_queue()
     broker.cache.clear()
