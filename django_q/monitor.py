@@ -137,6 +137,8 @@ def save_task(task, broker: Broker):
                 name=task["name"],
                 func=func,
                 hook=task.get("hook"),
+                timeout_hook=task.get("timeout_hook"),
+                failure_hook=task.get("failure_hook"),
                 args=task["args"],
                 kwargs=task["kwargs"],
                 cluster=task.get("cluster"),
