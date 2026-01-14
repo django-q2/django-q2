@@ -1,3 +1,6 @@
+import signal
+import sys
+
 from multiprocessing import Event
 from multiprocessing.process import current_process
 from multiprocessing.queues import Queue
@@ -31,6 +34,11 @@ def pusher(task_queue: Queue, event: Event, broker: Broker = None):
     :type task_queue: multiprocessing.Queue
     :type event: multiprocessing.Event
     """
+
+    if sys.platform == "win32":
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+
     if not broker:
         broker = get_broker()
     proc_name = current_process().name

@@ -1,3 +1,6 @@
+import signal
+import sys
+
 from multiprocessing.process import current_process
 from multiprocessing.queues import Queue
 
@@ -32,6 +35,9 @@ def monitor(result_queue: Queue, broker: Broker = None):
     :type broker: brokers.Broker
     :type result_queue: multiprocessing.Queue
     """
+    if sys.platform == "win32":
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
     if not broker:
         broker = get_broker()
     proc_name = current_process().name
