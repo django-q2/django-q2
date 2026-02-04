@@ -1,12 +1,10 @@
-from django import VERSION as DJANGO_VERSION
-
-if DJANGO_VERSION < (6, 0):
-    raise NotImplementedError("Task backend support requires Django ≥ 6.0")
-
-
-from django.tasks.backends.base import BaseTaskBackend
 from django_q .tasks import async_task, result
 from django_q.conf import Conf
+
+if not Conf.SUPPORTS_TASK_BACKEND:
+    raise NotImplementedError("Task backend support requires Django ≥ 6.0")
+
+from django.tasks.backends.base import BaseTaskBackend
 
 
 class DjangoQ2Backend(BaseTaskBackend):
