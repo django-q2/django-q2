@@ -1,4 +1,4 @@
-from django_q .tasks import async_task, result
+from django_q.tasks import async_task, result
 from django_q.conf import Conf
 
 if not Conf.SUPPORTS_TASK_BACKEND:
@@ -12,8 +12,8 @@ class DjangoQ2Backend(BaseTaskBackend):
 
     def __init__(self, alias, params):
         super().__init__(alias, params)
-    
-    def get_result(self, result_id,  *args, **kwargs):
+
+    def get_result(self, result_id, *args, **kwargs):
         wait = kwargs.pop("wait", 0)
         cached = kwargs.pop("cached", Conf.CACHED)
 
@@ -21,8 +21,7 @@ class DjangoQ2Backend(BaseTaskBackend):
             raise TypeError("get_result() received unsupported arguments")
 
         return result(task_id=result_id, wait=wait, cached=cached)
-    
+
     def enqueue(self, task, args, kwargs):
         self.validate_task(task)
         return async_task(task.module_path, *args, **kwargs)
-        
