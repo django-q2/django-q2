@@ -72,6 +72,10 @@ def scheduler(broker: Broker = None):
                     kwargs[s.intended_date_kwarg] = s.next_run.isoformat()
                 if s.hook:
                     q_options["hook"] = s.hook
+                if s.timeout_hook:
+                    q_options["timeout_hook"] = s.timeout_hook
+                if s.failure_hook:
+                    q_options["failure_hook"] = s.failure_hook
                 # set up the next run time
                 if s.schedule_type != s.ONCE:
                     next_run = s.next_run
