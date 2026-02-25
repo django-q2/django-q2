@@ -19,7 +19,12 @@ from django_q.models import Success, Task
 from django_q.monitor import monitor, save_task
 from django_q.pusher import pusher
 from django_q.queues import Queue
-from django_q.signals import post_execute, pre_enqueue, pre_execute
+from django_q.signals import (
+    post_execute,
+    post_execute_in_worker,
+    pre_enqueue,
+    pre_execute,
+)
 from django_q.status import Stat
 from django_q.tasks import (
     async_task,
@@ -399,7 +404,7 @@ def test_timeout_task_finishes(broker, cluster_config_timeout, async_task_kwargs
 
 
 @pytest.mark.django_db
-def test_recycle(broker, monkeypatch):
+def test_recycle(broker, monkeypatch, django_assert_num_queries):
     # set up the Sentinel
     broker.list_key = "test_recycle_test:q"
     async_task("django_q.tests.tasks.multiply", 2, 2, broker=broker)
@@ -432,7 +437,8 @@ def test_recycle(broker, monkeypatch):
     monkeypatch.setattr(Conf, "SAVE_LIMIT", 1)
     result_queue.put("STOP")
     # run monitor
-    monitor(result_queue)
+    with django_assert_num_queries(12):
+        monitor(result_queue)
     assert Success.objects.count() == Conf.SAVE_LIMIT
     broker.delete_queue()
 
@@ -487,7 +493,7 @@ def test_max_rss(broker, monkeypatch):
     stop_event = Event()
     cluster_id = uuidlib.uuid4()
     # override settings
-    monkeypatch.setattr(Conf, "MAX_RSS", 40000)
+    monkeypatch.setattr(Conf, "MAX_RSS", 20000)
     monkeypatch.setattr(Conf, "WORKERS", 1)
     # set a timer to stop the Sentinel
     threading.Timer(3, stop_event.set).start()
@@ -758,6 +764,35 @@ class TestSignals:
         assert self.task.get("id") == task_id
         assert self.task.get("result") == -1
         post_execute.disconnect(handler)
+
+    @pytest.mark.django_db
+    def test_post_execute_in_worker_signal(self, broker):
+        broker.list_key = "post_execute_in_worker_test:q"
+        broker.delete_queue()
+        self.signal_was_called: bool = False
+        self.task: Optional[dict] = None
+        self.func = None
+
+        def handler(sender, task, **kwargs):
+            self.signal_was_called = True
+            self.task = task
+
+        post_execute_in_worker.connect(handler)
+        task_id = async_task("math.copysign", 1, -1, broker=broker)
+        task_queue = Queue()
+        result_queue = Queue()
+        event = Event()
+        event.set()
+        pusher(task_queue, event, broker=broker)
+        task_queue.put("STOP")
+        worker(task_queue, result_queue, Value("f", -1))
+        result_queue.put("STOP")
+        monitor(result_queue, broker)
+        broker.delete_queue()
+        assert self.signal_was_called is True
+        assert self.task.get("id") == task_id
+        assert self.task.get("result") == -1
+        post_execute_in_worker.disconnect(handler)
 
 
 @pytest.mark.django_db

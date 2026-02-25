@@ -1,9 +1,9 @@
 import logging
 import os
+import signal
 import sys
 from copy import deepcopy
 from multiprocessing import cpu_count
-from signal import signal
 from warnings import warn
 
 from django.conf import settings
@@ -37,6 +37,11 @@ try:
     import setproctitle
 except ModuleNotFoundError:
     setproctitle = None
+
+try:
+    from prometheus_client import multiprocess as prometheus_multiprocess
+except ModuleNotFoundError:
+    prometheus_multiprocess = None
 
 
 class Conf:
@@ -263,7 +268,6 @@ if not logger.hasHandlers():
 
 # Error Reporting Interface
 class ErrorReporter:
-
     # initialize with iterator of reporters (better name, targets?)
     def __init__(self, reporters):
         self.targets = [target for target in reporters]

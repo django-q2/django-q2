@@ -1,7 +1,7 @@
 A multiprocessing distributed task queue for Django
 ---------------------------------------------------
 
-|image0| |image1| |docs| |downloads|
+|image0| |image1| |downloads|
 
 Django Q2 is a fork of Django Q. Big thanks to Ilan Steemers for starting this project. Unfortunately, development has stalled since June 2021. Django Q2 is the new updated version of Django Q, with dependencies updates, docs updates and several bug fixes. Original repository: https://github.com/Koed00/django-q
 
@@ -35,10 +35,13 @@ See the `changelog <https://github.com/GDay/django-q2/blob/master/CHANGELOG.md>`
 Requirements
 ~~~~~~~~~~~~
 
--  `Django <https://www.djangoproject.com>`__ > = 3.2
+-  `Django <https://www.djangoproject.com>`__ > = 4.2
 -  `Django-picklefield <https://github.com/gintas/django-picklefield>`__
 
-Tested with: Python 3.8, 3.9, 3.10, 3.11 and 3.12. Works with Django 3.2.X, 4.1.X, 4.2.X and 5.0.X
+Tested with:
+
+* Python 3.9 to 3.13.
+* Django 4.2 to 6.0.
 
 Brokers
 ~~~~~~~
@@ -197,6 +200,23 @@ Admin page or directly from your code:
 
 For more info check the `Schedules <https://django-q2.readthedocs.org/en/latest/schedules.html>`__ documentation.
 
+Development
+~~~~~~~~~~~
+
+There is an example project that you can use to develop with. Docker (compose) is being used to set everything up.
+Please note that you will have to restart the django-q container when changes have been made to tasks or django-q.
+You can start the example project with:
+
+.. code:: bash
+
+    make dev
+
+Create a superuser with:
+
+.. code:: bash
+
+    make createsuperuser
+
 Testing
 ~~~~~~~
 
@@ -204,19 +224,13 @@ Running tests is easy with docker compose, it will also start the necessary data
 
 .. code:: bash
 
-    docker-compose -f test-services-docker-compose.yaml run --rm django-q2 poetry run pytest
+    make test
 
 Locale
 ~~~~~~
 
 Currently available in English, German, Turkish, and French.
 Translation pull requests are always welcome.
-
-Todo
-~~~~
-
--  Better tests and coverage
--  Less dependencies?
 
 Acknowledgements
 ~~~~~~~~~~~~~~~~
@@ -234,9 +248,5 @@ Acknowledgements
    :target: https://github.com/GDay/django-q2/actions?query=workflow%3Atests
 .. |image1| image:: https://coveralls.io/repos/github/GDay/django-q2/badge.svg?branch=master
    :target: https://coveralls.io/github/GDay/django-q2?branch=master
-.. |docs| image:: https://readthedocs.org/projects/docs/badge/?version=latest
-    :alt: Documentation Status
-    :scale: 100
-    :target: https://django-q2.readthedocs.org/
 .. |downloads| image:: https://img.shields.io/pypi/dm/django-q2
    :target: https://img.shields.io/pypi/dm/django-q2

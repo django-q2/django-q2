@@ -397,9 +397,7 @@ def memory(run_once=False, workers=False, broker=None):
                     2,
                 )
                 # memory available (MB)
-                memory_available = round(
-                    psutil.virtual_memory().available / 1024**2, 2
-                )
+                memory_available = round(psutil.virtual_memory().available / 1024**2, 2)
                 if memory_available_percentage < MEMORY_AVAILABLE_LOWEST_PERCENTAGE:
                     MEMORY_AVAILABLE_LOWEST_PERCENTAGE = memory_available_percentage
                     MEMORY_AVAILABLE_LOWEST_PERCENTAGE_AT = timezone.now()

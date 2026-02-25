@@ -5,8 +5,8 @@ from multiprocessing.process import current_process
 from multiprocessing.queues import Queue
 
 from django import core, db
-from django.utils.translation import gettext_lazy as _
 from django.apps.registry import apps
+from django.utils.translation import gettext_lazy as _
 
 try:
     apps.check_apps_ready()
@@ -113,35 +113,32 @@ def save_task(task, broker: Broker):
                 value = get_func_repr(value)
             filters[Conf.SAVE_LIMIT_PER] = value
 
-        with db.transaction.atomic(using=db.router.db_for_write(Success)):
-            last = Success.objects.filter(**filters).select_for_update().last()
-            if (
-                task["success"]
-                and 0 < Conf.SAVE_LIMIT <= Success.objects.filter(**filters).count()
-            ):
-                last.delete()
+        # check if we should clean the success tasks
+        if Conf.SAVE_LIMIT > 0:
+            with db.transaction.atomic(using=db.router.db_for_write(Success)):
+                success_tasks_qs = Success.objects.filter(**filters)
+                success_tasks_pks = [
+                    success_task.pk
+                    for success_task in success_tasks_qs.select_for_update()
+                ]
+                if task["success"] and len(success_tasks_pks) >= Conf.SAVE_LIMIT:
+                    success_tasks_qs.last().delete()
 
         # check if this task has previous results
         try:
-            existing_task = Task.objects.get(id=task["id"], name=task["name"])
+            task_obj = Task.objects.get(id=task["id"], name=task["name"])
             # only update the result if it hasn't succeeded yet
-            if not existing_task.success:
-                existing_task.stopped = task["stopped"]
-                existing_task.result = task["result"]
-                existing_task.success = task["success"]
-                existing_task.attempt_count = existing_task.attempt_count + 1
-                existing_task.save()
-
-            if (
-                Conf.MAX_ATTEMPTS > 0
-                and existing_task.attempt_count >= Conf.MAX_ATTEMPTS
-            ):
-                broker.acknowledge(task["ack_id"])
+            if not task_obj.success:
+                task_obj.stopped = task["stopped"]
+                task_obj.result = task["result"]
+                task_obj.success = task["success"]
+                task_obj.attempt_count = task_obj.attempt_count + 1
+                task_obj.save()
 
         except Task.DoesNotExist:
             # convert func to string
             func = get_func_repr(task["func"])
-            Task.objects.create(
+            task_obj = Task.objects.create(
                 id=task["id"],
                 name=task["name"],
                 func=func,
@@ -156,6 +153,14 @@ def save_task(task, broker: Broker):
                 success=task["success"],
                 attempt_count=1,
             )
+
+        if (
+            Conf.MAX_ATTEMPTS > 0
+            and task_obj.attempt_count >= Conf.MAX_ATTEMPTS
+            and task.get("ack_id")
+        ):
+            broker.acknowledge(task["ack_id"])
+
     except Exception:
         logger.exception("Could not save task result")
 

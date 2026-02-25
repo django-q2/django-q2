@@ -1,4 +1,5 @@
 """Package signing."""
+
 import pickle
 
 from django_q import core_signing as signing

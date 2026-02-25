@@ -2,17 +2,22 @@ import datetime
 import time
 import zlib
 
-import django
-from django.core.signing import BadSignature, JSONSerializer, SignatureExpired
+from django.core.signing import (
+    BadSignature,
+    JSONSerializer,
+    SignatureExpired,
+    b64_decode,
+    dumps,
+)
 from django.core.signing import Signer as Sgnr
 from django.core.signing import TimestampSigner as TsS
-from django.core.signing import b64_decode, dumps
 
 try:
     from django.core.signing import b62_decode
 except ImportError:
     # fallback for django 3.x
     from django.utils.baseconv import base62
+
     b62_decode = base62.decode
 
 from django.utils.crypto import constant_time_compare

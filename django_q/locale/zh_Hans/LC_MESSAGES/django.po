@@ -1,0 +1,499 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+msgid ""
+msgstr ""
+"Project-Id-Version: django-q\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-14 16:36+0800\n"
+"PO-Revision-Date: 2026-01-14 16:36+0800\n"
+"Last-Translator: Yibo Li <lybcyd@outlook.com>\n"
+"Language-Team: Simplified Chinese\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: \n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: admin.py:43
+msgid "Resubmit selected tasks to queue"
+msgstr "将选定的任务重新提交到队列"
+
+#: admin.py:107 models.py:293
+#, fuzzy
+#| msgid "Success"
+msgid "success"
+msgstr "成功"
+
+#: admin.py:119 models.py:295
+msgid "last_run"
+msgstr "最后运行"
+
+#: cluster.py:79
+#, python-format
+msgid "Q Cluster %(name)s starting."
+msgstr "Q 集群 %(name)s 正在启动。"
+
+#: cluster.py:87
+#, fuzzy, python-format
+#| msgid "Q Cluster-{} stopping."
+msgid "Q Cluster %(name)s stopping."
+msgstr "Q 集群 %(name)s 正在停止。"
+
+#: cluster.py:90
+#, python-format
+msgid "Q Cluster %(name)s has stopped."
+msgstr "Q 集群 %(name)s 已停止。"
+
+#: cluster.py:97
+#, python-format
+msgid "%(name)s got signal %(signal)s"
+msgstr "%(name)s 收到信号 %(signal)s"
+
+#: cluster.py:224
+#, python-format
+msgid "reincarnated monitor %(name)s after sudden death"
+msgstr "意外宕机后monitor %(name)s 已重生"
+
+#: cluster.py:230
+#, python-format
+msgid "reincarnated pusher %(name)s after sudden death"
+msgstr "意外宕机后pusher %(name)s 已重生"
+
+#: cluster.py:250
+#, fuzzy, python-format
+#| msgid "reincarnated worker %(name)s after timeout"
+msgid ""
+"reincarnated worker %(name)s after timeout while processing task "
+"%(task_name)s"
+msgstr "处理任务 %(task_name)s 时超时，worker %(name)s 已重生"
+
+#: cluster.py:255
+#, python-format
+msgid "reincarnated worker %(name)s after timeout"
+msgstr "超时后worker %(name)s 已重生"
+
+#: cluster.py:260
+#, python-format
+msgid "recycled worker %(name)s"
+msgstr "worker %(name)s 已回收"
+
+#: cluster.py:263
+#, python-format
+msgid "reincarnated worker %(name)s after death"
+msgstr "意外宕机后worker %(name)s 已重生"
+
+#: cluster.py:287
+#, python-format
+msgid "%(name)s guarding cluster %(cluster_name)s"
+msgstr "%(name)s 正在保护Cluster %(cluster_name)s"
+
+#: cluster.py:296
+#, python-format
+msgid "Q Cluster %(cluster_name)s running."
+msgstr "Q 集群 %(cluster_name)s 正在运行。"
+
+#: cluster.py:332
+#, python-format
+msgid "%(name)s stopping cluster processes"
+msgstr "%(name)s 正在停止集群进程"
+
+#: cluster.py:357
+#, python-format
+msgid "%(name)s waiting for the monitor."
+msgstr "%(name)s 正在等待监视器。"
+
+#: cluster.py:383
+#, fuzzy, python-format
+#| msgid "%(process_name)s pushing tasks at %(id)s"
+msgid "%(name)s pushing tasks at %(id)s"
+msgstr "%(name)s 正在 %(id)s 处推送任务"
+
+#: cluster.py:407
+#, python-format
+msgid "queueing from %(list_key)s"
+msgstr "从 %(list_key)s 排队"
+
+#: cluster.py:411
+#, python-format
+msgid "%(name)s stopped pushing tasks"
+msgstr "%(name)s 已停止推送任务"
+
+#: cluster.py:426
+#, python-format
+msgid "%(name)s monitoring at %(id)s"
+msgstr "%(name)s 正在 %(id)s 处监视"
+
+#: cluster.py:445
+#, python-format
+msgid "Processed '%(info_name)s' (%(task_name)s)"
+msgstr "已处理 '%(info_name)s' (%(task_name)s)"
+
+#: cluster.py:451
+#, python-format
+msgid "Failed '%(info_name)s' (%(task_name)s) - %(task_result)s"
+msgstr "'%(info_name)s' (%(task_name)s) 失败 - %(task_result)s"
+
+#: cluster.py:458
+#, python-format
+msgid "%(name)s stopped monitoring results"
+msgstr "%(name)s 已停止监视结果"
+
+#: cluster.py:474
+#, python-format
+msgid "%(proc_name)s ready for work at %(id)s"
+msgstr "%(proc_name)s 已准备好在 %(id)s 处工作"
+
+#: cluster.py:494
+#, fuzzy, python-format
+#| msgid "%(proc_name)s processing '%(func_name)s' (%(task_name)s)"
+msgid "%(proc_name)s processing %(task_name)s '%(func_name)s'"
+msgstr "%(proc_name)s 正在处理任务 %(task_name)s '%(func_name)s'"
+
+#: cluster.py:546
+#, python-format
+msgid "%(proc_name)s stopped doing work"
+msgstr "%(proc_name)s 已停止工作"
+
+#: cluster.py:751
+#, python-format
+msgid "%(process_name)s failed to create a task from schedule [%(schedule)s]"
+msgstr ""
+"%(process_name)s 无法从计划 [%(schedule)s] 创建任务"
+
+#: cluster.py:762
+#, fuzzy, python-format
+#| msgid "%(process_name)s created a task from schedule [%(schedule)s]"
+msgid ""
+"%(process_name)s created task %(task_name)s from schedule [%(schedule)s]"
+msgstr ""
+"%(process_name)s 从计划 [%(schedule)s] 创建了任务 %(task_name)s"
+
+#: cluster.py:808
+msgid "Skipping cpu affinity because psutil was not found."
+msgstr "跳过 CPU 亲和性，因为未找到 psutil。"
+
+#: cluster.py:813
+msgid "Faking cpu affinity because it is not supported on this platform"
+msgstr ""
+"伪造 CPU 亲和性，因为此平台不支持此功能"
+
+#: cluster.py:835
+#, python-format
+msgid "%(pid)s will use cpu %(affinity)s"
+msgstr "%(pid)s 将使用 CPU %(affinity)s"
+
+#: conf.py:90
+#, python-format
+msgid ""
+"SAVE_LIMIT_PER (%(option)s) is not a valid option. Options are: 'group', "
+"'name', 'func' and None. Default is None."
+msgstr ""
+"SAVE_LIMIT_PER (%(option)s) 不是有效的选项。选项包括：'group'、'name'、'func' 和 None。默认值是 None。"
+
+#. Translators: Cluster status descriptions
+#: conf.py:207
+msgid "Starting"
+msgstr "正在启动"
+
+#: conf.py:208
+msgid "Working"
+msgstr "工作中"
+
+#: conf.py:209
+msgid "Idle"
+msgstr "空闲"
+
+#: conf.py:210
+msgid "Stopped"
+msgstr "已停止"
+
+#: conf.py:211
+msgid "Stopping"
+msgstr "正在停止"
+
+#. Translators: help text for qcluster management command
+#: management/commands/qcluster.py:9
+msgid "Starts a Django Q Cluster."
+msgstr "启动 Django Q 集群。"
+
+#. Translators: help text for qinfo management command
+#: management/commands/qinfo.py:11
+msgid "General information over all clusters."
+msgstr "所有集群的常规信息。"
+
+#. Translators: help text for qmemory management command
+#: management/commands/qmemory.py:9
+msgid "Monitors Q Cluster memory usage"
+msgstr "监视 Q 集群内存使用情况"
+
+#. Translators: help text for qmonitor management command
+#: management/commands/qmonitor.py:9
+msgid "Monitors Q Cluster activity"
+msgstr "监视 Q 集群活动"
+
+#: models.py:125
+msgid "Successful task"
+msgstr "成功的任务"
+
+#: models.py:126
+msgid "Successful tasks"
+msgstr "成功的任务"
+
+#: models.py:141
+msgid "Failed task"
+msgstr "失败的任务"
+
+#: models.py:142
+msgid "Failed tasks"
+msgstr "失败的任务"
+
+#: models.py:150 models.py:234
+msgid "Please install croniter to enable cron expressions"
+msgstr "请安装 croniter 以启用 cron 表达式"
+
+#: models.py:170
+msgid "e.g. 1, 2, 'John'"
+msgstr "例如 1, 2, 'John'"
+
+#: models.py:172
+msgid "e.g. x=1, y=2, name='John'"
+msgstr "例如 x=1, y=2, name='John'"
+
+#: models.py:186
+msgid "Once"
+msgstr "一次"
+
+#: models.py:187
+msgid "Minutes"
+msgstr "分钟"
+
+#: models.py:188
+msgid "Hourly"
+msgstr "每小时"
+
+#: models.py:189
+msgid "Daily"
+msgstr "每天"
+
+#: models.py:190
+msgid "Weekly"
+msgstr "每周"
+
+#: models.py:191
+msgid "Biweekly"
+msgstr "每两周"
+
+#: models.py:192
+msgid "Monthly"
+msgstr "每月"
+
+#: models.py:193
+msgid "Bimonthly"
+msgstr "每两个月"
+
+#: models.py:194
+msgid "Quarterly"
+msgstr "每季度"
+
+#: models.py:195
+msgid "Yearly"
+msgstr "每年"
+
+#: models.py:196
+msgid "Cron"
+msgstr "Cron"
+
+#: models.py:199
+msgid "Schedule Type"
+msgstr "计划类型"
+
+#: models.py:202
+msgid "Number of minutes for the Minutes type"
+msgstr "'分钟'类型的分钟数"
+
+#: models.py:205
+msgid "Repeats"
+msgstr "重复次数"
+
+#: models.py:205
+msgid "n = n times, -1 = forever"
+msgstr "n = n 次，-1 = 永远"
+
+#: models.py:208
+msgid "Next Run"
+msgstr "下次运行"
+
+#: models.py:215
+msgid "Cron expression"
+msgstr "Cron 表达式"
+
+#: models.py:224
+msgid "Name of kwarg to pass intended schedule date"
+msgstr "传递预定计划日期的 kwarg 的名称"
+
+#: models.py:299
+msgid "Scheduled task"
+msgstr "计划任务"
+
+#: models.py:300
+msgid "Scheduled tasks"
+msgstr "计划任务"
+
+#: models.py:326
+msgid "Queued task"
+msgstr "排队的任务"
+
+#: models.py:327
+msgid "Queued tasks"
+msgstr "排队的任务"
+
+#: monitor.py:64 monitor.py:348
+msgid "Host"
+msgstr "主机"
+
+#: monitor.py:68 monitor.py:352 monitor.py:459
+msgid "Id"
+msgstr "ID"
+
+#: monitor.py:72
+msgid "State"
+msgstr "状态"
+
+#: monitor.py:76
+msgid "Pool"
+msgstr "连接池"
+
+#: monitor.py:80
+msgid "TQ"
+msgstr "TQ"
+
+#: monitor.py:84
+msgid "RQ"
+msgstr "RQ"
+
+#: monitor.py:88
+msgid "RC"
+msgstr "RC"
+
+#: monitor.py:92
+msgid "Up"
+msgstr "运行中"
+
+#: monitor.py:172 monitor.py:286
+msgid "Queued"
+msgstr "已排队"
+
+#: monitor.py:180
+msgid "Success"
+msgstr "成功"
+
+#: monitor.py:190 monitor.py:294
+msgid "Failures"
+msgstr "失败"
+
+#: monitor.py:201 monitor.py:498
+msgid "[Press q to quit]"
+msgstr "[按 q 键退出]"
+
+#: monitor.py:227
+msgid "day"
+msgstr "天"
+
+#: monitor.py:248
+msgid "second"
+msgstr "秒"
+
+#: monitor.py:251
+msgid "minute"
+msgstr "分钟"
+
+#: monitor.py:254
+msgid "hour"
+msgstr "小时"
+
+#: monitor.py:263
+#, python-format
+msgid "-- %(prefix)s %(version)s on %(info)s --"
+msgstr "-- %(prefix)s %(version)s 在 %(info)s 上 --"
+
+#: monitor.py:273
+msgid "Clusters"
+msgstr "集群"
+
+#: monitor.py:277
+msgid "Workers"
+msgstr "工作进程"
+
+#: monitor.py:281
+msgid "Restarts"
+msgstr "重启次数"
+
+#: monitor.py:290
+msgid "Successes"
+msgstr "成功次数"
+
+#: monitor.py:299
+msgid "Schedules"
+msgstr "计划"
+
+#: monitor.py:303
+#, python-format
+msgid "Tasks/%(per)s"
+msgstr "任务/%(per)s"
+
+#: monitor.py:307
+msgid "Avg time"
+msgstr "平均时间"
+
+#: monitor.py:357
+msgid "Available (%)"
+msgstr "可用 (%)"
+
+#: monitor.py:363
+msgid "Available (MB)"
+msgstr "可用 (MB)"
+
+#: monitor.py:368
+msgid "Total (MB)"
+msgstr "总计 (MB)"
+
+#: monitor.py:373
+msgid "Sentinel (MB)"
+msgstr "哨兵 (MB)"
+
+#: monitor.py:379
+msgid "Monitor (MB)"
+msgstr "监视器 (MB)"
+
+#: monitor.py:385
+msgid "Workers (MB)"
+msgstr "工作进程 (MB)"
+
+#: monitor.py:487
+#, python-format
+msgid "Available lowest (): %(memory_percent)s ((at)s)"
+msgstr "最低可用 (): %(memory_percent)s ((at)s)"
+
+#: monitor.py:509
+msgid "No clusters appear to be running."
+msgstr "似乎没有集群正在运行。"
+
+#: signals.py:22
+#, python-format
+msgid "malformed return hook '%(hook)s' for [%(name)s]"
+msgstr "格式错误的返回钩子 '%(hook)s' 用于 [%(name)s]"
+
+#: signals.py:30
+#, python-format
+msgid "return hook %(hook)s failed on [%(name)s] because %(error)s"
+msgstr "返回钩子 %(hook)s 在 [%(name)s] 上失败，原因是 %(error)s"
+
+#, python-format
+#~ msgid ""
+#~ "Could not process '%(func_name)s'. Check the location of the function and "
+#~ "the args/kwargs."
+#~ msgstr ""
+#~ "无法处理函数 '%(func_name)s'。检查函数的位置和args/kwargs。"

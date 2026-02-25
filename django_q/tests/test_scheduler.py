@@ -473,6 +473,47 @@ def test_scheduler_atomic_must_specify_the_database_based_on_router_redirection(
         mocked_db.atomic.assert_called_with(using="default")
 
 
+@pytest.mark.django_db
+def test_schedule_save_sets_next_run_for_cron():
+    """Ensure Schedule.save() sets next_run correctly for CRON schedules."""
+    cron_expression = "0 12 * * *"  # Executes dialy at 12pm
+    schedule = Schedule(
+        func="math.sqrt",
+        schedule_type=Schedule.CRON,
+        cron=cron_expression,
+    )
+
+    assert schedule.next_run is not None
+    assert schedule.pk is None
+
+    initial_next_run = schedule.next_run
+    schedule.save()
+
+    # After save, next_run must be recalculated based on the CRON expression
+    assert schedule.next_run > initial_next_run
+
+
+@pytest.mark.django_db
+def test_schedule_save_direct_db(broker):
+    """Ensure Schedule.save() updates next_run correctly when created directly in DB."""
+    cron_expression = "0 12 * * *"  # Executes dialy at 12pm
+
+    # Creating schedule directly in database
+    schedule = Schedule.objects.create(
+        func="math.sqrt",
+        schedule_type=Schedule.CRON,
+        cron=cron_expression,
+    )
+
+    # Next run must be defined after execution time
+    assert schedule.next_run is not None
+    assert schedule.next_run > timezone.now()
+
+    scheduler(broker)
+
+    assert broker.queue_size() == 0
+
+
 def test_localtime():
     assert not is_naive(localtime())
 

@@ -1,3 +1,5 @@
+import time
+from copy import deepcopy
 from multiprocessing import Event, Value
 
 import pytest
@@ -126,6 +128,27 @@ def test_iter(broker):
     assert i.result() is None
     i.run()
     assert len(i.result()) == 5
+
+
+def _sleeping_func(_):
+    time.sleep(1)
+
+
+@pytest.mark.django_db
+def test_iter_default_cache_timeout(broker, settings):
+    """
+    Test async_iter when it completes after the default Django
+    cache timeout expires.
+    """
+    cache_settings = deepcopy(settings.CACHES)
+    cache_settings["default"]["TIMEOUT"] = 1
+    settings.CACHES = cache_settings
+    broker.purge_queue()
+    broker.cache.clear()
+    it = [i for i in range(2)]
+    t = async_iter(_sleeping_func, it, sync=True)
+    result_t = result(t)
+    assert result_t is not None
 
 
 @pytest.mark.django_db

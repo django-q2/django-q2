@@ -6,7 +6,6 @@ import django_q.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("django_q", "0011_auto_20200628_1055"),
     ]

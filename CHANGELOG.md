@@ -1,5 +1,66 @@
 # Changelog
 
+## [v1.9.0](https://github.com/django-q2/django-q2/tree/v1.9.0) (2025-12-04)
+
+- Django 6.0 support https://github.com/django-q2/django-q2/pull/307
+- Fix to make tests work with redis-py > 5 https://github.com/django-q2/django-q2/pull/282
+
+## [v1.8.0](https://github.com/django-q2/django-q2/tree/v1.8.0) (2025-04-25)
+
+- Delete deprecated imports and unwrapping https://github.com/django-q2/django-q2/pull/261
+- Remove disque from CI https://github.com/django-q2/django-q2/pull/270
+- Avoid creating task run on Scheduler creation https://github.com/django-q2/django-q2/pull/268
+- Update tested versions, add python 3.13 support and django 5.2 support. Drop python 3.8 support https://github.com/django-q2/django-q2/pull/271
+- Move timeout function from ORM broker into class to allow easy customization https://github.com/django-q2/django-q2/pull/274
+
+## [v1.7.6](https://github.com/django-q2/django-q2/tree/v1.7.6) (2025-01-12)
+
+- Make poetry version fixed in CI https://github.com/django-q2/django-q2/pull/260
+
+## [v1.7.5](https://github.com/django-q2/django-q2/tree/v1.7.5) (2025-01-12)
+
+- perf: avoid checking success tasks when save limit is disabled https://github.com/django-q2/django-q2/pull/255
+- Fix install path for CHANGELOG.md https://github.com/django-q2/django-q2/pull/258
+
+## [v1.7.4](https://github.com/django-q2/django-q2/tree/v1.7.4) (2024-11-03)
+
+- Decrease the MAX_RSS set in test_cluster::test_max_rss https://github.com/django-q2/django-q2/pull/240
+- Fix BROKER_CLASS monkeypatch in test_brokers https://github.com/django-q2/django-q2/pull/239
+- Fix 'receive_message_wait_time_seconds' SQS broker management https://github.com/django-q2/django-q2/pull/243
+
+## [v1.7.3](https://github.com/django-q2/django-q2/tree/v1.7.3) (2024-10-15)
+
+- Catch missing SEGALRM with AttributeError instead of ValueError https://github.com/django-q2/django-q2/pull/223
+- Refactor timeout handling to handle AttributeError and ValueError for Windows users https://github.com/django-q2/django-q2/pull/234
+- Fix type check for args in scheduler.py E721 https://github.com/django-q2/django-q2/pull/233
+- Only trigger prometheus if configured https://github.com/django-q2/django-q2/pull/231
+- Fix missing ack_id when finishing task https://github.com/django-q2/django-q2/pull/224
+
+
+## [v1.7.2](https://github.com/django-q2/django-q2/tree/v1.7.2) (2024-09-09)
+
+- Fix twine check
+
+## [v1.7.1](https://github.com/django-q2/django-q2/tree/v1.7.1) (2024-09-08)
+
+- Fixed date of v1.7.0
+- Fixed README.rst formatting which is blocking release of latest version
+
+## [v1.7.0](https://github.com/django-q2/django-q2/tree/v1.7.0) (2024-09-08)
+
+**Merged pull requests:**
+
+- Remove support for Django 3.2 and 4.1 https://github.com/django-q2/django-q2/pull/183
+- Fix max attempts for value 1 https://github.com/django-q2/django-q2/pull/185
+- Replace black/isort with ruff https://github.com/django-q2/django-q2/pull/188
+- Fix repeating task after timeout https://github.com/django-q2/django-q2/pull/184
+- fix: Oracle ORM backend compatibility #180 https://github.com/django-q2/django-q2/pull/186
+- chore: Update CI for Django 4.2 Python 3.12 support https://github.com/django-q2/django-q2/pull/208
+- chore: Add Support Django 5.1 https://github.com/django-q2/django-q2/pull/207
+- Call mark_process_dead on worker pid if prometheus_client is installed https://github.com/django-q2/django-q2/pull/212
+- Add example project https://github.com/django-q2/django-q2/pull/215
+- Add index on succeeded tasks https://github.com/django-q2/django-q2/pull/164
+
 ## [v1.6.2](https://github.com/django-q2/django-q2/tree/v1.6.2) (2024-03-05)
 
 **Merged pull requests:**

@@ -2,23 +2,21 @@ from datetime import datetime, timedelta
 from keyword import iskeyword
 
 # Django
-from django import get_version
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.template.defaultfilters import truncatechars
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.html import format_html
-from django.utils.timezone import is_aware
 from django.utils.translation import gettext_lazy as _
 
 # External
 from picklefield import PickledObjectField
-from picklefield.fields import dbsafe_decode
 
 # Local
-from django_q.conf import Conf, croniter
+from django_q.conf import croniter
 from django_q.signing import SignedPackage
 from django_q.utils import add_months, add_years, localtime
 
@@ -59,7 +57,7 @@ class Task(models.Model):
                 .exclude(success=False)
                 .values_list("result", flat=True)
             )
-        return decode_results(values)
+        return values
 
     def group_result(self, failures=False):
         if self.group:
@@ -112,6 +110,13 @@ class Task(models.Model):
     class Meta:
         app_label = "django_q"
         ordering = ["-stopped"]
+        indexes = [
+            models.Index(
+                name="success_index",
+                fields=["group", "name", "func"],
+                condition=Q(success=True),
+            ),
+        ]
 
 
 class SuccessManager(models.Manager):
@@ -291,11 +296,17 @@ class Schedule(models.Model):
                 url = reverse("admin:django_q_success_change", args=(task.id,))
             else:
                 url = reverse("admin:django_q_failure_change", args=(task.id,))
-            return format_html(f'<a href="{url}">[{task.name}]</a>')
+            return format_html('<a href="{}">[{}]</a>', url, task.name)
         return None
 
     def __str__(self):
         return self.func
+
+    def save(self, *args, **kwargs):
+        if self.pk is None and self.schedule_type == self.CRON:
+            self.next_run = self.calculate_next_run()
+
+        return super().save(*args, **kwargs)
 
     success.boolean = True
     success.short_description = _("success")
@@ -349,11 +360,3 @@ class OrmQ(models.Model):
         app_label = "django_q"
         verbose_name = _("Queued task")
         verbose_name_plural = _("Queued tasks")
-
-
-# Backwards compatibility for Django 1.7
-def decode_results(values):
-    if get_version().split(".")[1] == "7":
-        # decode values in 1.7
-        return [dbsafe_decode(v) for v in values]
-    return values

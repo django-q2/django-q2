@@ -10,10 +10,6 @@ from django_q.conf import Conf, logger
 from django_q.models import OrmQ
 
 
-def _timeout():
-    return timezone.now() + timedelta(seconds=Conf.RETRY)
-
-
 class ORM(Broker):
     @staticmethod
     def get_connection(list_key: str = None):
@@ -27,6 +23,9 @@ class ORM(Broker):
         else:
             logger.debug("Broker in an atomic transaction")
         return OrmQ.objects.using(Conf.ORM)
+
+    def timeout(self, task):
+        return timezone.now() + timedelta(seconds=Conf.RETRY)
 
     def queue_size(self) -> int:
         return (
@@ -75,7 +74,7 @@ class ORM(Broker):
                 if (
                     self.get_connection()
                     .filter(id=task.id, lock=task.lock)
-                    .update(lock=_timeout())
+                    .update(lock=self.timeout(task))
                 ):
                     task_list.append((task.pk, task.payload))
                 # else don't process, as another cluster has been faster than us on

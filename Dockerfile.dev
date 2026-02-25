@@ -7,11 +7,15 @@ ENV PYTHONUNBUFFERED 1
 # Sets the default shell to bash
 ENV SHELL /bin/bash
 
+RUN set -ex \
+    && apt update \
+    && apt-get install gcc python3-dev --yes
+
 # Upgrades pip
-RUN pip install --upgrade pip 
+RUN pip install -U pip setuptools
 
 # Install poetry
-RUN pip install poetry
+RUN pip install poetry==1.8.2
 
 WORKDIR /app
 
