@@ -24,19 +24,84 @@ from .utils import get_func_repr
 
 
 class Task(models.Model):
-    id = models.CharField(max_length=32, primary_key=True, editable=False)
-    name = models.CharField(max_length=100, editable=False)
-    func = models.CharField(max_length=256)
-    hook = models.CharField(max_length=256, null=True)
-    args = PickledObjectField(null=True, protocol=-1)
-    kwargs = PickledObjectField(null=True, protocol=-1)
-    result = PickledObjectField(null=True, protocol=-1)
-    group = models.CharField(max_length=100, editable=False, null=True)
-    cluster = models.CharField(max_length=100, default=None, null=True, blank=True)
-    started = models.DateTimeField(editable=False)
-    stopped = models.DateTimeField(editable=False)
-    success = models.BooleanField(default=True, editable=False)
-    attempt_count = models.IntegerField(default=0)
+    id = models.CharField(
+        max_length=32,
+        primary_key=True,
+        editable=False,
+        verbose_name=_("Task id"),
+        help_text=_("32-character task identifier."),
+    )
+    name = models.CharField(
+        max_length=100,
+        editable=False,
+        verbose_name=_("Name"),
+        help_text=_("Optional human-readable name for lookup and display."),
+    )
+    func = models.CharField(
+        max_length=256,
+        verbose_name=_("Function"),
+        help_text=_("Dotted import path to the callable, e.g. myapp.tasks.job."),
+    )
+    hook = models.CharField(
+        max_length=256,
+        null=True,
+        verbose_name=_("Hook"),
+        help_text=_("Optional dotted path to a callback that receives the task result."),
+    )
+    args = PickledObjectField(
+        null=True,
+        protocol=-1,
+        verbose_name=_("Arguments"),
+        help_text=_("Pickled positional arguments (tuple)."),
+    )
+    kwargs = PickledObjectField(
+        null=True,
+        protocol=-1,
+        verbose_name=_("Keyword arguments"),
+        help_text=_("Pickled keyword arguments (dict)."),
+    )
+    result = PickledObjectField(
+        null=True,
+        protocol=-1,
+        verbose_name=_("Result"),
+        help_text=_("Pickled return value or error payload."),
+    )
+    group = models.CharField(
+        max_length=100,
+        editable=False,
+        null=True,
+        verbose_name=_("Group"),
+        help_text=_("Optional group id to aggregate related tasks."),
+    )
+    cluster = models.CharField(
+        max_length=100,
+        default=None,
+        null=True,
+        blank=True,
+        verbose_name=_("Cluster"),
+        help_text=_("Name of the cluster that executed this task."),
+    )
+    started = models.DateTimeField(
+        editable=False,
+        verbose_name=_("Started at"),
+        help_text=_("When the worker started executing the task."),
+    )
+    stopped = models.DateTimeField(
+        editable=False,
+        verbose_name=_("Stopped at"),
+        help_text=_("When the worker finished (success or failure)."),
+    )
+    success = models.BooleanField(
+        default=True,
+        editable=False,
+        verbose_name=_("Success"),
+        help_text=_("False if the task raised an exception or timed out."),
+    )
+    attempt_count = models.IntegerField(
+        default=0,
+        verbose_name=_("Attempt count"),
+        help_text=_("How many times execution was attempted."),
+    )
 
     @staticmethod
     def get_result(task_id):
@@ -109,6 +174,8 @@ class Task(models.Model):
 
     class Meta:
         app_label = "django_q"
+        verbose_name = _("Task")
+        verbose_name_plural = _("Tasks")
         ordering = ["-stopped"]
         indexes = [
             models.Index(
@@ -166,17 +233,36 @@ def validate_kwarg(value):
 
 
 class Schedule(models.Model):
-    name = models.CharField(max_length=100, null=True, blank=True)
-    func = models.CharField(max_length=256, help_text=_("e.g. module.tasks.function"))
+    name = models.CharField(
+        max_length=100,
+        null=True,
+        blank=True,
+        verbose_name=_("Name"),
+        help_text=_("Optional label to identify this schedule in the admin."),
+    )
+    func = models.CharField(
+        max_length=256,
+        verbose_name=_("Function"),
+        help_text=_("e.g. module.tasks.function"),
+    )
     hook = models.CharField(
         max_length=256,
         null=True,
         blank=True,
+        verbose_name=_("Hook"),
         help_text=_("e.g. module.tasks.result_function"),
     )
-    args = models.TextField(null=True, blank=True, help_text=_("e.g. 1, 2, 'John'"))
+    args = models.TextField(
+        null=True,
+        blank=True,
+        verbose_name=_("Arguments"),
+        help_text=_("e.g. 1, 2, 'John'"),
+    )
     kwargs = models.TextField(
-        null=True, blank=True, help_text=_("e.g. x=1, y=2, name='John'")
+        null=True,
+        blank=True,
+        verbose_name=_("Keyword arguments"),
+        help_text=_("e.g. x=1, y=2, name='John'"),
     )
     ONCE = "O"
     MINUTES = "I"
@@ -206,7 +292,10 @@ class Schedule(models.Model):
         max_length=2, choices=TYPE, default=TYPE[0][0], verbose_name=_("Schedule Type")
     )
     minutes = models.PositiveSmallIntegerField(
-        null=True, blank=True, help_text=_("Number of minutes for the Minutes type")
+        null=True,
+        blank=True,
+        verbose_name=_("Minutes"),
+        help_text=_("Number of minutes for the Minutes type"),
     )
     repeats = models.IntegerField(
         default=-1, verbose_name=_("Repeats"), help_text=_("n = n times, -1 = forever")
@@ -219,14 +308,22 @@ class Schedule(models.Model):
         null=True,
         blank=True,
         validators=[validate_cron],
+        verbose_name=_("Cron"),
         help_text=_("Cron expression"),
     )
-    task = models.CharField(max_length=100, null=True, editable=False)
+    task = models.CharField(
+        max_length=100,
+        null=True,
+        editable=False,
+        verbose_name=_("Last task id"),
+        help_text=_("Id of the last task spawned from this schedule (read-only)."),
+    )
     cluster = models.CharField(
         max_length=100,
         default=None,
         null=True,
         blank=True,
+        verbose_name=_("Cluster"),
         help_text=_("Name of the target cluster"),
     )
     intended_date_kwarg = models.CharField(
@@ -234,6 +331,7 @@ class Schedule(models.Model):
         null=True,
         blank=True,
         validators=[validate_kwarg],
+        verbose_name=_("Intended date kwarg"),
         help_text=_("Name of kwarg to pass intended schedule date"),
     )
 
@@ -321,10 +419,19 @@ class Schedule(models.Model):
 
 
 class OrmQ(models.Model):
-    key = models.CharField(max_length=100, help_text=_("Name of the target cluster"))
-    payload = models.TextField()
+    key = models.CharField(
+        max_length=100,
+        verbose_name=_("Cluster key"),
+        help_text=_("Name of the target cluster"),
+    )
+    payload = models.TextField(
+        verbose_name=_("Payload"),
+        help_text=_("Signed serialized task package (do not edit manually)."),
+    )
     lock = models.DateTimeField(
-        null=True, help_text=_("Prevent any cluster from pulling until")
+        null=True,
+        verbose_name=_("Lock until"),
+        help_text=_("Prevent any cluster from pulling until"),
     )
 
     @cached_property
