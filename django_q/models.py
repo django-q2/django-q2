@@ -167,12 +167,12 @@ def validate_kwarg(value):
 
 class Schedule(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
-    func = models.CharField(max_length=256, help_text="e.g. module.tasks.function")
+    func = models.CharField(max_length=256, help_text=_("e.g. module.tasks.function"))
     hook = models.CharField(
         max_length=256,
         null=True,
         blank=True,
-        help_text="e.g. module.tasks.result_function",
+        help_text=_("e.g. module.tasks.result_function"),
     )
     args = models.TextField(null=True, blank=True, help_text=_("e.g. 1, 2, 'John'"))
     kwargs = models.TextField(
