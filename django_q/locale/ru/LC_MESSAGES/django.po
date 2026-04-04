@@ -198,11 +198,6 @@ msgstr "например: module.tasks.result_function "
 msgid "e.g. 1, 2, 'John'"
 msgstr "например: 1, 2, 'Алимхан'"
 
-
-#: models.py:177
-msgid "e.g. 1, 2, 'John'"
-msgstr "например: 1, 2, 'Алимхан'"
-
 #: models.py:179
 msgid "e.g. x=1, y=2, name='John'"
 msgstr "например: x=1, y=2, name='Алимхан'"
