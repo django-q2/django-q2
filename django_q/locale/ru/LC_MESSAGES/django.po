@@ -191,7 +191,7 @@ msgid "e.g. module.tasks.function"
 msgstr "например: module.tasks.function"
 
 #: models.py:175
-msgid "e.g. module.tasks.function"
+msgid "e.g. module.tasks.result_function"
 msgstr "например: module.tasks.result_function "
 
 #: models.py:177
