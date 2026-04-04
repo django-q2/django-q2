@@ -5,7 +5,6 @@ from keyword import iskeyword
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
-from django.template.defaultfilters import truncatechars
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -165,10 +164,6 @@ class Task(models.Model):
     def time_taken(self):
         return (self.stopped - self.started).total_seconds()
 
-    @property
-    def short_result(self):
-        return truncatechars(self.result, 100)
-
     def __str__(self):
         return f"{self.name or self.id}"
 
@@ -289,7 +284,11 @@ class Schedule(models.Model):
         (CRON, _("Cron")),
     )
     schedule_type = models.CharField(
-        max_length=2, choices=TYPE, default=TYPE[0][0], verbose_name=_("Schedule Type")
+        max_length=2,
+        choices=TYPE,
+        default=TYPE[0][0],
+        verbose_name=_("Schedule Type"),
+        help_text=_("How often this task should be enqueued."),
     )
     minutes = models.PositiveSmallIntegerField(
         null=True,
@@ -301,7 +300,10 @@ class Schedule(models.Model):
         default=-1, verbose_name=_("Repeats"), help_text=_("n = n times, -1 = forever")
     )
     next_run = models.DateTimeField(
-        verbose_name=_("Next Run"), default=timezone.now, null=True
+        verbose_name=_("Next Run"),
+        help_text=_("When this schedule runs next (stored in UTC)."),
+        default=timezone.now,
+        null=True,
     )
     cron = models.CharField(
         max_length=100,
@@ -462,6 +464,14 @@ class OrmQ(models.Model):
     def q_options(self):
         exclude = {"id", "name", "group", "func", "args", "kwargs"}
         return {k: v for k, v in self.task.items() if k not in exclude}
+
+    func.short_description = _("Function")
+    task_id.short_description = _("Task id")
+    name.short_description = _("Name")
+    group.short_description = _("Group")
+    args.short_description = _("Arguments")
+    kwargs.short_description = _("Keyword arguments")
+    q_options.short_description = _("Queue options")
 
     class Meta:
         app_label = "django_q"
