@@ -35,6 +35,57 @@ def test_broker(monkeypatch):
     assert broker.get_stats("test:*") is None
 
 
+def test_broker_set_stat_prunes_stale_master_list():
+    # regression: set_stat should prune stale master-list entries on register
+    broker = Broker()
+    a_key = f"{Conf.Q_STAT}:A"
+    b_key = f"{Conf.Q_STAT}:B"
+    broker.cache.delete(Conf.Q_STAT)
+
+    broker.set_stat(a_key, "state_a", 3)
+    assert a_key in broker.cache.get(Conf.Q_STAT)
+
+    # Drop A's per-stat value to simulate a dead cluster whose TTL expired,
+    # leaving the master-list entry as a stale reference.
+    broker.cache.delete(a_key)
+    assert broker.get_stat(a_key) is None
+    assert a_key in broker.cache.get(Conf.Q_STAT)
+
+    # Registering B should prune stale A from the master list.
+    broker.set_stat(b_key, "state_b", 3)
+    key_list = broker.cache.get(Conf.Q_STAT)
+    assert a_key not in key_list
+    assert b_key in key_list
+    assert broker.get_stat(b_key) == "state_b"
+
+
+def test_broker_set_stat_skips_master_list_write_on_repeat(monkeypatch):
+    # set_stat should only write the master list when membership changes
+    broker = Broker()
+    a_key = f"{Conf.Q_STAT}:A"
+    broker.cache.delete(Conf.Q_STAT)
+
+    writes = []
+    orig_set = broker.cache.set
+
+    def counting_set(key, value, timeout=None, **kw):
+        if key == Conf.Q_STAT:
+            writes.append(key)
+        return orig_set(key, value, timeout, **kw)
+
+    monkeypatch.setattr(broker.cache, "set", counting_set)
+
+    # First call adds a new entry, one master-list write expected
+    broker.set_stat(a_key, "state_a", 3)
+    assert len(writes) == 1
+
+    # Subsequent calls for the same key must not rewrite the master list
+    broker.set_stat(a_key, "state_a", 3)
+    broker.set_stat(a_key, "state_a", 3)
+    broker.set_stat(a_key, "state_a", 3)
+    assert len(writes) == 1
+
+
 def test_redis(monkeypatch):
     monkeypatch.setattr(Conf, "DJANGO_REDIS", None)
     broker = get_broker()
