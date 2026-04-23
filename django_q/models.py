@@ -45,7 +45,9 @@ class Task(models.Model):
         max_length=256,
         null=True,
         verbose_name=_("Hook"),
-        help_text=_("Optional dotted path to a callback that receives the task result."),
+        help_text=_(
+            "Optional dotted path to a callback that receives the task result."
+        ),
     )
     args = PickledObjectField(
         null=True,
