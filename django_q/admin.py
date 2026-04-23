@@ -63,7 +63,7 @@ class TaskAdmin(admin.ModelAdmin):
 
     @admin.display(description=_("Time Taken"))
     def time_taken(self, obj):
-        return obj.time_taken
+        return obj.time_taken()
 
 
 class FailAdmin(admin.ModelAdmin):
