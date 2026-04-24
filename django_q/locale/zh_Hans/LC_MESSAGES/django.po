@@ -620,8 +620,7 @@ msgid "No clusters appear to be running."
 msgstr "似乎没有集群正在运行。"
 
 #: pusher.py:40
-#, fuzzy, python-format
-#| msgid "%(process_name)s pushing tasks at %(id)s"
+#, python-format
 msgid "%(name)s pushing tasks at %(id)s"
 msgstr "%(name)s 正在 %(id)s 处推送任务"
 
@@ -641,8 +640,7 @@ msgid "%(process_name)s failed to create a task from schedule [%(schedule)s]"
 msgstr "%(process_name)s 无法从计划 [%(schedule)s] 创建任务"
 
 #: scheduler.py:121
-#, fuzzy, python-format
-#| msgid "%(process_name)s created a task from schedule [%(schedule)s]"
+#, python-format
 msgid ""
 "%(process_name)s created task %(task_name)s from schedule [%(schedule)s]"
 msgstr "%(process_name)s 从计划 [%(schedule)s] 创建了任务 %(task_name)s"

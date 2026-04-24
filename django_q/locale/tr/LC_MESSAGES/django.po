@@ -621,14 +621,13 @@ msgstr "Hiçbir küme çalışıyor görünmüyor."
 
 #: pusher.py:40
 #, python-format
-#| msgid "%(process_name)s pushing tasks at %(id)s"
 msgid "%(name)s pushing tasks at %(id)s"
 msgstr "%(name)s, işleri %(id)s pid'ine gönderiyor."
 
 #: pusher.py:67
 #, python-format
 msgid "queueing from %(list_key)s"
-msgstr ""
+msgstr "%(list_key)s kuyruğa alınıyor"
 
 #: pusher.py:71
 #, python-format
@@ -641,11 +640,10 @@ msgid "%(process_name)s failed to create a task from schedule [%(schedule)s]"
 msgstr "%(process_name)s programdan bir görev oluşturamadı [%(schedule)s]"
 
 #: scheduler.py:121
-#, fuzzy, python-format
-#| msgid "%(process_name)s created a task from schedule [%(schedule)s]"
+#, python-format
 msgid ""
 "%(process_name)s created task %(task_name)s from schedule [%(schedule)s]"
-msgstr "%(process_name)s programdan bir görev oluşturamadı [%(schedule)s]"
+msgstr "%(process_name)s programdan %(task_name)s görevini oluşturdu [%(schedule)s]"
 
 #: signals.py:22
 #, python-format
