@@ -620,10 +620,10 @@ msgid "No clusters appear to be running."
 msgstr "Hiçbir küme çalışıyor görünmüyor."
 
 #: pusher.py:40
-#, fuzzy, python-format
+#, python-format
 #| msgid "%(process_name)s pushing tasks at %(id)s"
 msgid "%(name)s pushing tasks at %(id)s"
-msgstr "%(process_name)s, işleri %(id)s pid'ine gönderiyor."
+msgstr "%(name)s, işleri %(id)s pid'ine gönderiyor."
 
 #: pusher.py:67
 #, python-format
