@@ -79,6 +79,20 @@ class Cluster:
         # is blocked in sentinel.join(). It is also necessary to check for start_event
         # being set to None by the signal handler.
         while self.start_event and not self.start_event.is_set():
+            # While waiting for the sentinel to start, also check for sentinel premature
+            # death
+            if self.sentinel and not self.sentinel.is_alive():
+                logger.error(
+                    _(
+                        "Q Cluster %(name)s failed to start. Sentinel exited "
+                        "with exit code %(exitcode)s."
+                    )
+                    % {"name": self.name, "exitcode": self.sentinel.exitcode}
+                )
+                raise RuntimeError(
+                    f"Q Cluster {self.name} failed to start: sentinel exited "
+                    f"with code {self.sentinel.exitcode}"
+                )
             sleep(0.1)
         return self.pid
 
