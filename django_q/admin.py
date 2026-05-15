@@ -2,6 +2,7 @@
 
 from django.contrib import admin
 from django.db.models.expressions import OuterRef, Subquery
+from django.template.defaultfilters import truncatechars
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
@@ -60,6 +61,10 @@ class TaskAdmin(admin.ModelAdmin):
         """Set all fields readonly."""
         return list(self.readonly_fields) + [field.name for field in obj._meta.fields]
 
+    @admin.display(description=_("Time Taken"))
+    def time_taken(self, obj):
+        return obj.time_taken()
+
 
 class FailAdmin(admin.ModelAdmin):
     """model admin for failed tasks."""
@@ -86,6 +91,10 @@ class FailAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         """Set all fields readonly."""
         return list(self.readonly_fields) + [field.name for field in obj._meta.fields]
+
+    @admin.display(description=_("Short result"))
+    def short_result(self, obj):
+        return truncatechars(obj.result, 100)
 
 
 class ScheduleAdmin(admin.ModelAdmin):

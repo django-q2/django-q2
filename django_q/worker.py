@@ -85,7 +85,8 @@ def worker(
         if not callable(f):
             # locate() returns None if f cannot be loaded
             f = pydoc.locate(f)
-        close_old_django_connections()
+        if not task.get("sync", False):
+            close_old_django_connections()
         timer_value = task.pop("timeout", timeout)
         # signal execution
         pre_execute.send(sender="django_q", func=f, task=task)
