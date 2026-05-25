@@ -99,54 +99,75 @@ def test_cluster_initial(broker):
     broker.delete_queue()
 
 
-@pytest.mark.django_db
-def test_cluster_early_stop(broker, monkeypatch):
-    """
-    Test stopping the cluster before the sentinel has set the cluster's start_event
-    """
-
+class TestEarlyClusterStop:
     sentinel_event = Event()
     test_event = Event()
 
-    def fake_ping():
+    @staticmethod
+    def _fake_ping_for_test_cluster_early_stop():
         """
-        Fake broker ping() method
+        Fake broker ping() method for test_cluster_early_stop()
 
         This is called in the sentinel process's start() method and overriding it allows
         us to synchronize the sentinel process with the main process to provide a
         deterministic ordering of operations for the test.
+
+        This is implemented as a static method so the patched broker remains pickleable
+        for passing to the sentinel process, in case anyone ever runs the test on
+        platforms like MacOS that use spawn Process start method.
         """
-        sentinel_event.set()  # let the main process know the sentinel is waiting
-        test_event.wait()  # wait for the main process to let the sentinel proceed
+        # let the main process know the sentinel is waiting
+        TestEarlyClusterStop.sentinel_event.set()
+        # wait for the main process to let the sentinel proceed. The timeout prevents
+        # the test from hanging if the main process terminates unexpectedly before
+        # setting the event.
+        assert TestEarlyClusterStop.test_event.wait(10)
 
-    def raise_sigterm():
-        # wait for the sentinel to be blocked in fake_ping()
-        sentinel_event.wait()
-        # stop the cluster via SIGTERM
-        os.kill(os.getpid(), signal.SIGTERM)
-        # unblock the sentinel
-        test_event.set()
+    @pytest.mark.django_db
+    def test_cluster_early_stop(self, broker, monkeypatch):
+        """
+        Test stopping the cluster before the sentinel has set the cluster's start_event
+        """
 
-    monkeypatch.setattr(broker, "ping", fake_ping)
+        def raise_sigterm():
+            # wait for the sentinel to be blocked in fake_ping(). Periodically check
+            # that the sentinel is alive in case the sentinel dies unexpectedly before
+            # setting the sentinel_event -- prevents the test from hanging if sentinel
+            # dies unexpectedly.
+            while True:
+                if self.sentinel_event.wait(0.5):
+                    break
+                if not c.sentinel.is_alive():
+                    break
+            # stop the cluster via SIGTERM
+            os.kill(os.getpid(), signal.SIGTERM)
+            # unblock the sentinel
+            self.test_event.set()
 
-    broker.list_key = "initial_test:q"
-    broker.delete_queue()
-    c = Cluster(broker=broker)
-    assert c.sentinel is None
-    assert c.stat.status == Conf.STOPPED
+        monkeypatch.setattr(
+            broker,
+            "ping",
+            self._fake_ping_for_test_cluster_early_stop,
+        )
 
-    # Use a timer to stop the cluster while it is still starting up. The timer function
-    # is guaranteed to run before c.start() returns, as start() must wait for the
-    # sentinel to set the cluster's start_event, and the sentinel will block on
-    # test_event before setting start_event.
-    threading.Timer(0.5, raise_sigterm).start()
+        broker.list_key = "initial_test:q"
+        broker.delete_queue()
+        c = Cluster(broker=broker)
+        assert c.sentinel is None
+        assert c.stat.status == Conf.STOPPED
 
-    c.start()
-    stat = c.stat
-    assert stat.status == Conf.STOPPED
-    assert c.sentinel.is_alive() is False
-    assert c.has_stopped
-    broker.delete_queue()
+        # Use a timer to stop the cluster while it is still starting up. The timer function
+        # is guaranteed to run before c.start() returns, as start() must wait for the
+        # sentinel to set the cluster's start_event, and the sentinel will block on
+        # test_event before setting start_event.
+        threading.Timer(0.5, raise_sigterm).start()
+
+        c.start()
+        stat = c.stat
+        assert stat.status == Conf.STOPPED
+        assert c.sentinel.is_alive() is False
+        assert c.has_stopped
+        broker.delete_queue()
 
 
 @pytest.mark.django_db

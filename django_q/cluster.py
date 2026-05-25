@@ -81,7 +81,11 @@ class Cluster:
         while self.start_event and not self.start_event.is_set():
             # While waiting for the sentinel to start, also check for sentinel premature
             # death
-            if self.sentinel and not self.sentinel.is_alive():
+            if not self.sentinel.is_alive():
+                if self.sentinel.exitcode == 0:
+                    # the cluster was stopped via SIGTERM/SIGINT and sentinel early
+                    # termination was intentional -- exit quietly
+                    break
                 logger.error(
                     _(
                         "Q Cluster %(name)s failed to start. Sentinel exited "
