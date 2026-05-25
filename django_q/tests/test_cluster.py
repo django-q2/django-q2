@@ -150,6 +150,45 @@ def test_cluster_early_stop(broker, monkeypatch):
 
 
 @pytest.mark.django_db
+def test_cluster_stop_responsive(broker, monkeypatch):
+    """
+    Ensure that stopping the cluster is responsive and does not wait for a full
+    GUARD_CYCLE.
+    """
+    timeout_seconds = 5
+
+    def timeout(signal, frame):
+        assert 0, f"cluster did not stop after {timeout_seconds}s"
+
+    broker.list_key = "initial_test:q"
+    broker.delete_queue()
+    # set a long GUARD_CYCLE -- greater than timeout_seconds
+    monkeypatch.setattr(Conf, "GUARD_CYCLE", timeout_seconds * 2)
+    c = Cluster(broker=broker)
+    assert c.sentinel is None
+    assert c.stat.status == Conf.STOPPED
+    assert c.start() > 0
+    assert c.sentinel.is_alive() is True
+    assert c.is_running
+    assert c.is_stopping is False
+    assert c.is_starting is False
+    sleep(0.5)
+    stat = c.stat
+    assert stat.status == Conf.IDLE
+    prev_handler = signal.signal(signal.SIGALRM, timeout)
+    try:
+        signal.alarm(timeout_seconds)
+        assert c.stop() is True
+    finally:
+        signal.alarm(0)  # cancel the alarm
+        signal.signal(signal.SIGALRM, prev_handler)
+    assert c.sentinel.is_alive() is False
+    assert c.has_stopped
+    assert c.stop() is False
+    broker.delete_queue()
+
+
+@pytest.mark.django_db
 def test_sentinel():
     start_event = Event()
     stop_event = Event()
