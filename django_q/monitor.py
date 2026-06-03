@@ -1,3 +1,6 @@
+import signal
+import sys
+
 from multiprocessing.process import current_process
 from multiprocessing.queues import Queue
 
@@ -32,6 +35,9 @@ def monitor(result_queue: Queue, broker: Broker = None):
     :type broker: brokers.Broker
     :type result_queue: multiprocessing.Queue
     """
+    if sys.platform == "win32":
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
     if not broker:
         broker = get_broker()
     proc_name = current_process().name
@@ -83,8 +89,8 @@ def save_task(task, broker: Broker):
     # SAVE LIMIT < 0 : Don't save success
     if not task.get("save", Conf.SAVE_LIMIT >= 0) and task["success"]:
         return
-    # enqueues next in a chain
-    if task.get("chain", None):
+    # enqueues next in a chain, only if the task succeeded
+    if task.get("chain", None) and task["success"]:
         async_chain(
             task["chain"],
             group=task["group"],

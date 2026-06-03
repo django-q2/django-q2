@@ -1,6 +1,7 @@
 # Standard
 import os
 import signal
+import sys
 import socket
 import uuid
 from multiprocessing import Event, Process, Value, current_process
@@ -51,8 +52,14 @@ class Cluster:
         self.cluster_id = uuid.uuid4()
         self.host = socket.gethostname()
         self.timeout = None
-        signal.signal(signal.SIGTERM, self.sig_handler)
-        signal.signal(signal.SIGINT, self.sig_handler)
+        if sys.platform == "win32":
+            import win32api
+            win32api.SetConsoleCtrlHandler(self.sig_handler_windows, True)
+            signal.signal(signal.SIGINT, signal.SIG_IGN)
+            signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        else:
+            signal.signal(signal.SIGTERM, self.sig_handler)
+            signal.signal(signal.SIGINT, self.sig_handler)
 
     def start(self) -> int:
         if setproctitle:
@@ -120,6 +127,9 @@ class Cluster:
             }
         )
         self.stop()
+
+    def sig_handler_windows(self, signum):
+        self.sig_handler(signum, None)
 
     @property
     def stat(self) -> Status:
@@ -292,6 +302,18 @@ class Sentinel:
             elif int(process.timer.value) == -2:
                 logger.info(_("recycled worker %(name)s") % {"name": process.name})
             else:
+                dead_task = None
+                try:
+                    dead_task = process.current_task_queue.get(block=False)
+                except Exception:
+                    pass
+                if dead_task:
+                    dead_task["result"] = _("Worker died while processing task %(task_name)s") % {
+                        "task_name": dead_task.get("name", "")
+                    }
+                    dead_task["success"] = False
+                    dead_task["stopped"] = timezone.now()
+                    self.result_queue.put(dead_task)
                 logger.critical(
                     _("reincarnated worker %(name)s after death")
                     % {"name": process.name}
