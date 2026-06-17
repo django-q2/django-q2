@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.translation import gettext as _
 
@@ -28,6 +29,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        # Ensure that the cluster starts only if the SECRET_KEY is set, as it is required for signing.
+        settings.SECRET_KEY
         # Set alternative cluster_name before creating the cluster (cluster_name is broker's queue_name, too)
         cluster_name = options.get("cluster_name")
         if cluster_name:

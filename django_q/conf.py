@@ -7,6 +7,7 @@ from multiprocessing import cpu_count
 from warnings import warn
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext_lazy as _
 
 from django_q.queues import Queue
@@ -211,7 +212,12 @@ class Conf:
 
     # Use the secret key for package signing
     # Django itself should raise an error if it's not configured
-    SECRET_KEY = settings.SECRET_KEY
+    # but suppress the exception early to allow other parts of the app to still run.
+    # For example any "python manage.py ..." command still runs even if SECRET_KEY is not set.
+    try:
+        SECRET_KEY = settings.SECRET_KEY
+    except ImproperlyConfigured:
+        SECRET_KEY = None
 
     # The redis stats key
     Q_STAT = f"django_q:{PREFIX}:cluster"
