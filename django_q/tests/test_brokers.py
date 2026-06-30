@@ -101,6 +101,24 @@ def test_redis(monkeypatch):
         broker.ping()
 
 
+def test_redis_dequeue_uses_configured_poll_timeout(monkeypatch):
+    # regression: Redis.dequeue() used to hardcode a 1 second blpop timeout,
+    # ignoring the configurable Conf.POLL setting (Q_CLUSTER["poll"]).
+    from unittest.mock import MagicMock
+
+    from django_q.brokers.redis_broker import Redis as RedisBroker
+
+    monkeypatch.setattr(Conf, "POLL", 5)
+    broker = RedisBroker.__new__(RedisBroker)
+    broker.list_key = "django_q:test:q"
+    broker.connection = MagicMock()
+    broker.connection.blpop.return_value = None
+
+    broker.dequeue()
+
+    broker.connection.blpop.assert_called_once_with(broker.list_key, timeout=Conf.POLL)
+
+
 def test_custom(monkeypatch):
     monkeypatch.setattr(Conf, "BROKER_CLASS", "django_q.brokers.redis_broker.Redis")
     broker = get_broker()
