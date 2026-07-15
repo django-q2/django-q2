@@ -52,8 +52,8 @@ include = [
 
 
 [tool.poetry.dependencies]
-python = ">=3.9,<4"
-django = ">=4.2"
+python = ">=3.10,<4"
+django = ">=5.2"
 django-picklefield = "^3.1"
 
 blessed = { version = "^1.19.1", optional = true }

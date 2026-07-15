@@ -35,13 +35,13 @@ See the `changelog <https://github.com/GDay/django-q2/blob/master/CHANGELOG.md>`
 Requirements
 ~~~~~~~~~~~~
 
--  `Django <https://www.djangoproject.com>`__ > = 4.2
+-  `Django <https://www.djangoproject.com>`__ 5.2 and 6.0 
 -  `Django-picklefield <https://github.com/gintas/django-picklefield>`__
 
 Tested with:
 
-* Python 3.9 to 3.13.
-* Django 4.2 to 6.0.
+* Python 3.10 to 3.14.
+* Django 5.2 and 6.0.
 
 Brokers
 ~~~~~~~
