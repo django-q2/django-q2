@@ -84,6 +84,7 @@ build-backend = ["poetry.core.masonry.api"]
 testing = ["django-redis", "croniter", "hiredis", "psutil", "iron-mq", "boto3", "pymongo", "blessed", "redis", "setproctitle"]
 rollbar = ["django-q-rollbar"]
 sentry = ["django-q-sentry"]
+croniter = ["croniter"]
 
 [tool.isort]
 profile = "black"
