@@ -146,11 +146,11 @@ def monitor(run_once=False, broker=None):
                 )
                 print(
                     term.move(i, 5 * col_width)
-                    + term.center(results, width=col_width - 1)
+                    + term.center(str(results), width=col_width - 1)
                 )
                 print(
                     term.move(i, 6 * col_width)
-                    + term.center(stat.reincarnations, width=col_width - 1)
+                    + term.center(str(stat.reincarnations), width=col_width - 1)
                 )
                 print(
                     term.move(i, 7 * col_width)
