@@ -97,6 +97,8 @@ def monitor(run_once=False, broker=None):
             for stat in stats:
                 status = stat.status
                 # color status
+                if stat.status == Conf.STARTING:
+                    status = term.yellow(str(Conf.STARTING))
                 if stat.status == Conf.WORKING:
                     status = term.green(str(Conf.WORKING))
                 elif stat.status == Conf.STOPPING:
@@ -105,6 +107,8 @@ def monitor(run_once=False, broker=None):
                     status = term.red(str(Conf.STOPPED))
                 elif stat.status == Conf.IDLE:
                     status = str(Conf.IDLE)
+                else:
+                    status = _("Unknown")
                 # color q's
                 tasks = str(stat.task_q_size)
                 if stat.task_q_size > 0:
@@ -138,7 +142,7 @@ def monitor(run_once=False, broker=None):
                 )
                 print(
                     term.move(i, 3 * col_width)
-                    + term.center(workers, width=col_width - 1)
+                    + term.center(str(workers), width=col_width - 1)
                 )
                 print(
                     term.move(i, 4 * col_width)
