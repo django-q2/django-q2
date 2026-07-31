@@ -411,27 +411,27 @@ def memory(run_once=False, workers=False, broker=None):
                 )
                 print(
                     term.move(row, 2 * col_width)
-                    + term.center(memory_available_percentage, width=col_width - 1)
+                    + term.center(str(memory_available_percentage), width=col_width - 1)
                 )
                 print(
                     term.move(row, 3 * col_width)
-                    + term.center(memory_available, width=col_width - 1)
+                    + term.center(str(memory_available), width=col_width - 1)
                 )
                 print(
                     term.move(row, 4 * col_width)
                     + term.center(
-                        round(psutil.virtual_memory().total / 1024**2, 2),
+                        str(round(psutil.virtual_memory().total / 1024**2, 2)),
                         width=col_width - 1,
                     )
                 )
                 print(
                     term.move(row, 5 * col_width)
-                    + term.center(get_process_mb(stat.sentinel), width=col_width - 1)
+                    + term.center(str(get_process_mb(stat.sentinel)), width=col_width - 1)
                 )
                 print(
                     term.move(row, 6 * col_width)
                     + term.center(
-                        get_process_mb(getattr(stat, "monitor", None)),
+                        str(get_process_mb(getattr(stat, "monitor", None))),
                         width=col_width - 1,
                     )
                 )
@@ -444,7 +444,7 @@ def memory(run_once=False, workers=False, broker=None):
                 print(
                     term.move(row, 7 * col_width)
                     + term.center(
-                        workers_mb or "NO_PROCESSES_FOUND", width=col_width - 1
+                        str(workers_mb) or "NO_PROCESSES_FOUND", width=col_width - 1
                     )
                 )
                 row += 1
@@ -476,7 +476,7 @@ def memory(run_once=False, workers=False, broker=None):
                         mb_used = get_process_mb(worker_pid)
                         print(
                             term.move(row, (idx + 1) * col_width)
-                            + term.center(mb_used, width=col_width - 1)
+                            + term.center(str(mb_used), width=col_width - 1)
                         )
                     row += 1
             row += 1
