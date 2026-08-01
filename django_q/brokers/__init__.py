@@ -106,8 +106,13 @@ class Broker:
             return
         key_list = self.cache.get(Conf.Q_STAT, [])
         if key not in key_list:
+            # Prune stale entries whose per-stat value has expired, so the
+            # master list cannot grow without bound across cluster restarts.
+            key_list = [k for k in key_list if self.cache.get(k) is not None]
             key_list.append(key)
-        self.cache.set(Conf.Q_STAT, key_list)
+            # timeout=None: master list lifetime is managed by membership
+            # changes, not by TTL refresh on every heartbeat.
+            self.cache.set(Conf.Q_STAT, key_list, None)
         return self.cache.set(key, value, timeout)
 
     def get_stat(self, key: str):

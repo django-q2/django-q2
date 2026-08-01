@@ -173,7 +173,7 @@ def monitor(run_once=False, broker=None):
             )
             print(
                 term.move(i, 3 * col_width)
-                + term.white_on_cyan(term.center(queue_size, width=col_width))
+                + term.white_on_cyan(term.center(str(queue_size), width=col_width))
             )
             print(
                 term.move(i, 4 * col_width)
@@ -182,7 +182,7 @@ def monitor(run_once=False, broker=None):
             print(
                 term.move(i, 5 * col_width)
                 + term.white_on_cyan(
-                    term.center(models.Success.objects.count(), width=col_width)
+                    term.center(str(models.Success.objects.count()), width=col_width)
                 )
             )
             print(
@@ -192,7 +192,7 @@ def monitor(run_once=False, broker=None):
             print(
                 term.move(i, 7 * col_width)
                 + term.white_on_cyan(
-                    term.center(models.Failure.objects.count(), width=col_width)
+                    term.center(str(models.Failure.objects.count()), width=col_width)
                 )
             )
             # for testing

@@ -1,4 +1,5 @@
 import os
+import signal
 import sys
 import threading
 import uuid as uuidlib
@@ -19,7 +20,12 @@ from django_q.models import Success, Task
 from django_q.monitor import monitor, save_task
 from django_q.pusher import pusher
 from django_q.queues import Queue
-from django_q.signals import post_execute, pre_enqueue, pre_execute
+from django_q.signals import (
+    post_execute,
+    post_execute_in_worker,
+    pre_enqueue,
+    pre_execute,
+)
 from django_q.status import Stat
 from django_q.tasks import (
     async_task,
@@ -87,6 +93,116 @@ def test_cluster_initial(broker):
     stat = c.stat
     assert stat.status == Conf.IDLE
     assert c.stop() is True
+    assert c.sentinel.is_alive() is False
+    assert c.has_stopped
+    assert c.stop() is False
+    broker.delete_queue()
+
+
+class TestEarlyClusterStop:
+    sentinel_event = Event()
+    test_event = Event()
+
+    @staticmethod
+    def _fake_ping_for_test_cluster_early_stop():
+        """
+        Fake broker ping() method for test_cluster_early_stop()
+
+        This is called in the sentinel process's start() method and overriding it allows
+        us to synchronize the sentinel process with the main process to provide a
+        deterministic ordering of operations for the test.
+
+        This is implemented as a static method so the patched broker remains pickleable
+        for passing to the sentinel process, in case anyone ever runs the test on
+        platforms like MacOS that use spawn Process start method.
+        """
+        # let the main process know the sentinel is waiting
+        TestEarlyClusterStop.sentinel_event.set()
+        # wait for the main process to let the sentinel proceed. The timeout prevents
+        # the test from hanging if the main process terminates unexpectedly before
+        # setting the event.
+        assert TestEarlyClusterStop.test_event.wait(10)
+
+    @pytest.mark.django_db
+    def test_cluster_early_stop(self, broker, monkeypatch):
+        """
+        Test stopping the cluster before the sentinel has set the cluster's start_event
+        """
+
+        def raise_sigterm():
+            # wait for the sentinel to be blocked in fake_ping(). Periodically check
+            # that the sentinel is alive in case the sentinel dies unexpectedly before
+            # setting the sentinel_event -- prevents the test from hanging if sentinel
+            # dies unexpectedly.
+            while True:
+                if self.sentinel_event.wait(0.5):
+                    break
+                if not c.sentinel.is_alive():
+                    break
+            # stop the cluster via SIGTERM
+            os.kill(os.getpid(), signal.SIGTERM)
+            # unblock the sentinel
+            self.test_event.set()
+
+        monkeypatch.setattr(
+            broker,
+            "ping",
+            self._fake_ping_for_test_cluster_early_stop,
+        )
+
+        broker.list_key = "initial_test:q"
+        broker.delete_queue()
+        c = Cluster(broker=broker)
+        assert c.sentinel is None
+        assert c.stat.status == Conf.STOPPED
+
+        # Use a timer to stop the cluster while it is still starting up. The timer function
+        # is guaranteed to run before c.start() returns, as start() must wait for the
+        # sentinel to set the cluster's start_event, and the sentinel will block on
+        # test_event before setting start_event.
+        threading.Timer(0.5, raise_sigterm).start()
+
+        c.start()
+        stat = c.stat
+        assert stat.status == Conf.STOPPED
+        assert c.sentinel.is_alive() is False
+        assert c.has_stopped
+        broker.delete_queue()
+
+
+@pytest.mark.django_db
+def test_cluster_stop_responsive(broker, monkeypatch):
+    """
+    Ensure that stopping the cluster is responsive and does not wait for a full
+    GUARD_CYCLE.
+    """
+    timeout_seconds = 5
+
+    def timeout(signal, frame):
+        assert 0, f"cluster did not stop after {timeout_seconds}s"
+
+    broker.list_key = "initial_test:q"
+    broker.delete_queue()
+    # set a long GUARD_CYCLE -- greater than timeout_seconds
+    monkeypatch.setattr(Conf, "GUARD_CYCLE", timeout_seconds * 2)
+    c = Cluster(broker=broker)
+    assert c.sentinel is None
+    assert c.stat.status == Conf.STOPPED
+    assert c.start() > 0
+    assert c.sentinel.is_alive() is True
+    assert c.is_running
+    assert c.is_stopping is False
+    assert c.is_starting is False
+    sleep(0.5)
+    stat = c.stat
+    assert stat.status == Conf.IDLE
+    prev_handler = signal.signal(signal.SIGALRM, timeout)
+    try:
+        signal.alarm(timeout_seconds)
+        assert c.stop() is True
+    finally:
+        signal.alarm(0)  # cancel the alarm
+        signal.signal(signal.SIGALRM, prev_handler)
     assert c.sentinel.is_alive() is False
     assert c.has_stopped
     assert c.stop() is False
@@ -759,6 +875,35 @@ class TestSignals:
         assert self.task.get("id") == task_id
         assert self.task.get("result") == -1
         post_execute.disconnect(handler)
+
+    @pytest.mark.django_db
+    def test_post_execute_in_worker_signal(self, broker):
+        broker.list_key = "post_execute_in_worker_test:q"
+        broker.delete_queue()
+        self.signal_was_called: bool = False
+        self.task: Optional[dict] = None
+        self.func = None
+
+        def handler(sender, task, **kwargs):
+            self.signal_was_called = True
+            self.task = task
+
+        post_execute_in_worker.connect(handler)
+        task_id = async_task("math.copysign", 1, -1, broker=broker)
+        task_queue = Queue()
+        result_queue = Queue()
+        event = Event()
+        event.set()
+        pusher(task_queue, event, broker=broker)
+        task_queue.put("STOP")
+        worker(task_queue, result_queue, Value("f", -1))
+        result_queue.put("STOP")
+        monitor(result_queue, broker)
+        broker.delete_queue()
+        assert self.signal_was_called is True
+        assert self.task.get("id") == task_id
+        assert self.task.get("result") == -1
+        post_execute_in_worker.disconnect(handler)
 
 
 @pytest.mark.django_db

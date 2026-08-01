@@ -4,7 +4,10 @@ build-backend = "uv_build"
 
 [project]
 name = "django-q2"
-version = "1.9.0"
+version = "1.10.0"
+packages = [
+    { include = "django_q" },
+]
 description = "A multiprocessing distributed task queue for Django"
 authors = [
     { name = "Stan Triepels", email = "django-q2@stantriepels.com" },
@@ -63,8 +66,7 @@ testing = [
     "pytest-cov",
     "ruff",
 ]
-rollbar = []
-sentry = []
+croniter = ["croniter"]
 
 [project.urls]
 Homepage = "https://django-q2.readthedocs.org"

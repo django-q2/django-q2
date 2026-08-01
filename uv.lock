@@ -541,7 +541,7 @@ wheels = [
 
 [[package]]
 name = "django-q2"
-version = "1.9.0"
+version = "1.10.0"
 source = { editable = "." }
 dependencies = [
     { name = "django", version = "4.2.28", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.10'" },
@@ -553,6 +553,9 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+croniter = [
+    { name = "croniter" },
+]
 testing = [
     { name = "blessed" },
     { name = "boto3" },
@@ -575,6 +578,7 @@ testing = [
 requires-dist = [
     { name = "blessed", marker = "extra == 'testing'" },
     { name = "boto3", marker = "extra == 'testing'" },
+    { name = "croniter", marker = "extra == 'croniter'" },
     { name = "croniter", marker = "extra == 'testing'" },
     { name = "django", specifier = ">=4.2" },
     { name = "django-picklefield", specifier = ">=3.1,<4" },
@@ -591,7 +595,7 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'testing'" },
     { name = "setproctitle", marker = "extra == 'testing'" },
 ]
-provides-extras = ["testing", "rollbar", "sentry"]
+provides-extras = ["testing", "croniter"]
 
 [[package]]
 name = "django-redis"

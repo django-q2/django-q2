@@ -461,7 +461,9 @@ def async_iter(func, args_iter, **kwargs):
     # save the original arguments
     broker = options["broker"]
     broker.cache.set(
-        f"{broker.list_key}:{iter_group}:args", SignedPackage.dumps(args_iter)
+        f"{broker.list_key}:{iter_group}:args",
+        SignedPackage.dumps(args_iter),
+        timeout=None,
     )
     for args in args_iter:
         if not isinstance(args, tuple):

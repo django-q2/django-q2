@@ -1,5 +1,19 @@
 # Changelog
 
+## [v1.10.0](https://github.com/django-q2/django-q2/tree/v1.10.0) (2026-05-01)
+
+- fix: Fix incorrect signal import (#308) https://github.com/django-q2/django-q2/pull/308
+- Add post_execute_in_worker signal (#309) https://github.com/django-q2/django-q2/pull/309
+- Fix BadSignature after the default Django cache expires (#311) https://github.com/django-q2/django-q2/pull/311
+- feat:add Simplified Chinese Translation (#314) https://github.com/django-q2/django-q2/pull/314
+- Update Django Q2 compatibility information (#316) https://github.com/django-q2/django-q2/pull/316
+- Don't close DB connection if async_task was called with sync=True (#301) https://github.com/django-q2/django-q2/pull/301
+- Convert queue size and count to string in monitor (#319) https://github.com/django-q2/django-q2/pull/319
+- Fix unbounded growth of Broker.set_stat cluster master list (#322) https://github.com/django-q2/django-q2/pull/322
+- Update Python base image to 3.9-slim-bookworm (#325) https://github.com/django-q2/django-q2/pull/325
+- feat: add ru locale and improve translations (#320) https://github.com/django-q2/django-q2/pull/320
+
+
 ## [v1.9.0](https://github.com/django-q2/django-q2/tree/v1.9.0) (2025-12-04)
 
 - Django 6.0 support https://github.com/django-q2/django-q2/pull/307
