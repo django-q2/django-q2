@@ -87,8 +87,8 @@ jobs:
         - name: Install dependencies with Django ${{ matrix.django }}
           run: |
             python -m pip install uv==0.12.1
-            uv add "django~=${{ matrix.django }}a1" --python-version ${{ matrix.python-version }}
-            uv sync --extra testing --python-version ${{ matrix.python-version }}
+            uv sync --extra testing --python ${{ matrix.python-version }}
+            uv pip install "django~=${{ matrix.django }}a1"
         - name: Run Tests
           run: |
             uv run pytest --cov=./django_q --cov-report=xml
