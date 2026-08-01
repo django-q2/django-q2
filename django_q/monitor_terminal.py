@@ -107,6 +107,8 @@ def monitor(run_once=False, broker=None):
                     status = term.red(str(Conf.STOPPED))
                 elif stat.status == Conf.IDLE:
                     status = str(Conf.IDLE)
+                else:
+                    status = _("Unknown")
                 # color q's
                 tasks = str(stat.task_q_size)
                 if stat.task_q_size > 0:
@@ -117,7 +119,7 @@ def monitor(run_once=False, broker=None):
                 if results > 0:
                     results = term.cyan(str(results))
                 else:
-                    str(results)
+                    results = str(results)
                 # color workers
                 workers = len(stat.workers)
                 if workers < Conf.WORKERS:
@@ -432,7 +434,9 @@ def memory(run_once=False, workers=False, broker=None):
                 )
                 print(
                     term.move(row, 5 * col_width)
-                    + term.center(str(get_process_mb(stat.sentinel)), width=col_width - 1)
+                    + term.center(
+                        str(get_process_mb(stat.sentinel)), width=col_width - 1
+                    )
                 )
                 print(
                     term.move(row, 6 * col_width)
