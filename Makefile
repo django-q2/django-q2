@@ -19,6 +19,10 @@ makemigrations:
 migrate:
 	docker compose -f test-services-docker-compose.yaml run --rm django-q2 uv run python manage.py migrate
 
+build-package:
+	docker compose -f test-services-docker-compose.yaml run --rm django-q2 uv run django-admin compilemessages
+	docker compose -f test-services-docker-compose.yaml run --rm django-q2 uv build
+
 createsuperuser:
 	docker compose -f web-docker-compose.yaml run --rm web python manage.py createsuperuser
 
