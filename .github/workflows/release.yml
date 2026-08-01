@@ -23,9 +23,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install gettext
-          python -m pip install pip setuptools django poetry
+          pip install uv==0.12.1 django==5.2
           # compile messages to get .mo files
-          django-admin compilemessages
+          uv run django-admin compilemessages
       - name: Build and publish package
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
-        run: poetry --build --username=__token__ --password=${{ secrets.PYPI_TOKEN }} publish
+        run: |
+          uv build 
+          uv publish --token ${{ secrets.PYPI_TOKEN }}
