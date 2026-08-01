@@ -99,7 +99,7 @@ def monitor(run_once=False, broker=None):
                 # color status
                 if stat.status == Conf.STARTING:
                     status = term.yellow(str(Conf.STARTING))
-                if stat.status == Conf.WORKING:
+                elif stat.status == Conf.WORKING:
                     status = term.green(str(Conf.WORKING))
                 elif stat.status == Conf.STOPPING:
                     status = term.yellow(str(Conf.STOPPING))
@@ -454,7 +454,7 @@ def memory(run_once=False, workers=False, broker=None):
                 print(
                     term.move(row, 7 * col_width)
                     + term.center(
-                        str(workers_mb) or "NO_PROCESSES_FOUND", width=col_width - 1
+                        str(workers_mb or "NO_PROCESSES_FOUND"), width=col_width - 1
                     )
                 )
                 row += 1
