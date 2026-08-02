@@ -1,4 +1,5 @@
 # Standard
+import multiprocessing
 import os
 import signal
 import socket
@@ -39,6 +40,10 @@ from django_q.status import Stat, Status
 from django_q.worker import worker
 
 
+def get_mp_context():
+    return multiprocessing.get_context("fork")
+
+
 class Cluster:
     def __init__(self, broker: Broker = None):
         # Cluster do not need an init or default broker except for testing,
@@ -60,7 +65,7 @@ class Cluster:
         # Start Sentinel
         self.stop_event = Event()
         self.start_event = Event()
-        self.sentinel = Process(
+        self.sentinel = get_mp_context().Process(
             target=Sentinel,
             name=f"Process-{uuid.uuid4().hex}",
             args=(
@@ -213,7 +218,9 @@ class Sentinel:
         """
         :type target: function or class
         """
-        p = Process(target=target, args=args, name=f"Process-{uuid.uuid4().hex}")
+        p = get_mp_context().Process(
+            target=target, args=args, name=f"Process-{uuid.uuid4().hex}"
+        )
         p.daemon = True
         if target == worker:
             p.daemon = Conf.DAEMONIZE_WORKERS
