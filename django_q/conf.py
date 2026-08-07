@@ -7,6 +7,7 @@ from multiprocessing import cpu_count
 from warnings import warn
 
 from django.conf import settings
+from django import VERSION as DJANGO_VERSION
 from django.utils.translation import gettext_lazy as _
 
 from django_q.queues import Queue
@@ -16,6 +17,7 @@ if sys.version_info < (3, 10):
     from importlib_metadata import entry_points
 else:
     from importlib.metadata import entry_points
+
 
 # optional
 try:
@@ -49,13 +51,24 @@ class Conf:
     Configuration class
     """
 
+    SUPPORTS_TASK_BACKEND = DJANGO_VERSION >= (6, 0)
+
     try:
         conf = settings.Q_CLUSTER.copy()
     except AttributeError:
         conf = {}
 
     _Q_CLUSTER_NAME = os.getenv("Q_CLUSTER_NAME")
+
     if (
+        SUPPORTS_TASK_BACKEND
+        and isinstance(settings.TASKS, dict)
+        and _Q_CLUSTER_NAME in settings.TASKS.keys()
+    ):
+        task_specific = settings.TASKS[_Q_CLUSTER_NAME]
+        task_options = task_specific.get("OPTIONS", {})
+        conf.update(task_options)
+    elif (
         _Q_CLUSTER_NAME
         and _Q_CLUSTER_NAME != conf.get("name")
         and _Q_CLUSTER_NAME != conf.get("cluster_name")
