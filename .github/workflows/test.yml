@@ -10,7 +10,7 @@ on:
 env:
   MONGO_HOST: "127.0.0.1"
   REDIS_HOST: "127.0.0.1"
-  AWS_ENDPOINT_URL: http://aws:4566
+  AWS_ENDPOINT_URL: http://localhost:4566
   AWS_REGION: "us-east-1"
   AWS_ACCESS_KEY_ID: "test"
   AWS_SECRET_ACCESS_KEY: "test"
@@ -102,8 +102,6 @@ jobs:
             uv sync --extra testing --python ${{ matrix.python-version }}
             uv pip install "django~=${{ matrix.django }}a1"
         - name: Create SQS queue
-          env:
-            AWS_ENDPOINT_URL: http://localhost:4566
           run: aws sqs create-queue --queue-name testing
         - name: Run Tests
           run: |
