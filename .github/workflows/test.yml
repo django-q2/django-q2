@@ -73,11 +73,11 @@ jobs:
         env:
           SERVICES: sqs
           MINISTACK_HOST: aws
-        options: >-
-          --health-cmd "wget -qO- http://localhost:4566/_ministack/ready || exit 1"
-          --health-interval 2s
-          --health-retries 15
-          --health-timeout 5s
+        # options: >-
+        #   --health-cmd "wget -qO- http://localhost:4566/_ministack/ready || exit 1"
+        #   --health-interval 2s
+        #   --health-retries 15
+        #   --health-timeout 5s
         ports:
           - 4566:4566
     steps:
