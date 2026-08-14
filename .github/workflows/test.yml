@@ -69,18 +69,17 @@ jobs:
           - 6379:6379
         options: --entrypoint redis-server
       aws:
-        image: redis
+        image: ministackorg/ministack:1.4.16
         env:
           SERVICES: sqs
           MINISTACK_HOST: aws
-        healthcheck:
-          test: ["CMD", "wget", "-qO-", "http://localhost:4566/_ministack/ready"]
-          interval: 2s
-          retries: 15
+        options: >-
+          --health-cmd "wget -qO- http://localhost:4566/_ministack/ready || exit 1"
+          --health-interval 2s
+          --health-retries 15
+          --health-timeout 5s
         ports:
           - 4566:4566
-        volumes:
-          - ./containers/ministack:/docker-entrypoint-initaws.d
     steps:
         - uses: actions/checkout@v3
         - name: Set up Python ${{ matrix.python-version }}
@@ -92,6 +91,8 @@ jobs:
             python -m pip install uv==0.12.1
             uv sync --extra testing --python ${{ matrix.python-version }}
             uv pip install "django~=${{ matrix.django }}a1"
+        - name: Create SQS queue
+          run: aws sqs create-queue --queue-name testing
         - name: Run Tests
           run: |
             uv run pytest --cov=./django_q --cov-report=xml
