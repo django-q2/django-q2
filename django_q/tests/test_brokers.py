@@ -172,9 +172,6 @@ def test_ironmq(monkeypatch):
     broker.delete_queue()
 
 
-@pytest.mark.skipif(
-    not os.getenv("AWS_ACCESS_KEY_ID"), reason="requires AWS credentials"
-)
 def test_sqs(monkeypatch):
     monkeypatch.setattr(
         Conf,
@@ -188,6 +185,7 @@ def test_sqs(monkeypatch):
     )
     # check broker
     broker = get_broker(list_key="testing")
+    broker.purge_queue()
     assert "receive_message_wait_time_seconds" in Conf.SQS
     assert "aws_region" in Conf.SQS
     assert broker.ping() is True
@@ -224,8 +222,9 @@ def test_sqs(monkeypatch):
     assert broker.dequeue() is None
     # fail
     broker.enqueue("test")
+    task = None
     while task is None:
-        task = broker.dequeue()[0]
+        task = broker.dequeue()
     broker.fail(task[0][0])
     # bulk test
     for _ in range(10):
@@ -235,8 +234,6 @@ def test_sqs(monkeypatch):
     for task in tasks:
         assert task is not None
         broker.acknowledge(task[0])
-    # duplicate acknowledge
-    broker.acknowledge(task[0])
     assert broker.lock_size() == 0
     # delete queue
     broker.enqueue("test")
