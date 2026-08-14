@@ -118,10 +118,12 @@ jobs:
   finish:
     needs: test
     runs-on: ubuntu-latest
-    container: python:3.11-bookworm
+    container: python:3.13-bookworm
     steps:
     - name: Run tests
       run: |
+        python -m pip install uv==0.12.1
+        uv sync --extra testing
         uv run pytest --cov=./django_q --cov-report=xml --junitxml=pytest.xml --cov-report=term-missing:skip-covered | tee pytest-coverage.txt
 
     - name: Coverage comment
