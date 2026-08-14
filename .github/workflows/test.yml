@@ -83,11 +83,6 @@ jobs:
         env:
           SERVICES: sqs
           MINISTACK_HOST: aws
-        # options: >-
-        #   --health-cmd "wget -qO- http://localhost:4566/_ministack/ready || exit 1"
-        #   --health-interval 2s
-        #   --health-retries 15
-        #   --health-timeout 5s
         ports:
           - 4566:4566
     steps:
@@ -105,30 +100,11 @@ jobs:
           run: aws sqs create-queue --queue-name testing
         - name: Run Tests
           run: |
-            uv run pytest --cov=./django_q --cov-report=xml
-        - name: Upload to coveralls
-          run: |
-            python -m pip install coveralls
-            coveralls --service=github
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            COVERALLS_FLAG_NAME: python-${{ matrix.python-version }}-django-${{ matrix.django }}
-            COVERALLS_PARALLEL: true
+            uv run pytest --cov=./django_q --cov-report=xml --junitxml=pytest.xml --cov-report=term-missing:skip-covered | tee pytest-coverage.txt
 
-  finish:
-    needs: test
-    runs-on: ubuntu-latest
-    container: python:3.13-bookworm
-    steps:
-    - uses: actions/checkout@v3
-    - name: Run tests
-      run: |
-        python -m pip install uv==0.12.1
-        uv sync --extra testing
-        uv run pytest --cov=./django_q --cov-report=xml --junitxml=pytest.xml --cov-report=term-missing:skip-covered | tee pytest-coverage.txt
-
-    - name: Coverage comment
-      uses: MishaKav/pytest-coverage-comment@v1
-      with:
-        pytest-coverage-path: ./pytest-coverage.txt
-        junitxml-path: ./pytest.xml
+        - name: Coverage comment
+          if: matrix.python-version == '3.13' && matrix.django == '5.2' && github.event_name == 'pull_request'
+          uses: MishaKav/pytest-coverage-comment@v1
+          with:
+            pytest-coverage-path: ./pytest-coverage.txt
+            junitxml-path: ./pytest.xml
