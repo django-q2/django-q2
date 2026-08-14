@@ -7,6 +7,11 @@ on:
     branches:
       - master
 
+# for code coverage comment
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   MONGO_HOST: "127.0.0.1"
   REDIS_HOST: "127.0.0.1"
