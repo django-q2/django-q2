@@ -92,7 +92,7 @@ jobs:
             uv sync --extra testing --python ${{ matrix.python-version }}
             uv pip install "django~=${{ matrix.django }}a1"
         - name: Create SQS queue
-          run: aws sqs create-queue --queue-name testing
+          run: aws sqs create-queue --queue-name testing --region us-east-1 --endpoint-url http://localhost:4566
         - name: Run Tests
           run: |
             uv run pytest --cov=./django_q --cov-report=xml
