@@ -15,20 +15,18 @@ services:
 
   aws:
     container_name: aws
-    image: localstack/localstack:3.4.0
+    image: ministackorg/ministack:1.4.16
     ports:
-      - "127.0.0.1:4566:4566"            # LocalStack Gateway
-      - "127.0.0.1:4510-4559:4510-4559"  # External services port range
+      - "127.0.0.1:4566:4566"
     environment:
-      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-west-2}
-      DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-west-2}
-      SQS_ENDPOINT_STRATEGY: path
+      MINISTACK_HOST: aws
       SERVICES: sqs
-      LOCALSTACK_HOST: aws
-      DEBUG: 1
-      LS_LOG: trace
     volumes:
-      - ./containers/localstack:/etc/localstack/init/ready.d
+      - ./containers/ministack:/docker-entrypoint-initaws.d
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4566/_ministack/ready"]
+      interval: 2s
+      retries: 15
     networks:
       - main
 
@@ -38,10 +36,10 @@ services:
       context: .
     environment:
       AWS_ENDPOINT_URL: http://aws:4566
-      AWS_REGION: ${AWS_REGION:-us-west-2}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-test}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-test}
-      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-west-2}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
     volumes:
       - .:/app
     depends_on:
