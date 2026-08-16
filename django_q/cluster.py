@@ -31,6 +31,7 @@ from django_q.conf import (
     psutil,
     setproctitle,
 )
+from django_q.enums import TimerStatus
 from django_q.humanhash import humanize
 from django_q.monitor import monitor
 from django_q.pusher import pusher
@@ -234,7 +235,11 @@ class Sentinel:
 
     def spawn_worker(self):
         self.spawn_process(
-            worker, self.task_queue, self.result_queue, Value("f", -1), self.timeout
+            worker,
+            self.task_queue,
+            self.result_queue,
+            Value("f", TimerStatus.IDLE),
+            self.timeout,
         )
 
     def spawn_monitor(self) -> Process:
@@ -271,7 +276,7 @@ class Sentinel:
 
             self.pool.remove(process)
             self.spawn_worker()
-            if process.timer.value == 0:
+            if process.timer.value == TimerStatus.TIMEOUT:
                 # only need to terminate on timeout, otherwise we risk destabilizing
                 # the queues
                 task_name = ""
@@ -296,7 +301,7 @@ class Sentinel:
                         "name": process.name
                     }
                 logger.critical(msg)
-            elif int(process.timer.value) == -2:
+            elif int(process.timer.value) == TimerStatus.RECYCLED:
                 logger.info(_("recycled worker %(name)s") % {"name": process.name})
             else:
                 logger.critical(
@@ -348,11 +353,11 @@ class Sentinel:
             for p in self.pool:
                 with p.timer.get_lock():
                     # Are you alive?
-                    if not p.is_alive() or p.timer.value == 0:
+                    if not p.is_alive() or p.timer.value == TimerStatus.TIMEOUT:
                         self.reincarnate(p)
                         continue
                     # Decrement timer if work is being done
-                    if p.timer.value > 0:
+                    if p.timer.value > TimerStatus.TIMEOUT:
                         p.timer.value -= cycle
             # Check Monitor
             if not self.monitor.is_alive():
