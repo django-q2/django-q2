@@ -3,7 +3,6 @@ import multiprocessing
 import os
 import signal
 import socket
-import sys
 import uuid
 from multiprocessing import Event, Process, Value, current_process
 from time import sleep
@@ -42,9 +41,10 @@ from django_q.worker import worker
 
 
 def get_mp_context():
-    if sys.platform == "win32":
-        return multiprocessing.get_context("spawn")
-    return multiprocessing.get_context("fork")
+    if "fork" in multiprocessing.get_all_start_methods():
+        return multiprocessing.get_context("fork")
+    else:
+        return multiprocessing.get_context()
 
 
 class Cluster:
