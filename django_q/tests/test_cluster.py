@@ -66,7 +66,21 @@ def test_get_mp_context_prefers_fork_when_available(monkeypatch):
         "get_all_start_methods",
         lambda: ["fork", "spawn", "forkserver"],
     )
+
+    calls = []
+
+    class DummyContext:
+        def get_start_method(self):
+            return "fork"
+
+    def fake_get_context(method=None):
+        calls.append(method)
+        return DummyContext()
+
+    monkeypatch.setattr(multiprocessing, "get_context", fake_get_context)
+
     assert get_mp_context().get_start_method() == "fork"
+    assert calls == ["fork"]
 
 
 def test_get_mp_context_falls_back_to_platform_default_without_fork(monkeypatch):
