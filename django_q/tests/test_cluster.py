@@ -1,3 +1,4 @@
+import multiprocessing
 import os
 import signal
 import sys
@@ -13,7 +14,7 @@ import pytest
 from django.utils import timezone
 
 from django_q.brokers import Broker, get_broker
-from django_q.cluster import Cluster, Sentinel
+from django_q.cluster import Cluster, Sentinel, get_mp_context
 from django_q.conf import Conf
 from django_q.humanhash import DEFAULT_WORDLIST, uuid
 from django_q.models import Success, Task
@@ -57,6 +58,39 @@ class WordClass:
 def broker(monkeypatch):
     monkeypatch.setattr(Conf, "DJANGO_REDIS", "default")
     return get_broker()
+
+
+def test_get_mp_context_prefers_fork_when_available(monkeypatch):
+    monkeypatch.setattr(
+        multiprocessing,
+        "get_all_start_methods",
+        lambda: ["fork", "spawn", "forkserver"],
+    )
+    assert get_mp_context().get_start_method() == "fork"
+
+
+def test_get_mp_context_falls_back_to_platform_default_without_fork(monkeypatch):
+    """
+    Regression test: get_mp_context() used to hardcode the unix-only "fork"
+    context, which raises ValueError on platforms (e.g. Windows) that don't
+    support it. It should instead defer to the platform's default context
+    whenever "fork" isn't available.
+    """
+    monkeypatch.setattr(multiprocessing, "get_all_start_methods", lambda: ["spawn"])
+
+    calls = []
+    real_get_context = multiprocessing.get_context
+
+    def fake_get_context(method=None):
+        calls.append(method)
+        return real_get_context(method)
+
+    monkeypatch.setattr(multiprocessing, "get_context", fake_get_context)
+
+    get_mp_context()
+
+    # Must ask for the platform default (no explicit method), should never be equal to "fork"
+    assert calls == [None]
 
 
 def test_redis_connection(broker):
