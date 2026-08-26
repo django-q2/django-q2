@@ -1,4 +1,7 @@
 import os
+import signal
+import sys
+import time
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -40,3 +43,9 @@ class Command(BaseCommand):
         q.start()
         if options.get("run_once", False):
             q.stop()
+        
+        # On Windows keep the main process alive to catch SIGINT
+        if sys.platform == "win32":
+            signal.signal(signal.SIGINT, q.sig_handler)
+            while q.is_running:
+                time.sleep(0.5)
