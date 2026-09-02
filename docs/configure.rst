@@ -408,6 +408,21 @@ scheduler
 You can disable the scheduler by setting this option to ``False``. This will reduce a little overhead if you're not using schedules, but is most useful if you want to temporarily disable all schedules.
 Defaults to ``True``
 
+.. _scheduler_interval:
+
+scheduler_interval
+~~~~~~~~~~~~~~~~~~
+The interval in seconds at which the cluster checks for due schedules.
+Lowering it increases how often the scheduler queries the database, so only lower it as far as your schedules need.
+To use sub-minute (six field) cron schedules this needs to be set below ``60`` seconds.
+Defaults to ``30``, minimum ``1``.
+
+For example, to check for due schedules every second::
+
+    Q_CLUSTER = {
+        'scheduler_interval': 1,
+    }
+
 .. _error_reporter:
 
 error_reporter

@@ -132,6 +132,21 @@ class Conf:
     # Disable the scheduler
     SCHEDULER = conf.get("scheduler", True)
 
+    # Interval in seconds between scheduler checks for due schedules
+    SCHEDULER_INTERVAL = conf.get("scheduler_interval", 30)
+
+    try:
+        SCHEDULER_INTERVAL = max(1, int(SCHEDULER_INTERVAL))
+    except (TypeError, ValueError):
+        warn(
+            _(
+                "SCHEDULER_INTERVAL (%(option)s) is not a valid number of seconds. "
+                "Using the default of 30 seconds."
+            )
+            % {"option": SCHEDULER_INTERVAL}
+        )
+        SCHEDULER_INTERVAL = 30
+
     # Number of workers in the pool. Default is cpu count if implemented, otherwise 4.
     WORKERS = conf.get("workers", False)
     if not WORKERS:
