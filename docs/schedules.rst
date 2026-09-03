@@ -110,7 +110,7 @@ Check out the :ref:`shell` examples if you want to schedule regular shell comman
 
    Schedules needs the optional :ref:`Croniter<croniter_package>` package installed to parse cron expressions.
 
-``croniter`` also accepts six field expressions, where the last field is seconds.
+``croniter`` also accepts six-field expressions, where the last field is seconds.
 For example ``* * * * * *`` runs every second.
 See :ref:`scheduler_interval` to make the cluster actually check for due schedules that often.
 

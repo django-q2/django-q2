@@ -540,7 +540,6 @@ def test_scheduler_interval_configurable(monkeypatch):
     assert calls == 2
 
 
-@pytest.mark.django_db
 def test_cron_every_second():
     schedule = Schedule(
         func="math.sqrt", schedule_type=Schedule.CRON, cron="* * * * * *"
@@ -550,7 +549,6 @@ def test_cron_every_second():
     assert schedule.full_clean() is None
 
 
-@pytest.mark.django_db
 def test_cron_calculate_next_run_uses_base_not_now():
     schedule = Schedule(
         func="math.sqrt", schedule_type=Schedule.CRON, cron="* * * * * *"

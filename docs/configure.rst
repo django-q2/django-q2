@@ -412,9 +412,10 @@ Defaults to ``True``
 
 scheduler_interval
 ~~~~~~~~~~~~~~~~~~
-The interval in seconds at which the cluster checks for due schedules.
+The target interval in seconds at which the cluster checks for due schedules.
 Lowering it increases how often the scheduler queries the database, so only lower it as far as your schedules need.
-To use sub-minute (six field) cron schedules this needs to be set below ``60`` seconds.
+To use sub-minute (six-field) cron schedules this needs to be set below ``60`` seconds.
+Checks cannot be more frequent than ``guard_cycle`` because the scheduler is only evaluated once per guard-loop iteration.
 Defaults to ``30``, minimum ``1``.
 
 For example, to check for due schedules every second::
