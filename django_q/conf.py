@@ -92,6 +92,9 @@ class Conf:
     # Database Poll
     POLL = conf.get("poll", 0.2)
 
+    # Minimum number of seconds between tasks pushed to the workers. 0 disables it
+    THROTTLE = conf.get("throttle", 0)
+
     # MongoDB broker
     MONGO = conf.get("mongo", None)
     MONGO_DB = conf.get("mongo_db", None)
