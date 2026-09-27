@@ -521,3 +521,38 @@ def test_localtime():
 @override_settings(USE_TZ=False)
 def test_naive_localtime():
     assert is_naive(localtime())
+
+
+def test_scheduler_interval_default():
+    assert Conf.SCHEDULER_INTERVAL == 30
+
+
+def test_scheduler_interval_configurable(monkeypatch):
+    monkeypatch.setattr(Conf, "SCHEDULER_INTERVAL", 1)
+    counter = 0
+    cycle = 0.5
+    calls = 0
+    for _ in range(4):
+        counter += cycle
+        if counter >= Conf.SCHEDULER_INTERVAL:
+            counter = 0
+            calls += 1
+    assert calls == 2
+
+
+def test_cron_every_second():
+    schedule = Schedule(
+        func="math.sqrt", schedule_type=Schedule.CRON, cron="* * * * * *"
+    )
+    base = localtime().replace(microsecond=0)
+    assert schedule.calculate_next_run(base) == base + timedelta(seconds=1)
+    assert schedule.full_clean() is None
+
+
+def test_cron_calculate_next_run_uses_base_not_now():
+    schedule = Schedule(
+        func="math.sqrt", schedule_type=Schedule.CRON, cron="* * * * * *"
+    )
+    # old code ignored the base and always used now() here
+    base = localtime().replace(microsecond=0) - timedelta(hours=1)
+    assert schedule.calculate_next_run(base) == base + timedelta(seconds=1)
