@@ -306,6 +306,28 @@ def test_cluster(broker):
 
 
 @pytest.mark.django_db
+def test_throttle(monkeypatch):
+    monkeypatch.setattr(Conf, "ORM", "default")
+    monkeypatch.setattr(Conf, "BULK", 3)
+    monkeypatch.setattr(Conf, "THROTTLE", 0.3)
+    delays = []
+    monkeypatch.setattr("django_q.pusher.sleep", delays.append)
+    broker = get_broker(list_key="throttle_test:q")
+    broker.delete_queue()
+    for _ in range(3):
+        async_task("math.copysign", 1, -1, broker=broker)
+    task_queue = Queue()
+    event = Event()
+    event.set()
+    pusher(task_queue, event, broker=broker)
+    assert task_queue.qsize() == 3
+    assert broker.queue_size() == 0
+    # the second and third task each wait out the throttle interval
+    assert delays == [pytest.approx(0.3, abs=0.05)] * 2
+    broker.delete_queue()
+
+
+@pytest.mark.django_db
 def test_results(broker):
     broker.list_key = "cluster_test:q"
     broker.delete_queue()
