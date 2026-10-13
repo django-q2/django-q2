@@ -244,7 +244,7 @@ Acknowledgements
 
 -  JetBrains for their `Open Source Support Program <https://www.jetbrains.com/community/opensource>`__
 
-.. |image0| image:: https://github.com/GDay/django-q2/actions/workflows/test.yml/badge.svg?branche=master
+.. |image0| image:: https://github.com/GDay/django-q2/actions/workflows/test.yml/badge.svg?branch=master
    :target: https://github.com/GDay/django-q2/actions?query=workflow%3Atests
 .. |image1| image:: https://coveralls.io/repos/github/GDay/django-q2/badge.svg?branch=master
    :target: https://coveralls.io/github/GDay/django-q2?branch=master
