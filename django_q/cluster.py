@@ -264,7 +264,7 @@ class Sentinel:
                 % {"name": process.name}
             )
         else:
-            # check if prometheus is proper configurated
+            # check if prometheus is properly configured
             prometheus_path = os.getenv(
                 "PROMETHEUS_MULTIPROC_DIR", os.getenv("prometheus_multiproc_dir")
             )
