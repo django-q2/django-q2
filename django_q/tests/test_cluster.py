@@ -16,6 +16,7 @@ from django.utils import timezone
 from django_q.brokers import Broker, get_broker
 from django_q.cluster import Cluster, Sentinel, get_mp_context
 from django_q.conf import Conf
+from django_q.enums import TimerStatus
 from django_q.humanhash import DEFAULT_WORDLIST, uuid
 from django_q.models import Success, Task
 from django_q.monitor import monitor, save_task
@@ -293,7 +294,7 @@ def test_cluster(broker):
     assert queue_size(broker=broker) == 0
     # Test work
     task_queue.put("STOP")
-    worker(task_queue, result_queue, Value("f", -1))
+    worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
     assert task_queue.qsize() == 0
     assert result_queue.qsize() == 1
     # Test monitor
@@ -320,7 +321,7 @@ def test_results(broker):
     pusher(task_queue, stop_event, broker=broker)
     task_queue.put("STOP")
     result_queue = Queue()
-    worker(task_queue, result_queue, Value("f", -1))
+    worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
     result_queue.put("STOP")
     monitor(result_queue)
 
@@ -420,7 +421,7 @@ def test_enqueue(broker, admin_user):
     assert fetch_group("test_j", count=2, wait=10) is None
     # let a worker handle them
     result_queue = Queue()
-    worker(task_queue, result_queue, Value("f", -1))
+    worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
     assert result_queue.qsize() == task_count
     result_queue.put("STOP")
     # store the results
@@ -589,7 +590,7 @@ def test_recycle(broker, monkeypatch, django_assert_num_queries):
     pusher(task_queue, stop_event, broker=broker)
     pusher(task_queue, stop_event, broker=broker)
     # worker should exit on recycle
-    worker(task_queue, result_queue, Value("f", -1))
+    worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
     # check if the work has been done
     assert result_queue.qsize() == 2
     # save_limit test
@@ -621,7 +622,7 @@ def test_save_limit_per_func(broker, monkeypatch):
     threading.Timer(3, stop_event.set).start()
     for i in range(3):
         pusher(task_queue, stop_event, broker=broker)
-    worker(task_queue, result_queue, Value("f", -1))
+    worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
     s = Sentinel(stop_event, start_event, cluster_id=cluster_id, broker=broker)
     assert start_event.is_set()
     assert s.status() == Conf.STOPPED
@@ -666,7 +667,7 @@ def test_max_rss(broker, monkeypatch):
     # push the task
     pusher(task_queue, stop_event, broker=broker)
     # worker should exit on recycle
-    worker(task_queue, result_queue, Value("f", -1))
+    worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
     # check if the work has been done
     assert result_queue.qsize() == 1
     # save_limit test
@@ -702,7 +703,7 @@ def test_bad_secret(broker, monkeypatch):
     worker(
         task_queue,
         result_queue,
-        Value("f", -1),
+        Value("f", TimerStatus.IDLE),
     )
     assert result_queue.qsize() == 0
     broker.delete_queue()
@@ -886,7 +887,7 @@ class TestSignals:
         event.set()
         pusher(task_queue, event, broker=broker)
         task_queue.put("STOP")
-        worker(task_queue, result_queue, Value("f", -1))
+        worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
         result_queue.put("STOP")
         monitor(result_queue, broker)
         broker.delete_queue()
@@ -915,7 +916,7 @@ class TestSignals:
         event.set()
         pusher(task_queue, event, broker=broker)
         task_queue.put("STOP")
-        worker(task_queue, result_queue, Value("f", -1))
+        worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
         result_queue.put("STOP")
         monitor(result_queue, broker)
         broker.delete_queue()
@@ -944,7 +945,7 @@ class TestSignals:
         event.set()
         pusher(task_queue, event, broker=broker)
         task_queue.put("STOP")
-        worker(task_queue, result_queue, Value("f", -1))
+        worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
         result_queue.put("STOP")
         monitor(result_queue, broker)
         broker.delete_queue()
