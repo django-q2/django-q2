@@ -348,7 +348,7 @@ class Schedule(models.Model):
                 raise ImportError(
                     _("Please install croniter to enable cron expressions")
                 )
-            return croniter(self.cron, localtime()).get_next(datetime)
+            return croniter(self.cron, localtime(next_run)).get_next(datetime)
 
         if self.schedule_type == self.MINUTES:
             add = timedelta(minutes=(self.minutes or 1))
@@ -406,7 +406,7 @@ class Schedule(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk is None and self.schedule_type == self.CRON:
-            self.next_run = self.calculate_next_run()
+            self.next_run = self.calculate_next_run(localtime())
 
         return super().save(*args, **kwargs)
 
