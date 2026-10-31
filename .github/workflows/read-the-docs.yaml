@@ -1,0 +1,58 @@
+name: Publish docs to Read the Docs
+ 
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build (e.g. v1.2.3)"
+        required: true
+ 
+jobs:
+  trigger-rtd:
+    runs-on: ubuntu-latest
+    env:
+      RTD_TOKEN: ${{ secrets.RTD_TOKEN }}
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      API: https://readthedocs.org/api/v3/projects/django-q2
+    steps:
+      - name: Make Read the Docs pick up the new tag
+        run: |
+          # Building "latest" makes RTD re-sync branches/tags from the repo,
+          # so the new tag shows up as a version.
+          curl -fsS -X POST -H "Authorization: Token $RTD_TOKEN" \
+            "$API/versions/latest/builds/" > /dev/null
+ 
+      - name: Wait for the tag to appear as a version
+        run: |
+          for i in $(seq 1 30); do
+            code=$(curl -s -o version.json -w '%{http_code}' \
+              -H "Authorization: Token $RTD_TOKEN" "$API/versions/$TAG/")
+            if [ "$code" = "200" ]; then
+              echo "Version found."
+              exit 0
+            fi
+            echo "Not there yet (HTTP $code), retrying in 10s… ($i/30)"
+            sleep 10
+          done
+          echo "::error::Version '$TAG' never appeared on Read the Docs"
+          exit 1
+ 
+      - name: Activate the version and build it
+        run: |
+          if [ "$(jq -r .active version.json)" = "true" ]; then
+            echo "Already active, triggering a build."
+            curl -fsS -X POST -H "Authorization: Token $RTD_TOKEN" \
+              "$API/versions/$TAG/builds/" | jq .
+          else
+            echo "Activating version (this triggers a build)."
+            curl -fsS -X PATCH \
+              -H "Authorization: Token $RTD_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d '{"active": true, "hidden": false}' \
+              "$API/versions/$TAG/"
+          fi
+          echo "Docs: https://django-q2.readthedocs.io/en/$TAG/"
+
