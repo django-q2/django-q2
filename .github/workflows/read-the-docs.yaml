@@ -41,9 +41,15 @@ jobs:
           exit 1
  
       - name: Activate the version and build it
+        shell: bash
         run: |
           if [ "$(jq -r .active version.json)" = "true" ]; then
             echo "Already active, triggering a build."
+            curl -fsS -X PATCH \
+              -H "Authorization: Token $RTD_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d '{"hidden": false}' \
+              "$API/versions/$TAG/" > /dev/null
             curl -fsS -X POST -H "Authorization: Token $RTD_TOKEN" \
               "$API/versions/$TAG/builds/" | jq .
           else
