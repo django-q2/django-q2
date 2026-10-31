@@ -25,7 +25,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
         - name: Lint with ruff
           run: |
             pipx install ruff==0.4.10
@@ -91,7 +91,9 @@ jobs:
         ports:
           - 4566:4566
     steps:
-        - uses: actions/checkout@v3
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
         - name: Set up Python ${{ matrix.python-version }}
           uses: actions/setup-python@v4
           with:
@@ -107,10 +109,8 @@ jobs:
           run: |
             uv run pytest --cov=./django_q --cov-report=xml --junitxml=pytest.xml --cov-report=term-missing:skip-covered | tee pytest-coverage.txt
 
-        - name: Coverage comment
+        - name: Diff coverage summary
           if: matrix.python-version == '3.13' && matrix.django == '5.2' && github.event_name == 'pull_request'
-          uses: MishaKav/pytest-coverage-comment@v1
-          with:
-            pytest-coverage-path: ./pytest-coverage.txt
-            junitxml-path: ./pytest.xml
-            report-only-changed-files: true
+          run: |
+            uvx diff-cover coverage.xml --compare-branch=origin/master --format markdown:diff-cover.md
+            cat diff-cover.md >> "$GITHUB_STEP_SUMMARY"
