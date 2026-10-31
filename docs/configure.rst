@@ -391,6 +391,20 @@ poll
 Sets the queue polling interval for database brokers that don't have a blocking call. Currently only affects the ORM and MongoDB brokers.
 Defaults to ``0.2`` (seconds).
 
+.. _throttle:
+
+throttle
+~~~~~~~~
+Sets the minimum interval, in seconds, between two tasks being handed to the workers of a cluster.
+This caps the throughput of the whole cluster no matter how many workers it has, which is useful when the tasks call an external service with a rate limit.
+Run the throttled tasks on their own queue with :ref:`ALT_CLUSTERS <alt-clusters>` to leave other clusters unaffected.
+Defaults to ``0`` (no throttling).
+
+.. note::
+
+    The pusher waits out the interval before pulling the next task from the broker, so a stop request is still handled promptly.
+    With :ref:`bulk` greater than ``1`` the tasks of one batch are spaced out after they have already been pulled.
+
 cache
 ~~~~~
 For some brokers, you will need to set up the Django `cache framework <https://docs.djangoproject.com/en/2.2/topics/cache/#setting-up-the-cache>`__
