@@ -83,8 +83,8 @@ def save_task(task, broker: Broker):
     # SAVE LIMIT < 0 : Don't save success
     if not task.get("save", Conf.SAVE_LIMIT >= 0) and task["success"]:
         return
-    # enqueues next in a chain
-    if task.get("chain", None):
+    # enqueues next in a chain, only if the task succeeded
+    if task.get("chain", None) and task["success"]:
         async_chain(
             task["chain"],
             group=task["group"],
