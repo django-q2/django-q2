@@ -175,9 +175,16 @@ class Task(models.Model):
         verbose_name_plural = _("Tasks")
         ordering = ["-stopped"]
         indexes = [
+            # success pruning (SAVE_LIMIT): boundary lookup and range delete
             models.Index(
-                name="success_index",
-                fields=["group", "name", "func"],
+                name="task_success_stopped_idx",
+                fields=["-stopped", "-id"],
+                condition=Q(success=True),
+            ),
+            # success pruning with SAVE_LIMIT_PER="group"
+            models.Index(
+                name="task_success_group_idx",
+                fields=["group", "-stopped", "-id"],
                 condition=Q(success=True),
             ),
         ]
