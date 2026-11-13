@@ -186,6 +186,18 @@ def test_chain(broker):
 
 
 @pytest.mark.django_db
+def test_chains_correct_cluster():
+    """Check that chains are correctly assigned to the correct cluster"""
+    br = get_broker("testy-test")
+    br.delete_queue()
+
+    async_chain([("math.copysign", (x, y), {"cluster": "testy-test"}) for x, y in [(2, -2), (3, -3)]], sync=False)
+
+    # asserts that the first task got enqueued
+    assert br.queue_size() == 1
+
+
+@pytest.mark.django_db
 def test_asynctask_class(broker, monkeypatch):
     broker.purge_queue()
     broker.cache.clear()
