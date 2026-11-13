@@ -4,7 +4,7 @@ import signal
 import sys
 import threading
 import uuid as uuidlib
-from datetime import datetime
+from datetime import datetime, timedelta
 from math import copysign
 from multiprocessing import Event, Value
 from time import sleep
@@ -600,6 +600,119 @@ def test_recycle(broker, monkeypatch, django_assert_num_queries):
         monitor(result_queue)
     assert Success.objects.count() == Conf.SAVE_LIMIT
     broker.delete_queue()
+
+
+def _make_success(stopped, task_id=None, func="django_q.tests.tasks.hello"):
+    return Task.objects.create(
+        id=task_id or uuid()[1],
+        name=uuid()[0],
+        func=func,
+        started=stopped,
+        stopped=stopped,
+        success=True,
+    )
+
+
+def _success_package(stopped, func="django_q.tests.tasks.hello"):
+    name, task_id = uuid()
+    return {
+        "id": task_id,
+        "name": name,
+        "func": func,
+        "args": (),
+        "kwargs": {},
+        "started": stopped,
+        "stopped": stopped,
+        "result": None,
+        "success": True,
+        "sync": True,
+    }
+
+
+@pytest.mark.django_db
+def test_save_limit_keeps_newest(broker, monkeypatch):
+    monkeypatch.setattr(Conf, "SAVE_LIMIT", 3)
+    monkeypatch.setattr(Conf, "SAVE_LIMIT_PER", None)
+    base = timezone.now() - timedelta(hours=1)
+    t = [base + timedelta(minutes=i) for i in range(5)]
+    _make_success(t[0])
+    # two rows share a stopped time; the pk decides which one is newer
+    _make_success(t[1], task_id="a" * 32)
+    tie_newer = _make_success(t[1], task_id="b" * 32)
+    newest_old = _make_success(t[2])
+    failure = Task.objects.create(
+        id=uuid()[1],
+        name=uuid()[0],
+        func="django_q.tests.tasks.hello",
+        started=t[0],
+        stopped=t[0],
+        success=False,
+    )
+
+    package = _success_package(t[4])
+    save_task(package, broker)
+
+    assert set(Success.objects.values_list("pk", flat=True)) == {
+        package["id"],
+        newest_old.pk,
+        tie_newer.pk,
+    }
+    # failures are never pruned
+    assert Task.objects.filter(pk=failure.pk).exists()
+
+    # already over the limit: trimmed back in a single save
+    for i in range(3):
+        _make_success(t[3] + timedelta(seconds=i))
+    package = _success_package(t[4] + timedelta(minutes=1))
+    save_task(package, broker)
+    assert Success.objects.count() == 3
+    assert Success.objects.order_by("-stopped").first().pk == package["id"]
+
+
+@pytest.mark.django_db
+def test_save_limit_prunes_on_write_db(broker, monkeypatch):
+    """The boundary read must not be routed to a read replica."""
+    from django.db import router
+
+    monkeypatch.setattr(Conf, "SAVE_LIMIT", 3)
+    monkeypatch.setattr(Conf, "SAVE_LIMIT_PER", None)
+    original_db_for_read = router.db_for_read
+
+    def db_for_read(model, **hints):
+        # route Success reads to an alias that doesn't exist, like a replica
+        if model is Success:
+            return "replica"
+        return original_db_for_read(model, **hints)
+
+    monkeypatch.setattr(router, "db_for_read", db_for_read)
+    base = timezone.now() - timedelta(hours=1)
+    for i in range(5):
+        _make_success(base + timedelta(minutes=i))
+
+    package = _success_package(timezone.now())
+    save_task(package, broker)
+
+    successes = Success.objects.using("default")
+    assert successes.count() == 3
+    assert successes.filter(pk=package["id"]).exists()
+
+
+@pytest.mark.django_db
+def test_save_limit_per_func_keeps_newest(broker, monkeypatch):
+    monkeypatch.setattr(Conf, "SAVE_LIMIT", 3)
+    monkeypatch.setattr(Conf, "SAVE_LIMIT_PER", "func")
+    base = timezone.now() - timedelta(hours=1)
+    for i in range(5):
+        stopped = base + timedelta(minutes=i)
+        _make_success(stopped, func="django_q.tests.tasks.hello")
+        _make_success(stopped, func="django_q.tests.tasks.multiply")
+
+    save_task(
+        _success_package(timezone.now(), func="django_q.tests.tasks.hello"), broker
+    )
+
+    assert Success.objects.filter(func="django_q.tests.tasks.hello").count() == 3
+    assert Success.objects.filter(func="django_q.tests.tasks.multiply").count() == 5
 
 
 @pytest.mark.django_db

@@ -93,7 +93,6 @@ def save_task(task, broker: Broker):
             sync=task["sync"],
             broker=broker,
         )
-    # SAVE LIMIT > 0: Prune database, SAVE_LIMIT 0: No pruning
     if not task.get("sync", False):
         close_old_django_connections()
 
@@ -109,29 +108,30 @@ def save_task(task, broker: Broker):
                 value = get_func_repr(value)
             filters[Conf.SAVE_LIMIT_PER] = value
 
-        # check if we should clean the success tasks
+        # Keep the newest SAVE_LIMIT - 1 rows so that, with this task saved
+        # below, the total stays at SAVE_LIMIT.
         if Conf.SAVE_LIMIT > 0 and task["success"]:
-            with db.transaction.atomic(using=db.router.db_for_write(Success)):
+            # Pin every query to the write database: with a read/write router
+            # the boundary read would otherwise hit a (possibly lagging)
+            # replica, since atomic() does not bind querysets to its alias.
+            write_db = db.router.db_for_write(Success)
+            with db.transaction.atomic(using=write_db):
                 keep_count = Conf.SAVE_LIMIT - 1
-                ordered_qs = Success.objects.filter(**filters).order_by(
-                    "-stopped", "-pk"
-                )
+                base_qs = Success.objects.using(write_db).filter(**filters)
                 if keep_count <= 0:
-                    ordered_qs.delete()
+                    base_qs.delete()
                 else:
-                    boundary = ordered_qs.values_list("stopped", "pk")[
-                        keep_count - 1 : keep_count
-                    ].first()
+                    boundary = (
+                        base_qs.order_by("-stopped", "-pk")
+                        .values_list("stopped", "pk")[keep_count - 1 : keep_count]
+                        .first()
+                    )
                     if boundary:
                         boundary_stopped, boundary_pk = boundary
-                        (
-                            Success.objects.filter(**filters)
-                            .filter(
-                                Q(stopped__lt=boundary_stopped)
-                                | Q(stopped=boundary_stopped, pk__lt=boundary_pk)
-                            )
-                            .delete()
-                        )
+                        base_qs.filter(
+                            Q(stopped__lt=boundary_stopped)
+                            | Q(stopped=boundary_stopped, pk__lt=boundary_pk)
+                        ).delete()
 
         # check if this task has previous results
         try:
