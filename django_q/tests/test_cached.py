@@ -6,6 +6,7 @@ import pytest
 
 from django_q.brokers import get_broker
 from django_q.conf import Conf
+from django_q.enums import TimerStatus
 from django_q.monitor import monitor
 from django_q.pusher import pusher
 from django_q.queues import Queue
@@ -67,7 +68,7 @@ def test_cached(broker):
     assert task_queue.qsize() == task_count
     task_queue.put("STOP")
     result_queue = Queue()
-    worker(task_queue, result_queue, Value("f", -1))
+    worker(task_queue, result_queue, Value("f", TimerStatus.IDLE))
     assert result_queue.qsize() == task_count
     result_queue.put("STOP")
     monitor(result_queue)

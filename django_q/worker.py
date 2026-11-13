@@ -17,6 +17,7 @@ except core.exceptions.AppRegistryNotReady:
     django.setup()
 
 from django_q.conf import Conf, error_reporter, logger, resource, setproctitle
+from django_q.enums import TimerStatus
 from django_q.exceptions import TimeoutException
 from django_q.signals import post_execute_in_worker, post_spawn, pre_execute
 from django_q.timeout import TimeoutHandler
@@ -54,11 +55,11 @@ def worker(
         setproctitle.setproctitle(f"qcluster {proc_name} idle")
     task_count = 0
     if timeout is None:
-        timeout = -1
+        timeout = TimerStatus.IDLE
     # Start reading the task queue
     for task in iter(task_queue.get, "STOP"):
         result = None
-        timer.value = -1  # Idle
+        timer.value = TimerStatus.IDLE
         task_count += 1
         f = task["func"]
 
@@ -92,7 +93,7 @@ def worker(
         pre_execute.send(sender="django_q", func=f, task=task)
         # execute the payload
         timer.value = timer_value  # Busy
-        if timer.value != -1:
+        if timer.value != TimerStatus.IDLE:
             timer.value += 3  # Add buffer so that guard doesn't kill the process on timeout before it gets processed
 
         timeout_error = False
@@ -122,15 +123,15 @@ def worker(
             result_queue.put(task)
             if timeout_error:
                 # force destroy process due to timeout
-                timer.value = 0
+                timer.value = TimerStatus.TIMEOUT
                 break
 
-            timer.value = -1  # Idle
+            timer.value = TimerStatus.IDLE
             if setproctitle:
                 setproctitle.setproctitle(f"qcluster {proc_name} idle")
             # Recycle
             if task_count == Conf.RECYCLE or rss_check():
-                timer.value = -2  # Recycled
+                timer.value = TimerStatus.RECYCLED
                 break
     logger.info(_("%(proc_name)s stopped doing work") % {"proc_name": proc_name})
 
