@@ -596,7 +596,7 @@ def test_recycle(broker, monkeypatch, django_assert_num_queries):
     monkeypatch.setattr(Conf, "SAVE_LIMIT", 1)
     result_queue.put("STOP")
     # run monitor
-    with django_assert_num_queries(12):
+    with django_assert_num_queries(10):
         monitor(result_queue)
     assert Success.objects.count() == Conf.SAVE_LIMIT
     broker.delete_queue()
