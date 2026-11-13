@@ -3,6 +3,7 @@ from multiprocessing.queues import Queue
 
 from django import core, db
 from django.apps.registry import apps
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 try:
@@ -92,7 +93,6 @@ def save_task(task, broker: Broker):
             sync=task["sync"],
             broker=broker,
         )
-    # SAVE LIMIT > 0: Prune database, SAVE_LIMIT 0: No pruning
     if not task.get("sync", False):
         close_old_django_connections()
 
@@ -108,16 +108,30 @@ def save_task(task, broker: Broker):
                 value = get_func_repr(value)
             filters[Conf.SAVE_LIMIT_PER] = value
 
-        # check if we should clean the success tasks
-        if Conf.SAVE_LIMIT > 0:
-            with db.transaction.atomic(using=db.router.db_for_write(Success)):
-                success_tasks_qs = Success.objects.filter(**filters)
-                success_tasks_pks = [
-                    success_task.pk
-                    for success_task in success_tasks_qs.select_for_update()
-                ]
-                if task["success"] and len(success_tasks_pks) >= Conf.SAVE_LIMIT:
-                    success_tasks_qs.last().delete()
+        # Keep the newest SAVE_LIMIT - 1 rows so that, with this task saved
+        # below, the total stays at SAVE_LIMIT.
+        if Conf.SAVE_LIMIT > 0 and task["success"]:
+            # Pin every query to the write database: with a read/write router
+            # the boundary read would otherwise hit a (possibly lagging)
+            # replica, since atomic() does not bind querysets to its alias.
+            write_db = db.router.db_for_write(Success)
+            with db.transaction.atomic(using=write_db):
+                keep_count = Conf.SAVE_LIMIT - 1
+                base_qs = Success.objects.using(write_db).filter(**filters)
+                if keep_count <= 0:
+                    base_qs.delete()
+                else:
+                    boundary = (
+                        base_qs.order_by("-stopped", "-pk")
+                        .values_list("stopped", "pk")[keep_count - 1 : keep_count]
+                        .first()
+                    )
+                    if boundary:
+                        boundary_stopped, boundary_pk = boundary
+                        base_qs.filter(
+                            Q(stopped__lt=boundary_stopped)
+                            | Q(stopped=boundary_stopped, pk__lt=boundary_pk)
+                        ).delete()
 
         # check if this task has previous results
         try:

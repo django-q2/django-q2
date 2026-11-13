@@ -106,6 +106,8 @@ jobs:
         - name: Create SQS queue
           run: aws sqs create-queue --queue-name testing
         - name: Run Tests
+          # explicit bash runs with -o pipefail, so failures aren't masked by tee
+          shell: bash
           run: |
             uv run pytest --cov=./django_q --cov-report=xml --junitxml=pytest.xml --cov-report=term-missing:skip-covered | tee pytest-coverage.txt
 
