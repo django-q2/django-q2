@@ -3,6 +3,7 @@ from multiprocessing.queues import Queue
 
 from django import core, db
 from django.apps.registry import apps
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 try:
@@ -109,15 +110,28 @@ def save_task(task, broker: Broker):
             filters[Conf.SAVE_LIMIT_PER] = value
 
         # check if we should clean the success tasks
-        if Conf.SAVE_LIMIT > 0:
+        if Conf.SAVE_LIMIT > 0 and task["success"]:
             with db.transaction.atomic(using=db.router.db_for_write(Success)):
-                success_tasks_qs = Success.objects.filter(**filters)
-                success_tasks_pks = [
-                    success_task.pk
-                    for success_task in success_tasks_qs.select_for_update()
-                ]
-                if task["success"] and len(success_tasks_pks) >= Conf.SAVE_LIMIT:
-                    success_tasks_qs.last().delete()
+                keep_count = Conf.SAVE_LIMIT - 1
+                ordered_qs = Success.objects.filter(**filters).order_by(
+                    "-stopped", "-pk"
+                )
+                if keep_count <= 0:
+                    ordered_qs.delete()
+                else:
+                    boundary = ordered_qs.values_list("stopped", "pk")[
+                        keep_count - 1 : keep_count
+                    ].first()
+                    if boundary:
+                        boundary_stopped, boundary_pk = boundary
+                        (
+                            Success.objects.filter(**filters)
+                            .filter(
+                                Q(stopped__lt=boundary_stopped)
+                                | Q(stopped=boundary_stopped, pk__lt=boundary_pk)
+                            )
+                            .delete()
+                        )
 
         # check if this task has previous results
         try:
