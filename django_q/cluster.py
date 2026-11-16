@@ -302,6 +302,18 @@ class Sentinel:
             elif int(process.timer.value) == -2:
                 logger.info(_("recycled worker %(name)s") % {"name": process.name})
             else:
+                dead_task = None
+                try:
+                    dead_task = process.current_task_queue.get(block=False)
+                except Exception:
+                    pass
+                if dead_task:
+                    dead_task["result"] = _("Worker died while processing task %(task_name)s") % {
+                        "task_name": dead_task.get("name", "")
+                    }
+                    dead_task["success"] = False
+                    dead_task["stopped"] = timezone.now()
+                    self.result_queue.put(dead_task)
                 logger.critical(
                     _("reincarnated worker %(name)s after death")
                     % {"name": process.name}
