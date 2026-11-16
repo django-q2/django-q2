@@ -357,6 +357,9 @@ class Schedule(models.Model):
                 )
             return croniter(self.cron, localtime(next_run)).get_next(datetime)
 
+        # months and years are counted on the local date, next_run is in UTC
+        local_next_run = localtime(next_run)
+
         if self.schedule_type == self.MINUTES:
             add = timedelta(minutes=(self.minutes or 1))
         elif self.schedule_type == self.HOURLY:
@@ -368,13 +371,13 @@ class Schedule(models.Model):
         elif self.schedule_type == self.BIWEEKLY:
             add = timedelta(weeks=2)
         elif self.schedule_type == self.MONTHLY:
-            add = timedelta(days=(add_months(next_run, 1) - next_run).days)
+            add = timedelta(days=(add_months(local_next_run, 1) - local_next_run).days)
         elif self.schedule_type == self.BIMONTHLY:
-            add = timedelta(days=(add_months(next_run, 2) - next_run).days)
+            add = timedelta(days=(add_months(local_next_run, 2) - local_next_run).days)
         elif self.schedule_type == self.QUARTERLY:
-            add = timedelta(days=(add_months(next_run, 3) - next_run).days)
+            add = timedelta(days=(add_months(local_next_run, 3) - local_next_run).days)
         elif self.schedule_type == self.YEARLY:
-            add = timedelta(days=(add_years(next_run, 1) - next_run).days)
+            add = timedelta(days=(add_years(local_next_run, 1) - local_next_run).days)
 
         # add normal timedelta, we will correct this later based on timezone
         next_run += add

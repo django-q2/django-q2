@@ -514,6 +514,17 @@ def test_schedule_save_direct_db(broker):
     assert broker.queue_size() == 0
 
 
+def test_monthly_schedule_keeps_the_local_day():
+    # 00:30 on the 1st in Amsterdam is still the last day of the month in UTC
+    amsterdam = ZoneInfo("Europe/Amsterdam")
+    schedule = Schedule(func="math.sqrt", schedule_type=Schedule.MONTHLY)
+    next_run = datetime(2026, 3, 1, 0, 30, tzinfo=amsterdam).astimezone(ZoneInfo("UTC"))
+
+    assert schedule.calculate_next_run(next_run) == datetime(
+        2026, 4, 1, 0, 30, tzinfo=amsterdam
+    )
+
+
 def test_localtime():
     assert not is_naive(localtime())
 
