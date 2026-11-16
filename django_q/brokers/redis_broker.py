@@ -19,7 +19,7 @@ class Redis(Broker):
         return self.connection.rpush(self.list_key, task)
 
     def dequeue(self):
-        task = self.connection.blpop(self.list_key, 1)
+        task = self.connection.blpop(self.list_key, timeout=Conf.POLL)
         if task:
             return [(None, task[1])]
 
