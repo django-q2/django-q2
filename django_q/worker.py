@@ -1,4 +1,6 @@
 import pydoc
+import signal
+import sys
 import traceback
 from multiprocessing import Value
 from multiprocessing.process import current_process
@@ -44,6 +46,9 @@ def worker(
     :type result_queue: multiprocessing.Queue
     :type timer: multiprocessing.Value
     """
+    # On Windows ignore SIGINT in child processes
+    if sys.platform == "win32":
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
     proc_name = current_process().name
     logger.info(
         _("%(proc_name)s ready for work at %(id)s")
